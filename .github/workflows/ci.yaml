@@ -139,4 +139,6 @@ jobs:
 
       - name: stop bastion
         working-directory: ./bootstrap
-        run: make stop-bastion-sessions
+        run: |
+          env | sort
+          make stop-bastion-sessions
