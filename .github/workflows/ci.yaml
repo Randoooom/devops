@@ -3,7 +3,7 @@ on:
   pull_request: 
 
 jobs:
-  deploy:
+  plan:
     runs-on: ubuntu
     steps:
       - name: Checkout
@@ -94,9 +94,7 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./cluster
-        run: |
-          terraform init
-          terraform apply -auto-approve -var-file ../tfvars
+        run: make plan-cluster 
 
       - name: stop bastion
         working-directory: ./bootstrap

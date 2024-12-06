@@ -2,10 +2,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - master
 
 jobs:
-  deploy:
+  apply:
     runs-on: ubuntu
     steps:
       - name: Checkout
@@ -58,7 +58,7 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: make plan-oci 
+        run: make apply-oci 
 
       - name: Bastion
         working-directory: ./bootstrap
@@ -96,9 +96,7 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./cluster
-        run: |
-          terraform init
-          terraform apply -auto-approve -var-file ../tfvars
+        run: make apply-cluster 
 
       - name: stop bastion
         working-directory: ./bootstrap
