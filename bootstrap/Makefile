@@ -20,13 +20,13 @@ plan-cluster: validate-cluster
 	terraform -chdir=./cluster plan -input=false -var-file ../tfvars -var-file ../.tfvars
 
 apply-oci: validate-oci
-	terraform -chdir=./oci apply -input=false -var-file ../tfvars -var-file ../.tfvars
+	terraform -chdir=./oci apply -input=false -auto-approve -var-file ../tfvars -var-file ../.tfvars
 
 apply-cluster: validate-cluster
-	terraform -chdir=./cluster apply -input=false -var-file ../tfvars -var-file ../.tfvars
+	terraform -chdir=./cluster apply -input=false -auto-approve -var-file ../tfvars -var-file ../.tfvars
 
 bastion-sessions: validate-oci
-	terraform -chdir=./oci apply -input=false -var-file ../tfvars -var-file ../.tfvars -target=module.nodes.oci_bastion_session.worker -target=module.nodes.oci_bastion_session.controlplane -target=module.nodes.oci_bastion_session.kubernetes_controlplane
+	terraform -chdir=./oci apply -input=false -auto-approve -var-file ../tfvars -var-file ../.tfvars -target=module.nodes.oci_bastion_session.worker -target=module.nodes.oci_bastion_session.controlplane -target=module.nodes.oci_bastion_session.kubernetes_controlplane
 
 start-bastion-sessions:
 	sh scripts/start_bastion_sessions.sh
