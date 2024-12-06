@@ -20,11 +20,17 @@ jobs:
 
       - uses: dcarbone/install-jq-action@v3
 
-      - name: write .zitadel
+      - name: Write files
         env:
           ZITADEL_KEY: ${{ secrets.ZITADEL_KEY }}
+          BACKEND_CONFIG: ${{ secrets.BACKEND_CONFIG }}
+          OCI_BACKEND_CONFIG: ${{ secrets.OCI_BACKEND_CONFIG }}
+          CLUSTER_BACKEND_CONFIG: ${{ secrets.CLUSTER_BACKEND_CONFIG }}
         run: |
           echo "$ZITADEL_KEY" > ./bootstrap/.zitadel
+          echo "$BACKEND_CONFIG" > ./bootstrap/.backend.config
+          echo "$OCI_BACKEND_CONFIG" > ./bootstrap/oci/.backend.config
+          echo "$CLUSTER_BACKEND_CONFIG" > ./bootstrap/cluster/.backend.config
 
       - name: Apply OCI
         env:
@@ -42,7 +48,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-          
           TF_VAR_remote_wireguard_public_key: ${{ secrets.REMOTE_WIREGUARD_PUBLIC_KEY }}
           TF_VAR_remote_wireguard_host: ${{ secrets.REMOTE_WIREGUARD_HOST }}
           TF_VAR_remote_wireguard_peer_cidr: ${{ secrets.REMOTE_WIREGUARD_PEER_CIDR }}
