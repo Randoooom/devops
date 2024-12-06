@@ -31,6 +31,7 @@ jobs:
           echo "$BACKEND_CONFIG" > ./bootstrap/.backend.config
           echo "$OCI_BACKEND_CONFIG" > ./bootstrap/oci/.backend.config
           echo "$CLUSTER_BACKEND_CONFIG" > ./bootstrap/cluster/.backend.config
+          touch ./bootstrap/.tfvars
 
       - name: Apply OCI
         env:
