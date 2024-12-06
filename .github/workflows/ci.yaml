@@ -16,7 +16,13 @@ jobs:
         with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - uses: actions/install-jq-action@v3
+      - uses: dcarbone/install-jq-action@v3
+
+      - name: write .zitadel
+        env:
+          ZITADEL_KEY: ${{ secrets.ZITADEL_KEY }}
+        run: |
+          echo "$ZITADEL_KEY" > ./bootstrap/.zitadel
 
       - name: Plan OCI
         env:
