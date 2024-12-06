@@ -135,10 +135,10 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: make plan-cluster 
+        run: |
+          env | sort
+          make plan-cluster 
 
       - name: stop bastion
         working-directory: ./bootstrap
-        run: |
-          env | sort
-          make stop-bastion-sessions
+        run: make stop-bastion-sessions
