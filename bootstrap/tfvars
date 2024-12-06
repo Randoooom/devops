@@ -2,38 +2,38 @@
 
 ## Authentication
 
-tenancy_ocid     = ""
-user_ocid        = ""
-compartment_ocid = ""
-fingerprint      = ""
-region           = ""
+#tenancy_ocid     = ""
+#user_ocid        = ""
+#compartment_ocid = ""
+#fingerprint      = ""
+#region           = ""
 
 ## Bastion
 
-bastion_ssh_public_key = ""
+#bastion_ssh_public_key = ""
 
 ### Cloudflare
 
-cloudflare_api_token = ""
+#cloudflare_api_token = ""
 
 ### Cluster
 
 ## WireGuard
 
-remote_wireguard_public_key = ""
-remote_wireguard_host       = ""
-remote_wireguard_peer_cidr  = ""
-remote_wireguard_cidr       = ""
-remote_subnet_cidr          = ""
+#remote_wireguard_public_key = ""
+#remote_wireguard_host       = ""
+#remote_wireguard_peer_cidr  = ""
+#remote_wireguard_cidr       = ""
+#remote_subnet_cidr          = ""
 
 ## ACME
-acme_email = ""
+#acme_email = ""
 
 ## General
 
-cluster_name               = ""
-cluster_domain             = ""
-talos_image_oci_bucket_url = ""
+#cluster_name               = ""
+#cluster_domain             = ""
+#talos_image_oci_bucket_url = ""
 
 talos_version      = "1.8.3"
 kubernetes_version = "v1.30.3"
@@ -60,5 +60,5 @@ worker_ram            = 6
 
 ### Zitadel
 
-zitadel_host = ""
-zitadel_org  = ""
+#zitadel_host = ""
+#zitadel_org  = ""
