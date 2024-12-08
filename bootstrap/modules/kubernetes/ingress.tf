@@ -27,7 +27,7 @@ resource "kubectl_manifest" "oauth2_proxy_secret" {
         {
           secretKey = "cookie-secret"
           remoteRef = {
-            key = "oauth2-proxy-cookie-secret" 
+            key = "oauth2-proxy-cookie-secret"
           }
         },
         {
@@ -73,9 +73,6 @@ pass_access_token = true
 set_xauthrequest = true
 EOF
     }
-    podAnnotations = {
-      "linkerd.io/inject" = "enabled"
-    }
     metrics = {
       serviceMonitor = {
         enabled = true
@@ -117,14 +114,21 @@ locals {
     {
       name      = "ingress-nginx"
       className = "nginx"
-      domain    = "*.${var.cluster_domain}"
       internal  = false
+      annotations = {
+        "service.beta.kubernetes.io/oci-load-balancer-subnet1" = var.public_subnet
+        "oci.oraclecloud.com/load-balancer-type"               = "lb"
+        "service.beta.kubernetes.io/oci-load-balancer-shape"   = "10Mbps"
+        "external-dns.alpha.kubernetes.io/hostname"            = "*.${var.cluster_domain}"
+      }
     },
     {
       name      = "internal-ingress-nginx"
       className = "internal"
-      domain    = "*.internal.${var.cluster_domain}"
       internal  = true
+      annotations = {
+        "external-dns.alpha.kubernetes.io/internal-hostname" = "*.internal.${var.cluster_domain}"
+      }
     }
   ]
 }
@@ -142,26 +146,22 @@ resource "helm_release" "ingress" {
 
   values = [yamlencode({
     controller = {
+      config = {
+        use-gzip = true
+      }
+      ingressClass = each.value.className
       ingressClassResource = {
         name            = each.value.className
         controllerValue = each.value.internal ? "k8s.io/internal-ingress-nginx" : "k8s.io/nginx"
       }
       allowSnippetAnnotations = true
       service = {
-        type = "LoadBalancer"
-        annotations = {
-          "oci-network-load-balancer.oraclecloud.com/subnet"                        = each.value.internal ? var.private_subnet : var.public_subnet
-          "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
-          "oci.oraclecloud.com/load-balancer-type"                                  = "nlb",
-          "external-dns.alpha.kubernetes.io/hostname"                               = each.value.domain
-          "oci-network-load-balancer.oraclecloud.com/internal"                      = each.value.internal
-        }
-      }
-      podAnnotations = {
-        "linkerd.io/inject" = "enabled"
+        type        = each.value.internal ? "ClusterIP" : "LoadBalancer"
+        annotations = each.value.annotations
       }
       extraArgs = {
         default-ssl-certificate = "ingress-nginx/ingress-tls"
+        enable-ssl-passthrough  = true
       }
       metrics = {
         enabled = true

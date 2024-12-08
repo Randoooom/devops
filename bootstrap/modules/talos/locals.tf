@@ -16,8 +16,6 @@ vcn: ${var.vcn_id}
 loadBalancer:
   subnet1: ${var.public_subnet}
   securityListManagementMode: None
-  securityLists:
-    ${var.public_subnet}: ${var.security_list_id}
 EOF
   talos_base_configuration    = <<-EOT
     machine:
@@ -57,7 +55,7 @@ EOF
             - no_write_workqueue
       features:
         kubePrism:
-          enabled: true
+          enabled: false
           port: 7445
       install:
         disk: ${local.talos_install_disk}
@@ -113,6 +111,6 @@ EOF
               namespace: kube-system
             spec:
               hard:
-                requests.storage: 100Gi
+                requests.storage: 50Gi
     EOT
 }
