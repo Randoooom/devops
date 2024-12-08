@@ -62,7 +62,7 @@ resource "helm_release" "argocd" {
     }
     configs = {
       params = {
-        "server.insecure" = true
+        "server.insecure" = false
       }
 
       cm = {
@@ -91,6 +91,12 @@ EOF
       ingress = {
         enabled          = true
         ingressClassName = "internal"
+        annotations = {
+          "cert-manager.io/cluster-issuer"               = "letsencrypt"
+          "nginx.ingress.kubernetes.io/ssl-passthrough"  = true
+          "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
+        }
+        tls = true
       }
     }
     dex = {
