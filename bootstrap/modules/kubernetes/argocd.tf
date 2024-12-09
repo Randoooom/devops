@@ -150,10 +150,13 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
       namespace = "sys-argocd"
     }
     spec = {
+      destination = {
+        namespace = "sys-argocd"
+        server    = "https://kubernetes.default.svc"
+      }
       source = {
         repoURL        = "https://github.com/randoooom/devops"
         path           = "gitops"
-        chart          = "gitops"
         targetRevision = "chore/argo"
 
         helm = {

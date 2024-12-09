@@ -4,6 +4,10 @@ metadata:
   name: postgres
   namespace: sys-argocd
 spec:
+  destination:
+    namespace: postgres
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: postgres
