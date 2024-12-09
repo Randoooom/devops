@@ -71,3 +71,7 @@ variable "remote_wireguard_peer_cidr" {
 variable "remote_wireguard_cidr" {
   type = string
 }
+
+variable "zitadel_project" {
+  type = string
+}

@@ -27,3 +27,7 @@ output "argocd_client_secret" {
   sensitive = true
   value     = zitadel_application_oidc.argocd.client_secret
 }
+
+output "zitadel_project" {
+  value = zitadel_project.this.id
+}
