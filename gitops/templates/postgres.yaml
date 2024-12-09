@@ -1,0 +1,11 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgres
+  namespace: sys-argocd
+spec:
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgres
+    targetRevision: 16.2.5
+  {{- include "common" . | nindent 2 }}

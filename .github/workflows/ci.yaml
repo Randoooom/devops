@@ -68,75 +68,75 @@ jobs:
         working-directory: ./bootstrap
         run: make plan-oci 
 
-      - name: Bastion
-        env:
-          TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
-          TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
-          TF_VAR_user_ocid: ${{ secrets.USER_OCID }} 
-          TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
-          TF_VAR_region: ${{ secrets.REGION }}
-          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
-
-          TF_VAR_bastion_ssh_public_key: ${{ secrets.BASTION_SSH_PUBLIC_KEY }}
-
-          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-          TF_VAR_remote_wireguard_public_key: ${{ secrets.REMOTE_WIREGUARD_PUBLIC_KEY }}
-          TF_VAR_remote_wireguard_host: ${{ secrets.REMOTE_WIREGUARD_HOST }}
-          TF_VAR_remote_wireguard_peer_cidr: ${{ secrets.REMOTE_WIREGUARD_PEER_CIDR }}
-          TF_VAR_remote_wireguard_cidr: ${{ secrets.REMOTE_WIREGUARD_CIDR }}
-          TF_VAR_remote_subnet_cidr: ${{ secrets.REMOTE_SUBNET_CIDR }}
-
-          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
-
-          TF_VAR_cluster_name: ${{ secrets.CLUSTER_NAME }}
-          TF_VAR_cluster_domain: ${{ secrets.CLUSTER_DOMAIN }}
-          TF_VAR_talos_image_oci_bucket_url: ${{ secrets.TALOS_IMAGE_OCI_BUCKET_URL }}
-
-          TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
-          TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
-        working-directory: ./bootstrap
-        run: |
-          make bastion-sessions
-          make start-bastion-sessions
-
-      - name: Plan Cluster
-        env:
-          TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
-          TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
-          TF_VAR_user_ocid: ${{ secrets.USER_OCID }} 
-          TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
-          TF_VAR_region: ${{ secrets.REGION }}
-          TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
-
-          TF_VAR_bastion_ssh_public_key: ${{ secrets.BASTION_SSH_PUBLIC_KEY }}
-
-          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-          
-          TF_VAR_remote_wireguard_public_key: ${{ secrets.REMOTE_WIREGUARD_PUBLIC_KEY }}
-          TF_VAR_remote_wireguard_host: ${{ secrets.REMOTE_WIREGUARD_HOST }}
-          TF_VAR_remote_wireguard_peer_cidr: ${{ secrets.REMOTE_WIREGUARD_PEER_CIDR }}
-          TF_VAR_remote_wireguard_cidr: ${{ secrets.REMOTE_WIREGUARD_CIDR }}
-          TF_VAR_remote_subnet_cidr: ${{ secrets.REMOTE_SUBNET_CIDR }}
-
-          TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
-
-          TF_VAR_cluster_name: ${{ secrets.CLUSTER_NAME }}
-          TF_VAR_cluster_domain: ${{ secrets.CLUSTER_DOMAIN }}
-          TF_VAR_talos_image_oci_bucket_url: ${{ secrets.TALOS_IMAGE_OCI_BUCKET_URL }}
-
-          TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
-          TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
-        working-directory: ./bootstrap
-        run: make plan-cluster 
-
-      - name: stop bastion
-        working-directory: ./bootstrap
-        run: make stop-bastion-sessions
+      # - name: Bastion
+      #   env:
+      #     TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
+      #     TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
+      #     TF_VAR_user_ocid: ${{ secrets.USER_OCID }} 
+      #     TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
+      #     TF_VAR_region: ${{ secrets.REGION }}
+      #     TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
+      #
+      #     TF_VAR_bastion_ssh_public_key: ${{ secrets.BASTION_SSH_PUBLIC_KEY }}
+      #
+      #     TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #
+      #     TF_VAR_remote_wireguard_public_key: ${{ secrets.REMOTE_WIREGUARD_PUBLIC_KEY }}
+      #     TF_VAR_remote_wireguard_host: ${{ secrets.REMOTE_WIREGUARD_HOST }}
+      #     TF_VAR_remote_wireguard_peer_cidr: ${{ secrets.REMOTE_WIREGUARD_PEER_CIDR }}
+      #     TF_VAR_remote_wireguard_cidr: ${{ secrets.REMOTE_WIREGUARD_CIDR }}
+      #     TF_VAR_remote_subnet_cidr: ${{ secrets.REMOTE_SUBNET_CIDR }}
+      #
+      #     TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+      #
+      #     TF_VAR_cluster_name: ${{ secrets.CLUSTER_NAME }}
+      #     TF_VAR_cluster_domain: ${{ secrets.CLUSTER_DOMAIN }}
+      #     TF_VAR_talos_image_oci_bucket_url: ${{ secrets.TALOS_IMAGE_OCI_BUCKET_URL }}
+      #
+      #     TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
+      #     TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
+      #   working-directory: ./bootstrap
+      #   run: |
+      #     make bastion-sessions
+      #     make start-bastion-sessions
+      #
+      # - name: Plan Cluster
+      #   env:
+      #     TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
+      #     TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
+      #     TF_VAR_user_ocid: ${{ secrets.USER_OCID }} 
+      #     TF_VAR_fingerprint: ${{ secrets.FINGERPRINT }}
+      #     TF_VAR_region: ${{ secrets.REGION }}
+      #     TF_VAR_private_key: ${{ secrets.PRIVATE_KEY }}
+      #
+      #     TF_VAR_bastion_ssh_public_key: ${{ secrets.BASTION_SSH_PUBLIC_KEY }}
+      #
+      #     TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #
+      #
+      #     TF_VAR_remote_wireguard_public_key: ${{ secrets.REMOTE_WIREGUARD_PUBLIC_KEY }}
+      #     TF_VAR_remote_wireguard_host: ${{ secrets.REMOTE_WIREGUARD_HOST }}
+      #     TF_VAR_remote_wireguard_peer_cidr: ${{ secrets.REMOTE_WIREGUARD_PEER_CIDR }}
+      #     TF_VAR_remote_wireguard_cidr: ${{ secrets.REMOTE_WIREGUARD_CIDR }}
+      #     TF_VAR_remote_subnet_cidr: ${{ secrets.REMOTE_SUBNET_CIDR }}
+      #
+      #     TF_VAR_acme_email: ${{ secrets.ACME_EMAIL }}
+      #
+      #     TF_VAR_cluster_name: ${{ secrets.CLUSTER_NAME }}
+      #     TF_VAR_cluster_domain: ${{ secrets.CLUSTER_DOMAIN }}
+      #     TF_VAR_talos_image_oci_bucket_url: ${{ secrets.TALOS_IMAGE_OCI_BUCKET_URL }}
+      #
+      #     TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
+      #     TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
+      #   working-directory: ./bootstrap
+      #   run: make plan-cluster 
+      #
+      # - name: stop bastion
+      #   working-directory: ./bootstrap
+      #   run: make stop-bastion-sessions

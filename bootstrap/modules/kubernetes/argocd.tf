@@ -81,9 +81,8 @@ EOF
       }
 
       rbac = {
-        "policy.default" = ""
-        "policy.csv"     = <<EOF
-g, admin, role:admin
+        "policy.csv" = <<EOF
+g, ${var.zitadel_project}:admin, role:admin
 EOF
       }
     }
@@ -103,4 +102,73 @@ EOF
       enabled = false
     }
   })]
+}
+
+resource "kubectl_manifest" "argocd_project" {
+  depends_on = [helm_release.argocd]
+
+  yaml_body = yamlencode({
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "AppProject"
+    metadata = {
+      name       = var.cluster_name
+      namespace  = "sys-argocd"
+      finalizers = ["resources-finalizer.argocd.argoproj.io"]
+    }
+    spec = {
+      destinations = [
+        {
+          namespace = "*"
+          server    = "https://kubernetes.default.svc"
+        }
+      ]
+      sourceRepos = ["https://github.com/randoooom/*"]
+      clusterResourceWhitelist = [
+        {
+          group = "*"
+          kind  = "*"
+        }
+      ]
+      namespaceResourceWhitelist = [
+        {
+          group = "*"
+          kind  = "*"
+        }
+      ]
+    }
+  })
+}
+
+resource "kubectl_manifest" "argocd_app_of_apps" {
+  depends_on = [kubectl_manifest.argocd_project]
+
+  yaml_body = yamlencode({
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "Application"
+    metadata = {
+      name      = "gitops"
+      namespace = "sys-argocd"
+    }
+    spec = {
+      source = {
+        repoURL        = "https://github.com/randoooom/devops"
+        path           = "gitops"
+        chart          = "gitops"
+        targetRevision = "chore/argo"
+
+        helm = {
+          values = <<EOF
+project: ${var.cluster_name}
+EOF
+        }
+      }
+      project = var.cluster_name
+      syncPolicy = {
+        automated = {
+          prune    = true
+          selfHeal = true
+        }
+      }
+    }
+  })
 }

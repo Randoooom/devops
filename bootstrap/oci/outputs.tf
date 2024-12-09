@@ -39,3 +39,7 @@ output "vault" {
 output "public_subnet_cidr" {
   value = module.network.public_subnet_cidr
 }
+
+output "zitadel_project" {
+  value = module.zitadel.zitadel_project
+}
