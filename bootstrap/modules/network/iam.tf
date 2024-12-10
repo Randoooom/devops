@@ -18,9 +18,7 @@ resource "oci_identity_policy" "ccm" {
   compartment_id = var.tenancy_ocid
   description    = "Instance access and OCI CSI driver permissions"
   statements = [
-    "Allow dynamic-group ${oci_identity_dynamic_group.ccm.name} to read instance-family in ${local.ns_type_name} ${local.ns_select_name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.ccm.name} to use virtual-network-family in ${local.ns_type_name} ${local.ns_select_name}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.ccm.name} to manage load-balancers in ${local.ns_type_name} ${local.ns_select_name}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.ccm.name} to manage all-resources in ${local.ns_type_name} ${local.ns_select_name}",
   ]
 
   freeform_tags = var.labels

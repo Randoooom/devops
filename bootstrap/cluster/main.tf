@@ -33,8 +33,9 @@ module "kubernetes" {
   cloudflare_api_token = var.cloudflare_api_token
   acme_email           = var.acme_email
 
-  zitadel_host = var.zitadel_host
-  vault        = data.terraform_remote_state.oci.outputs.vault
+  zitadel_host    = var.zitadel_host
+  zitadel_project = data.terraform_remote_state.oci.outputs.zitadel_project
+  vault           = data.terraform_remote_state.oci.outputs.vault
 
   remote_wireguard_peer_cidr  = var.remote_wireguard_peer_cidr
   remote_wireguard_public_key = var.remote_wireguard_public_key

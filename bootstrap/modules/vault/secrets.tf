@@ -1,8 +1,10 @@
 locals {
   secrets = [
     {
-      name  = "oauth2-proxy-cookie-secret"
-      value = random_password.oauth2_proxy_cookie_secret.result
+      name = "oauth2-proxy-cookie-secret"
+      generate = {
+        length = 32
+      }
     },
     {
       name  = "oauth2-proxy-client-id"
@@ -29,17 +31,45 @@ locals {
     {
       name  = "argocd-client-secret"
       value = var.argocd_client_secret
+    },
+
+    {
+      name = "postgres-admin-password"
+      generate = {
+        length = 60
+      }
+    },
+    {
+      name = "postgres-replication-password"
+      generate = {
+        length = 60
+      }
+    },
+
+    {
+      name = "postgres-username"
+      generate = {
+        length = 10
+      }
+    },
+    {
+      name = "postgres-password"
+      generate = {
+        length = 60
+      }
     }
   ]
 }
 
-resource "random_password" "oauth2_proxy_cookie_secret" {
-  length  = 32
+resource "random_password" "this" {
+  for_each = { for secret in local.secrets : secret.name => secret.generate if contains(keys(secret), "generate") }
+
+  length  = each.value.length
   special = false
 }
 
 resource "oci_vault_secret" "this" {
-  for_each = { for id, value in local.secrets : id => value }
+  for_each = { for secret in local.secrets : secret.name => secret }
 
   compartment_id = var.compartment_id
   vault_id       = oci_kms_vault.this.id
@@ -49,6 +79,6 @@ resource "oci_vault_secret" "this" {
 
   secret_content {
     content_type = "BASE64"
-    content      = base64encode(each.value.value)
+    content      = base64encode(contains(keys(each.value), "generate") ? random_password.this[each.key].result : each.value.value)
   }
 }
