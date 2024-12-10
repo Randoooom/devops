@@ -58,10 +58,7 @@ resource "helm_release" "wireguard" {
     }
     service = {
       port = 51871
-      type = "ClusterIP"
-      annotations = {
-        "external-dns.alpha.kubernetes.io/hostname" = "wg.${var.cluster_domain}"
-      }
+      type = "LoadBalancer"
     }
     replicaCount = 1
     metrics = {

@@ -5,4 +5,11 @@ resource "helm_release" "metrics_server" {
 
   name      = "metrics-server"
   namespace = "kube-system"
+
+  values = [yamlencode({
+    hostNetwork = {
+      enabled = true
+    }
+    containerPort = 11250
+  })]
 }

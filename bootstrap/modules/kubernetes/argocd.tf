@@ -61,6 +61,16 @@ resource "helm_release" "argocd" {
       domain = "argocd.internal.${var.cluster_domain}"
     }
     configs = {
+      repositories = {
+        docker-registry = {
+          url       = "registry-1.docker.io"
+          username  = "docker"
+          password  = ""
+          name      = "docker-registry"
+          enableOci = "true"
+          type      = "helm"
+        }
+      }
       params = {
         "server.insecure" = false
       }
@@ -122,7 +132,7 @@ resource "kubectl_manifest" "argocd_project" {
           server    = "https://kubernetes.default.svc"
         }
       ]
-      sourceRepos = ["https://github.com/randoooom/*"]
+      sourceRepos = ["*"]
       clusterResourceWhitelist = [
         {
           group = "*"
