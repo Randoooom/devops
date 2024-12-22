@@ -36,7 +36,7 @@ jobs:
           echo "$BASTION_BACKEND_CONFIG" > ./bootstrap/bastion/.backend.config
           touch ./bootstrap/.tfvars
 
-      - name: Plan OCI
+      - name: OCI
         env:
           TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
           TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
@@ -68,7 +68,7 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: make plan-oci 
+        run: make validate-oci 
 
       - name: Bastion
         env:
@@ -101,11 +101,9 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: |
-          make apply-bastion
-          make start-bastion-sessions
+        run: make validate-bastion
 
-      - name: Plan Cluster
+      - name: Cluster
         env:
           TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
           TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
@@ -137,8 +135,4 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: make plan-cluster 
-
-      - name: stop bastion
-        working-directory: ./bootstrap
-        run: make stop-bastion-sessions
+        run: make validate-cluster 
