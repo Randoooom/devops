@@ -57,7 +57,3 @@ variable "control_plane_security_group" {
 variable "worker_security_group" {
   type = string
 }
-
-variable "ssh_public_key" {
-  type = string
-}

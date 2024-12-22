@@ -1,8 +1,10 @@
 #!/bin/sh
 
-cd ./oci/
+cd ./bastion/
 # get the bastion session data from the state
 SESSIONS=$(terraform output -raw bastion_sessions)
+
+cd ../oci/
 region=$(terraform output -raw region)
 
 cd ../

@@ -1,6 +1,6 @@
 resource "oci_bastion_bastion" "this" {
   compartment_id               = var.compartment_ocid
-  target_subnet_id             = var.subnet
+  target_subnet_id             = data.terraform_remote_state.oci.outputs.subnet_id 
   bastion_type                 = "STANDARD"
   client_cidr_block_allow_list = ["0.0.0.0/0"]
 }
@@ -13,13 +13,13 @@ resource "null_resource" "always_run" {
 }
 
 resource "oci_bastion_session" "controlplane" {
-  for_each = local.controlplane
+  for_each = { for controlplane in data.terraform_remote_state.oci.outputs.controlplane: controlplane.id => controlplane }
 
   bastion_id   = oci_bastion_bastion.this.id
   display_name = "${var.cluster_name}-${each.value.display_name}"
 
   key_details {
-    public_key_content = var.ssh_public_key
+    public_key_content = var.bastion_ssh_public_key
   }
 
   target_resource_details {
@@ -37,13 +37,13 @@ resource "oci_bastion_session" "controlplane" {
 }
 
 resource "oci_bastion_session" "worker" {
-  for_each = local.workers
+  for_each = { for worker in data.terraform_remote_state.oci.outputs.worker: worker.id => worker }
 
   bastion_id   = oci_bastion_bastion.this.id
   display_name = "${var.cluster_name}-${each.value.display_name}"
 
   key_details {
-    public_key_content = var.ssh_public_key
+    public_key_content = var.bastion_ssh_public_key
   }
 
   target_resource_details {
@@ -65,13 +65,13 @@ resource "oci_bastion_session" "kubernetes_controlplane" {
   display_name = "${var.cluster_name}-kubernetes-controlplane"
 
   key_details {
-    public_key_content = var.ssh_public_key
+    public_key_content = var.bastion_ssh_public_key
   }
 
   target_resource_details {
     session_type                       = "PORT_FORWARDING"
-    target_resource_id                 = oci_core_instance.controlplane[0].id
-    target_resource_private_ip_address = oci_core_instance.controlplane[0].private_ip
+    target_resource_id                 = data.terraform_remote_state.oci.outputs.controlplane[0].id
+    target_resource_private_ip_address = data.terraform_remote_state.oci.outputs.controlplane[0].private_ip
     target_resource_port               = 6443
   }
 

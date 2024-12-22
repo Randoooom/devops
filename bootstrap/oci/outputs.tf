@@ -1,14 +1,9 @@
-output "worker_ips" {
-  value = module.nodes.worker_ips
+output "worker" {
+  value = module.nodes.worker
 }
 
-output "controlplane_ips" {
-  value = module.nodes.controlplane_ips
-}
-
-output "bastion_sessions" {
-  value     = module.nodes.bastion_sessions
-  sensitive = true
+output "controlplane" {
+  value = module.nodes.controlplane
 }
 
 output "region" {
@@ -38,4 +33,8 @@ output "vault" {
 
 output "public_subnet_cidr" {
   value = module.network.public_subnet_cidr
+}
+
+output "zitadel_project" {
+  value = module.zitadel.zitadel_project
 }

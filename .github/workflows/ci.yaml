@@ -27,14 +27,16 @@ jobs:
           BACKEND_CONFIG: ${{ secrets.BACKEND_CONFIG }}
           OCI_BACKEND_CONFIG: ${{ secrets.OCI_BACKEND_CONFIG }}
           CLUSTER_BACKEND_CONFIG: ${{ secrets.CLUSTER_BACKEND_CONFIG }}
+          BASTION_BACKEND_CONFIG: ${{ secrets.BASTION_BACKEND_CONFIG }}
         run: |
           echo "$ZITADEL_KEY" > ./bootstrap/.zitadel
           echo "$BACKEND_CONFIG" > ./bootstrap/.backend.config
           echo "$OCI_BACKEND_CONFIG" > ./bootstrap/oci/.backend.config
           echo "$CLUSTER_BACKEND_CONFIG" > ./bootstrap/cluster/.backend.config
+          echo "$BASTION_BACKEND_CONFIG" > ./bootstrap/bastion/.backend.config
           touch ./bootstrap/.tfvars
 
-      - name: Plan OCI
+      - name: OCI
         env:
           TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
           TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
@@ -66,7 +68,7 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: make plan-oci 
+        run: make validate-oci 
 
       - name: Bastion
         env:
@@ -99,11 +101,9 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: |
-          make bastion-sessions
-          make start-bastion-sessions
+        run: make validate-bastion
 
-      - name: Plan Cluster
+      - name: Cluster
         env:
           TF_VAR_compartment_ocid: ${{ secrets.COMPARTMENT_OCID }}
           TF_VAR_tenancy_ocid: ${{ secrets.TENANCY_OCID }} 
@@ -119,7 +119,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-          
+
           TF_VAR_remote_wireguard_public_key: ${{ secrets.REMOTE_WIREGUARD_PUBLIC_KEY }}
           TF_VAR_remote_wireguard_host: ${{ secrets.REMOTE_WIREGUARD_HOST }}
           TF_VAR_remote_wireguard_peer_cidr: ${{ secrets.REMOTE_WIREGUARD_PEER_CIDR }}
@@ -135,8 +135,4 @@ jobs:
           TF_VAR_zitadel_host: ${{ secrets.ZITADEL_HOST }}
           TF_VAR_zitadel_org: ${{ secrets.ZITADEL_ORG }}
         working-directory: ./bootstrap
-        run: make plan-cluster 
-
-      - name: stop bastion
-        working-directory: ./bootstrap
-        run: make stop-bastion-sessions
+        run: make validate-cluster 

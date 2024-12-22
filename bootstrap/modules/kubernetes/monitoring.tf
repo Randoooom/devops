@@ -62,6 +62,7 @@ resource "helm_release" "prometheus_operator" {
           allow_sign_up = false
         }
         server = {
+          domain   = "grafana.internal.${var.cluster_domain}"
           root_url = "https://grafana.internal.${var.cluster_domain}"
         }
         "auth.generic_oauth" = {
@@ -84,6 +85,38 @@ resource "helm_release" "prometheus_operator" {
           name_attribute_path  = "fullname"
 
           role_attribute_path = "contains(keys(\"urn:zitadel:iam:org:project:roles\"), 'admin') && 'Admin' || contains(keys(\"urn:zitadel:iam:org:project:roles\"), 'grafana-editor') && 'Editor' || contains(keys(\"urn:zitadel:iam:org:project:roles\"), 'grafana-viewer') && 'Viewer' || 'None'"
+        }
+      }
+
+      dashboardProviders = {
+        "dashboardproviders.yaml" = {
+          apiVersion = 1
+          providers = [
+            {
+              name  = "default"
+              orgId = 1
+              folder : ""
+              type            = "file"
+              disableDeletion = false
+              editable        = true
+              options = {
+                path = "/var/lib/grafana/dashboards/default"
+              }
+          }]
+        }
+      }
+
+      dashboards = {
+        default = {
+          ingress-nginx = {
+            gnetId     = 16677
+            datasource = "Prometheus"
+          }
+
+          node-exporter-full = {
+            gnetId     = 1860
+            datasource = "Prometheus"
+          }
         }
       }
 

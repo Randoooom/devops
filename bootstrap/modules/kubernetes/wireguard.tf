@@ -48,7 +48,11 @@ resource "helm_release" "wireguard" {
   namespace = "sys-wireguard"
 
   values = [yamlencode({
-    configSecretName    = "wireguard-endpoint"
+    image = {
+      tag        = "20240902-9c85c2e"
+      pullPolicy = "IfNotPresent"
+    }
+    configSecretName = "wireguard-endpoint"
     autoscaling = {
       enabled = false
     }
@@ -56,13 +60,15 @@ resource "helm_release" "wireguard" {
       port = 51871
       type = "LoadBalancer"
       annotations = {
-        "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
+        "oci.oraclecloud.com/load-balancer-type"                                  = "nlb"
         "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
-        "oci.oraclecloud.com/load-balancer-type"                                  = "nlb",
+        "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
         "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
-        "external-dns.alpha.kubernetes.io/access"                                 = "public"
       }
     }
     replicaCount = 1
+    metrics = {
+      enabled = true
+    }
   })]
 }

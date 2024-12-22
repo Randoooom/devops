@@ -37,7 +37,6 @@ module "nodes" {
   worker_security_group = module.network.worker_security_group
 
   subnet         = module.network.subnet
-  ssh_public_key = var.bastion_ssh_public_key
 }
 
 module "zitadel" {
