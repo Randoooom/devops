@@ -59,6 +59,12 @@ resource "helm_release" "wireguard" {
     service = {
       port = 51871
       type = "LoadBalancer"
+      annotations = {
+        "oci.oraclecloud.com/load-balancer-type"                                  = "nlb"
+        "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
+        "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
+        "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
+      }
     }
     replicaCount = 1
     metrics = {
