@@ -57,10 +57,6 @@ variable "talos_version" {
   type = string
 }
 
-variable "bastion_ssh_public_key" {
-  type = string
-}
-
 variable "public_cidr" {
   type = string
 }
