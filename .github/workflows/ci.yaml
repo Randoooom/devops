@@ -27,11 +27,13 @@ jobs:
           BACKEND_CONFIG: ${{ secrets.BACKEND_CONFIG }}
           OCI_BACKEND_CONFIG: ${{ secrets.OCI_BACKEND_CONFIG }}
           CLUSTER_BACKEND_CONFIG: ${{ secrets.CLUSTER_BACKEND_CONFIG }}
+          BASTION_BACKEND_CONFIG: ${{ secrets.BASTION_BACKEND_CONFIG }}
         run: |
           echo "$ZITADEL_KEY" > ./bootstrap/.zitadel
           echo "$BACKEND_CONFIG" > ./bootstrap/.backend.config
           echo "$OCI_BACKEND_CONFIG" > ./bootstrap/oci/.backend.config
           echo "$CLUSTER_BACKEND_CONFIG" > ./bootstrap/cluster/.backend.config
+          echo "$BASTION_BACKEND_CONFIG" > ./bootstrap/bastion/.backend.config
           touch ./bootstrap/.tfvars
 
       - name: Plan OCI
