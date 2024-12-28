@@ -10,8 +10,8 @@ module "talos" {
   talos_ccm_version    = var.talos_ccm_version
   oracle_ccm_version   = var.oracle_ccm_version
   kubernetes_version   = var.kubernetes_version
-  worker_ips           = data.terraform_remote_state.oci.outputs.worker_ips
-  controlplane_ips     = data.terraform_remote_state.oci.outputs.controlplane_ips
+  worker               = data.terraform_remote_state.oci.outputs.worker
+  controlplane         = data.terraform_remote_state.oci.outputs.controlplane
   compartment_ocid     = var.compartment_ocid
   security_list_id     = data.terraform_remote_state.oci.outputs.security_list_id
   subnet_id            = data.terraform_remote_state.oci.outputs.subnet_id
