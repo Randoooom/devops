@@ -9,7 +9,7 @@ spec:
     # TODO: solve this with yaml merging
     server: https://kubernetes.default.svc
   source:
-    repoURL: https:/github.com/randoooom/devops
+    repoURL: https://github.com/randoooom/devops
     path: charts/event 
     targetRevision: feat/event
 
