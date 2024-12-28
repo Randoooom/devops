@@ -56,6 +56,25 @@ resource "helm_release" "prometheus_operator" {
   name      = "prometheus"
 
   values = [yamlencode({
+    alertmanager = {
+      config = {
+        route = {
+          receiver = "discord"
+          routes   = []
+        }
+        receivers = [
+          {
+            name = "discord"
+            discord_configs = [
+              {
+                webhook_url = var.discord_webhook
+              }
+            ]
+          }
+        ]
+      }
+    }
+
     grafana = {
       "grafana.ini" = {
         users = {
@@ -113,14 +132,39 @@ resource "helm_release" "prometheus_operator" {
             datasource = "Prometheus"
           }
 
-          node-exporter-full = {
-            gnetId     = 1860
+          external-dns = {
+            gnetId     = 15038
             datasource = "Prometheus"
           }
 
+          external-secrets = {
+            gnetId = 21640
+            datasource = [
+              {
+                name  = "DS_PROMETHEUS"
+                value = "Prometheus"
+              }
+            ]
+          }
+
           longhorn = {
-            gnetId     = 16888
-            datasource = "Prometheus"
+            gnetId = 16888
+            datasource = [
+              {
+                name  = "DS_PROMETHEUS"
+                value = "Prometheus"
+              }
+            ]
+          }
+
+          cert-manager = {
+            gnetId = 11001
+            datasource = [
+              {
+                name  = "DS_PROMETHEUS"
+                value = "Prometheus"
+              }
+            ]
           }
         }
       }

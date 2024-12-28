@@ -31,6 +31,12 @@ resource "helm_release" "cert_manager" {
     crds = {
       enabled = true
     }
+    prometheus = {
+      enabled = true
+      servicemonitor = {
+        enabled = true
+      }
+    }
   })]
 }
 

@@ -95,3 +95,8 @@ variable "remote_wireguard_peer_cidr" {
 variable "remote_wireguard_cidr" {
   type = string
 }
+
+variable "discord_webhook" {
+  type      = string
+  sensitive = true
+}
