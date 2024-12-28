@@ -16,6 +16,9 @@ resource "helm_release" "external_secrets" {
 
   values = [yamlencode({
     installCRDs = true
+    serviceMonitor = {
+      enabled = true
+    }
   })]
 }
 

@@ -55,7 +55,7 @@ EOF
             - no_write_workqueue
       features:
         kubePrism:
-          enabled: false
+          enabled: true
           port: 7445
       install:
         disk: ${local.talos_install_disk}
@@ -68,8 +68,6 @@ EOF
       discovery:
         enabled: true
       network:
-        cni:
-          name: none
         podSubnets:
           - ${var.pod_subnet_block}
         serviceSubnets:
@@ -83,7 +81,8 @@ EOF
           - https://github.com/oracle/oci-cloud-controller-manager/releases/download/${var.oracle_ccm_version}/oci-cloud-controller-manager.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-podmonitors.yaml
-          - https://frme9idv6uqw.objectstorage.eu-frankfurt-1.oci.customer-oci.com/n/frme9idv6uqw/b/public/o/cilium.yaml
+          - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
+          - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
       controllerManager:
         extraArgs:
           cloud-provider: external
@@ -113,4 +112,5 @@ EOF
               hard:
                 requests.storage: 50Gi
     EOT
+  cert_sans = concat([ for controlplane in var.controlplane: controlplane.private_ip ], [ for worker in var.worker: worker.private_ip ])
 }

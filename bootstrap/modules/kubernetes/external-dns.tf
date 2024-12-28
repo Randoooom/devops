@@ -32,6 +32,10 @@ resource "helm_release" "external_dns" {
       name = "cloudflare"
     }
 
+    serviceMonitor = {
+      enabled = true
+    }
+
     env = [
       {
         name : "CF_API_TOKEN"

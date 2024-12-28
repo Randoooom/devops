@@ -7,7 +7,7 @@ resource "kubernetes_namespace" "argocd" {
 }
 
 resource "kubectl_manifest" "argocd_zitadel" {
-  depends_on = [kubectl_manifest.secret_store]
+  depends_on = [kubectl_manifest.secret_store, kubernetes_namespace.argocd]
 
   yaml_body = yamlencode({
     apiVersion = "external-secrets.io/v1beta1"

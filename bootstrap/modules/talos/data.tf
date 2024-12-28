@@ -17,12 +17,12 @@ data "talos_client_configuration" "this" {
   cluster_name         = var.cluster_name
   client_configuration = talos_machine_secrets.this.client_configuration
   endpoints            = ["https://talos:50001"]
-  nodes                = concat(var.controlplane_ips, var.worker_ips)
+  nodes                = local.cert_sans
 }
 
 data "talos_machine_configuration" "controlplane" {
   cluster_name     = var.cluster_name
-  cluster_endpoint = "https://${var.controlplane_ips[0]}:6443"
+  cluster_endpoint = "https://${var.controlplane[0].private_ip}:6443"
 
   machine_type    = "controlplane"
   machine_secrets = talos_machine_secrets.this.machine_secrets
@@ -48,11 +48,11 @@ data "talos_machine_configuration" "controlplane" {
     ,
     yamlencode({
       machine = {
-        certSANs = concat(var.controlplane_ips, ["10.0.0.1"])
+        certSANs = local.cert_sans
       }
       cluster = {
         apiServer = {
-          certSANs = concat(var.controlplane_ips, ["10.0.0.1"])
+          certSANs = local.cert_sans
         }
       }
     }),
@@ -61,7 +61,7 @@ data "talos_machine_configuration" "controlplane" {
 
 data "talos_machine_configuration" "worker" {
   cluster_name     = var.cluster_name
-  cluster_endpoint = "https://${var.controlplane_ips[0]}:6443"
+  cluster_endpoint = "https://${var.controlplane[0].private_ip}:6443"
 
   machine_type    = "worker"
   machine_secrets = talos_machine_secrets.this.machine_secrets
@@ -93,11 +93,11 @@ EOF
     ,
     yamlencode({
       machine = {
-        certSANs = concat(var.controlplane_ips, ["10.0.0.1"])
+        certSANs = local.cert_sans
       }
       cluster = {
         apiServer = {
-          certSANs = concat(var.controlplane_ips, ["10.0.0.1"])
+          certSANs = local.cert_sans
         }
       }
     }),

@@ -75,3 +75,8 @@ variable "remote_wireguard_cidr" {
 variable "zitadel_project" {
   type = string
 }
+
+variable "discord_webhook" {
+  type      = string
+  sensitive = true
+}
