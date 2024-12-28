@@ -117,6 +117,11 @@ resource "helm_release" "prometheus_operator" {
             gnetId     = 1860
             datasource = "Prometheus"
           }
+
+          longhorn = {
+            gnetId     = 16888
+            datasource = "Prometheus"
+          }
         }
       }
 
