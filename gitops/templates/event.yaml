@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: event
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: event
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https:/github.com/randoooom/devops
+    path: charts/event 
+    targetRevision: feat/event
+
+    helm:
+      values: |
+        domain: event.{{ .Values.domain }}
+
+        ingress:
+          hosts:
+            - host: event.{{ .values.domain }}
+              paths:
+                - path: /
+                  pathtype: Prefix
+        surrealdb:
+          ingress:
+            hosts:
+              - host: event.{{ .values.domain }}
+                paths:
+                  - path: /surrealdb
+                    pathtype: Prefix
+  {{- include "common" . | nindent 2 }}

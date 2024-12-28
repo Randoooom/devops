@@ -71,6 +71,20 @@ locals {
           key  = "postgres-password"
         }
       ]
+    },
+    {
+      name      = "surrealdb-credentials",
+      namespace = "event",
+      secrets = [
+        {
+          name = "password"
+          key  = "surrealdb-password"
+        },
+        {
+          name = "username"
+          key  = "surrealdb-username"
+        },
+      ]
     }
   ]
 }

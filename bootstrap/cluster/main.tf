@@ -33,6 +33,7 @@ module "kubernetes" {
   cloudflare_api_token = var.cloudflare_api_token
   acme_email           = var.acme_email
   discord_webhook      = var.discord_webhook
+  public_domain        = var.public_domain
 
   zitadel_host    = var.zitadel_host
   zitadel_project = data.terraform_remote_state.oci.outputs.zitadel_project
