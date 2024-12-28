@@ -19,14 +19,14 @@ spec:
 
         ingress:
           hosts:
-            - host: event.{{ .values.domain }}
+            - host: event.{{ .Values.domain }}
               paths:
                 - path: /
                   pathtype: Prefix
         surrealdb:
           ingress:
             hosts:
-              - host: event.{{ .values.domain }}
+              - host: event.{{ .Values.domain }}
                 paths:
                   - path: /surrealdb
                     pathtype: Prefix
