@@ -1,6 +1,16 @@
 resource "kubernetes_namespace" "external_dns" {
+  depends_on = [helm_release.linkerd]
+
   metadata {
     name = "sys-external-dns"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+
+    annotations = {
+      "linkerd.io/inject" = "enabled"
+    }
   }
 }
 
@@ -48,7 +58,7 @@ resource "helm_release" "external_dns" {
       }
     ]
 
-    sources = ["service"]
+    sources   = ["service"]
     extraArgs = ["--exclude-target-net=${var.public_subnet_cidr}"]
   })]
 }

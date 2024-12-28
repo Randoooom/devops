@@ -1,6 +1,16 @@
 resource "kubernetes_namespace" "external_secrets" {
+  depends_on = [helm_release.linkerd]
+
   metadata {
     name = "sys-external-secrets"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+
+    annotations = {
+      "linkerd.io/inject" = "enabled"
+    }
   }
 }
 
@@ -77,7 +87,7 @@ resource "kubectl_manifest" "secret_mount" {
   depends_on = [kubernetes_namespace.secret_mount]
 
   for_each = { for mount in local.mounts : mount.name => mount }
-  
+
   yaml_body = yamlencode({
     apiVersion = "external-secrets.io/v1beta1"
     kind       = "ExternalSecret"

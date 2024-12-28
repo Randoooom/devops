@@ -1,8 +1,17 @@
 resource "kubernetes_namespace" "argocd" {
-  depends_on = [helm_release.prometheus_operator]
+  depends_on = [helm_release.prometheus_operator, helm_release.linkerd]
 
   metadata {
     name = "sys-argocd"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+
+    annotations = {
+      "linkerd.io/inject"                        = "enabled"
+      "config.linkerd.io/default-inbound-policy" = "all-authenticated"
+    }
   }
 }
 
