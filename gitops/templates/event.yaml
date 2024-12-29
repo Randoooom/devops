@@ -29,5 +29,5 @@ spec:
               - host: event.{{ .Values.domain }}
                 paths:
                   - path: /surrealdb
-                    pathtype: Prefix
+                    pathType: Prefix
   {{- include "common" . | nindent 2 }}
