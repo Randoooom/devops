@@ -22,7 +22,7 @@ spec:
             - host: event.{{ .Values.domain }}
               paths:
                 - path: /
-                  pathtype: Prefix
+                  pathType: Prefix
         surrealdb:
           ingress:
             hosts:
