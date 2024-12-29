@@ -80,3 +80,7 @@ variable "discord_webhook" {
   type      = string
   sensitive = true
 }
+
+variable "public_domain" {
+  type = string
+}

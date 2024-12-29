@@ -57,6 +57,19 @@ locals {
       generate = {
         length = 60
       }
+    },
+
+    {
+      name = "surrealdb-username"
+      generate = {
+        length = 10
+      }
+    },
+    {
+      name = "surrealdb-password"
+      generate = {
+        length = 60
+      }
     }
   ]
 }

@@ -1,8 +1,16 @@
 resource "kubernetes_namespace" "argocd" {
-  depends_on = [helm_release.prometheus_operator]
+  depends_on = [helm_release.prometheus_operator, helm_release.linkerd]
 
   metadata {
     name = "sys-argocd"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+
+    annotations = {
+      "linkerd.io/inject"                        = "enabled"
+    }
   }
 }
 
@@ -167,11 +175,13 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
       source = {
         repoURL        = "https://github.com/randoooom/devops"
         path           = "gitops"
-        targetRevision = "master"
+        targetRevision = "main"
 
         helm = {
           values = <<EOF
 project: ${var.cluster_name}
+domain: ${var.public_domain}
+clusterDomain: ${var.cluster_domain}
 EOF
         }
       }

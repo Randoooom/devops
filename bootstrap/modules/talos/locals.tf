@@ -21,7 +21,7 @@ EOF
     machine:
       network:
         kubespan:
-          enabled: true
+          enabled: false
       sysctls:
         user.max_user_namespaces: "11255"
       time:

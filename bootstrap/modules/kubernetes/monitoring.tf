@@ -1,9 +1,15 @@
 resource "kubernetes_namespace" "monitoring" {
+  depends_on = [helm_release.linkerd]
+
   metadata {
     name = "sys-monitoring"
 
     labels = {
       "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+
+    annotations = {
+      "linkerd.io/inject"                        = "enabled"
     }
   }
 }

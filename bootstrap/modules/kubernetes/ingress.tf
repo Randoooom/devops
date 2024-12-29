@@ -1,6 +1,15 @@
 resource "kubernetes_namespace" "ingress" {
+  depends_on = [helm_release.linkerd]
   metadata {
     name = "ingress-nginx"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+
+    annotations = {
+      "linkerd.io/inject"                        = "enabled"
+    }
   }
 }
 

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "event.fullname" . }}
+  labels:
+    {{- include "event.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "event.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "event.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "surrealdb.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          env:
+            - name: SURREALDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: surrealdb-credentials
+                  key: password
+            - name: SURREALDB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: surrealdb-credentials
+                  key: username
+            - name: SURREALDB_ENDPOINT
+              value: "{{ .Release.Name  }}-surrealdb:8000"
+            - name: RUST_LOG 
+              value: INFO 
+            - name: NUXT_PUBLIC_SURREALDB_ENDPOINT
+              value: https://surrealdb.{{ .Values.clusterDomain }}
