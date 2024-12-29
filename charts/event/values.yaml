@@ -63,7 +63,7 @@ surrealdb:
 
   podExtraEnv:
     - name: SURREAL_CAPS_ALLOW_SCRIPT
-      value: true
+      value: "true"
     - name: SURREAL_PASS
       valueFrom:
         secretKeyRef:
