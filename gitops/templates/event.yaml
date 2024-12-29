@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/randoooom/devops
     path: charts/event 
-    targetRevision: feat/event
+    targetRevision: main 
 
     helm:
       values: |
