@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 domain: event.example.com
+clusterDomain: pu.randoms.rocks
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
@@ -40,6 +41,8 @@ ingress:
   className: nginx
   hosts: []
   tls: []
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
 
 livenessProbe:
   httpGet:

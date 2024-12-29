@@ -43,4 +43,4 @@ spec:
             - name: RUST_LOG 
               value: INFO 
             - name: NUXT_PUBLIC_SURREALDB_ENDPOINT
-              value: https://{{ .Values.domain }}/surrealdb
+              value: https://surrealdb.{{ .Values.clusterDomain }}

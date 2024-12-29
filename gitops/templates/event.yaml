@@ -16,6 +16,7 @@ spec:
     helm:
       values: |
         domain: event.{{ .Values.domain }}
+        clusterDomain: {{ .Values.clusterDomain }}
 
         ingress:
           hosts:
@@ -26,8 +27,8 @@ spec:
         surrealdb:
           ingress:
             hosts:
-              - host: event.{{ .Values.domain }}
+              - host: surrealdb.{{ .Values.clusterDomain }}
                 paths:
-                  - path: /surrealdb
+                  - path: /
                     pathType: Prefix
   {{- include "common" . | nindent 2 }}

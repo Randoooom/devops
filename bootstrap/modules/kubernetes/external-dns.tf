@@ -58,7 +58,6 @@ resource "helm_release" "external_dns" {
       }
     ]
 
-    sources   = ["service"]
     extraArgs = ["--exclude-target-net=${var.public_subnet_cidr}"]
   })]
 }
