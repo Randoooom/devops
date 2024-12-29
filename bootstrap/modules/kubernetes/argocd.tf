@@ -181,6 +181,7 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
           values = <<EOF
 project: ${var.cluster_name}
 domain: ${var.public_domain}
+clusterDomain: ${var.cluster_domain}
 EOF
         }
       }
