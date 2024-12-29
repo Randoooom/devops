@@ -51,6 +51,9 @@ readinessProbe:
     port: http
 
 surrealdb:
+  image:
+    tag: 1.0.0-beta.9-20230402
+
   ingress:
     className: nginx
     enabled: true
