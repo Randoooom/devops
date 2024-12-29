@@ -9,7 +9,6 @@ resource "kubernetes_namespace" "ingress" {
 
     annotations = {
       "linkerd.io/inject"                        = "enabled"
-      "config.linkerd.io/default-inbound-policy" = "all-authenticated"
     }
   }
 }

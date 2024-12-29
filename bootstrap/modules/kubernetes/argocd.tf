@@ -10,7 +10,6 @@ resource "kubernetes_namespace" "argocd" {
 
     annotations = {
       "linkerd.io/inject"                        = "enabled"
-      "config.linkerd.io/default-inbound-policy" = "all-authenticated"
     }
   }
 }
