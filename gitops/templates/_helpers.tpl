@@ -8,5 +8,5 @@ syncPolicy:
     - CreateNamespace=true
   managedNamespaceMetadata:
     annotations:
-      linkerd.io/inject: {{ . | default "disabled" }}
+      linkerd.io/inject: {{ .linkerd | default "disabled" }}
 {{- end }}

@@ -35,4 +35,4 @@ spec:
                 paths:
                   - path: /
                     pathType: Prefix
-  {{- include "common" "enabled" | nindent 2 }}
+  {{- include "common" (dict "linkerd" "enabled" "Values" .Values) | nindent 2 }}
