@@ -35,4 +35,4 @@ spec:
                 paths:
                   - path: /
                     pathType: Prefix
-  {{- include "common" . | nindent 2 }}
+  {{- include "common" "enabled" | nindent 2 }}
