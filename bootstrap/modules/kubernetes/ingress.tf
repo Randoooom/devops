@@ -8,7 +8,7 @@ resource "kubernetes_namespace" "ingress" {
     }
 
     annotations = {
-      "linkerd.io/inject"                        = "enabled"
+      "linkerd.io/inject" = "enabled"
     }
   }
 }
@@ -125,10 +125,10 @@ locals {
       className = "nginx"
       internal  = false
       annotations = {
-        "service.beta.kubernetes.io/oci-load-balancer-subnet1" = var.public_subnet
-        "oci.oraclecloud.com/load-balancer-type"               = "lb"
-        "service.beta.kubernetes.io/oci-load-balancer-shape"   = "10Mbps"
-        "external-dns.alpha.kubernetes.io/hostname"            = "*.${var.cluster_domain}"
+        "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
+        "oci.oraclecloud.com/load-balancer-type"                                  = "nlb"
+        "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
+        "external-dns.alpha.kubernetes.io/hostname"                               = "*.${var.cluster_domain}"
       }
     },
     {

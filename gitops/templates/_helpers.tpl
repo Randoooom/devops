@@ -6,4 +6,7 @@ syncPolicy:
     selfHeal: true
   syncOptions:
     - CreateNamespace=true
+  managedNamespaceMetadata:
+    annotations:
+      linkerd.io/inject: {{ .linkerd | default "disabled" }}
 {{- end }}
