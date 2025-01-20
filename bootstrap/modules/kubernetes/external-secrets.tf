@@ -151,7 +151,7 @@ resource "kubernetes_secret" "feedback_fusion_config" {
         audience     = "https://${var.zitadel_host}"
         issuer       = "https://${var.zitadel_host}"
         groups_claim = "groups"
-        scopes = []
+        scopes       = []
         groups = [
           {
             name = "${var.zitadel_project}:feedback-fusion"
@@ -185,12 +185,12 @@ resource "kubernetes_secret" "feedback_fusion_dasboard_config" {
   }
 
   data = {
-    NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT            = "https://feedback-fusion.${var.cluster_domain}"
-    FEEDBACK_FUSION_OIDC_PROVIDER_AUTHORIZATION_URL = "${var.zitadel_host}/connect/authorize"
-    FEEDBACK_FUSION_OIDC_PROVIDER_TOKEN_URL         = "${var.zitadel_host}/connect/token"
-    FEEDBACK_FUSION_OIDC_CLIENT_ID                  = "${var.feedback_fusion_client_id}"
-    FEEDBACK_FUSION_OIDC_CLIENT_SECRET              = "${var.feedback_fusion_client_secret}"
-    FEEDBACK_FUSION_OIDC_REDIRECT_URL               = "https://feedback-fusion.${var.public_domain}/auth/oidc/callback"
-    FEEDBACK_FUSION_OIDC_DISCOVERY_URL              = "${var.zitadel_host}/.well-known/openid-configuration"
+    NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT           = "https://feedback-fusion.${var.cluster_domain}"
+    NUXT_OIDC_PROVIDERS_OIDC_AUTHORIZATION_URL     = "https://${var.zitadel_host}/oauth/v2/authorize"
+    NUXT_OIDC_PROVIDERS_OIDC_TOKEN_URL             = "https://${var.zitadel_host}/oauth/v2/token"
+    NUXT_OIDC_PROVIDERS_OIDC_CLIENT_ID             = "${var.feedback_fusion_client_id}"
+    NUXT_OIDC_PROVIDERS_OIDC_CLIENT_SECRET         = "${var.feedback_fusion_client_secret}"
+    NUXT_OIDC_PROVIDERS_OIDC_REDIRECT_URI          = "https://feedback-fusion.${var.public_domain}/auth/oidc/callback"
+    NUXT_OIDC_PROVIDERS_OIDC_OPEN_ID_CONFIGURATION = "https://${var.zitadel_host}/.well-known/openid-configuration"
   }
 }

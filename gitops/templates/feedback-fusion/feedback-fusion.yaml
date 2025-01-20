@@ -14,6 +14,8 @@ spec:
     targetRevision: feat/helm-dashboard-config
     helm:
       values: |
+        feedbackFusion:
+          log: TRACE
         api:
           image:
             tag: "nightly"
