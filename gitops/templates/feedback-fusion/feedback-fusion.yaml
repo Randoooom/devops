@@ -19,6 +19,7 @@ spec:
             tag: "nightly"
 
           ingress:
+            enabled: true
             annotations:
               nginx.ingress.kubernetes.io/backend-protocol: "GRPC" 
             hosts:
@@ -32,6 +33,7 @@ spec:
             tag: "nightly"
 
           ingress:
+            enabled: true
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt
             hosts:
