@@ -59,7 +59,7 @@ locals {
       namespace = "feedback-fusion",
       secrets = [
         {
-          name = "postgres-admin-password"
+          name = "postgres-password"
           key  = "feedback-fusion-postgres-admin-password"
         },
         {
@@ -67,7 +67,7 @@ locals {
           key  = "feedback-fusion-postgres-replication-password"
         },
         {
-          name = "postgres-password"
+          name = "password"
           key  = "feedback-fusion-postgres-password"
         }
       ]
@@ -147,10 +147,11 @@ resource "kubernetes_secret" "feedback_fusion_config" {
   data = {
     "config.yaml" = yamlencode({
       oidc = {
-        provider     = var.zitadel_host
-        audience     = var.zitadel_host
-        issuer       = var.zitadel_host
+        provider     = "https://${var.zitadel_host}"
+        audience     = "https://${var.zitadel_host}"
+        issuer       = "https://${var.zitadel_host}"
         groups_claim = "groups"
+        scopes = []
         groups = [
           {
             name = "${var.zitadel_project}:feedback-fusion"
@@ -167,7 +168,7 @@ resource "kubernetes_secret" "feedback_fusion_config" {
         postgres = {
           endpoint = "feedback-fusion-postgres-postgresql:5432"
           username = "feedback-fusion"
-          password = data.kubernetes_secret.postgres_credentials.data.postgres-password
+          password = data.kubernetes_secret.postgres_credentials.data.password
           database = "feedback-fusion"
         }
       }
@@ -184,7 +185,7 @@ resource "kubernetes_secret" "feedback_fusion_dasboard_config" {
   }
 
   data = {
-    NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT            = "feedback-fusion-feedback-fusion"
+    NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT            = "https://feedback-fusion.${var.cluster_domain}"
     FEEDBACK_FUSION_OIDC_PROVIDER_AUTHORIZATION_URL = "${var.zitadel_host}/connect/authorize"
     FEEDBACK_FUSION_OIDC_PROVIDER_TOKEN_URL         = "${var.zitadel_host}/connect/token"
     FEEDBACK_FUSION_OIDC_CLIENT_ID                  = "${var.feedback_fusion_client_id}"
