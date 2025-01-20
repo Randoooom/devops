@@ -92,3 +92,7 @@ variable "worker_ocpu" {
 variable "worker_ram" {
   type = number
 }
+
+variable "public_domain" {
+  type = string
+}

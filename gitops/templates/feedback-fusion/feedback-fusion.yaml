@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: feedback-fusion 
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: feedback-fusion
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/OneLiteFeatherNET/feedback-fusion.git
+    path: charts/feedback-fusion
+    targetRevision: feat/helm-dashboard-config
+    helm:
+      values: |
+        api:
+          image:
+            tag: "nightly"
+
+        dashboard:
+          image:
+            tag: "nightly"
+  {{- include "common" (dict "linkerd" "enabled" "Values" .Values) | nindent 2 }}

@@ -55,23 +55,24 @@ resource "kubectl_manifest" "secret_store" {
 locals {
   mounts = [
     {
-      name      = "postgres",
-      namespace = "postgres",
+      name      = "postgres-credentials",
+      namespace = "feedback-fusion",
       secrets = [
         {
           name = "postgres-admin-password"
-          key  = "postgres-admin-password"
+          key  = "feedback-fusion-postgres-admin-password"
         },
         {
           name = "postgres-replication-password"
-          key  = "postgres-replication-password"
+          key  = "feedback-fusion-postgres-replication-password"
         },
         {
           name = "postgres-password"
-          key  = "postgres-password"
+          key  = "feedback-fusion-postgres-password"
         }
       ]
     },
+
     {
       name      = "surrealdb-credentials",
       namespace = "event",
@@ -126,4 +127,69 @@ resource "kubectl_manifest" "secret_mount" {
       }]
     }
   })
+}
+
+data "kubernetes_secret" "postgres_credentials" {
+  depends_on = [kubectl_manifest.secret_mount]
+
+  metadata {
+    name      = "postgres-credentials"
+    namespace = "feedback-fusion"
+  }
+}
+
+resource "kubernetes_secret" "feedback_fusion_config" {
+  metadata {
+    name      = "feedback-fusion-config"
+    namespace = "feedback-fusion"
+  }
+
+  data = {
+    "config.yaml" = yamlencode({
+      oidc = {
+        provider     = var.zitadel_host
+        audience     = var.zitadel_host
+        issuer       = var.zitadel_host
+        groups_claim = "groups"
+        groups = [
+          {
+            name = "${var.zitadel_project}:feedback-fusion"
+            grants = [
+              {
+                endpoint    = "*"
+                permissions = ["*"]
+              }
+            ]
+          }
+        ]
+      }
+      database = {
+        postgres = {
+          endpoint = "feedback-fusion-postgres-postgresql:5432"
+          username = "feedback-fusion"
+          password = data.kubernetes_secret.postgres_credentials.data.postgres-password
+          database = "feedback-fusion"
+        }
+      }
+    })
+  }
+}
+
+resource "kubernetes_secret" "feedback_fusion_dasboard_config" {
+  depends_on = [kubectl_manifest.secret_mount]
+
+  metadata {
+    name      = "feedback-fusion-dashboard-config"
+    namespace = "feedback-fusion"
+  }
+
+  data = {
+    NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT            = "feedback-fusion-feedback-fusion"
+    FEEDBACK_FUSION_OIDC_PROVIDER_AUTHORIZATION_URL = "${var.zitadel_host}/connect/authorize"
+    FEEDBACK_FUSION_OIDC_PROVIDER_TOKEN_URL         = "${var.zitadel_host}/connect/token"
+    FEEDBACK_FUSION_OIDC_CLIENT_ID                  = "${var.feedback_fusion_client_id}"
+    FEEDBACK_FUSION_OIDC_CLIENT_SECRET              = "${var.feedback_fusion_client_secret}"
+    FEEDBACK_FUSION_OIDC_REDIRECT_URL               = "https://feedback-fusion.${var.public_domain}/auth/oidc/callback"
+    FEEDBACK_FUSION_OIDC_DISCOVERY_URL              = "${var.zitadel_host}/.well-known/openid-configuration"
+  }
 }

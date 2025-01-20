@@ -34,26 +34,19 @@ locals {
     },
 
     {
-      name = "postgres-admin-password"
+      name = "feedback-fusion-postgres-admin-password"
       generate = {
         length = 60
       }
     },
     {
-      name = "postgres-replication-password"
+      name = "feedback-fusion-postgres-replication-password"
       generate = {
         length = 60
       }
     },
-
     {
-      name = "postgres-username"
-      generate = {
-        length = 10
-      }
-    },
-    {
-      name = "postgres-password"
+      name = "feedback-fusion-postgres-password"
       generate = {
         length = 60
       }

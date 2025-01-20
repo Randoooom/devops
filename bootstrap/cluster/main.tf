@@ -44,4 +44,7 @@ module "kubernetes" {
   remote_wireguard_host       = var.remote_wireguard_host
   remote_subnet_cidr          = var.remote_subnet_cidr
   remote_wireguard_cidr       = var.remote_wireguard_cidr
+
+  feedback_fusion_client_id     = data.terraform_remote_state.oci.outputs.feedback_fusion_client_id
+  feedback_fusion_client_secret = data.terraform_remote_state.oci.outputs.feedback_fusion_client_secret
 }

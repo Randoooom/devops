@@ -31,3 +31,13 @@ output "argocd_client_secret" {
 output "zitadel_project" {
   value = zitadel_project.this.id
 }
+
+output "feedback_fusion_client_id" {
+  sensitive = true
+  value     = zitadel_application_oidc.feedback_fusion.client_id
+}
+
+output "feedback_fusion_client_secret" {
+  sensitive = true
+  value     = zitadel_application_oidc.feedback_fusion.client_secret
+}

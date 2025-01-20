@@ -38,3 +38,13 @@ output "public_subnet_cidr" {
 output "zitadel_project" {
   value = module.zitadel.zitadel_project
 }
+
+output "feedback_fusion_client_id" {
+  sensitive = true
+  value = module.zitadel.feedback_fusion_client_id
+}
+
+output "feedback_fusion_client_secret" {
+  sensitive = true
+  value = module.zitadel.feedback_fusion_client_secret
+}

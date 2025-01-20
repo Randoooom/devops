@@ -36,7 +36,7 @@ module "nodes" {
   worker_ram            = var.worker_ram
   worker_security_group = module.network.worker_security_group
 
-  subnet         = module.network.subnet
+  subnet = module.network.subnet
 }
 
 module "zitadel" {
@@ -47,6 +47,8 @@ module "zitadel" {
 
   cluster_domain = var.cluster_domain
   cluster_name   = var.cluster_name
+
+  domain = var.public_domain
 }
 
 module "vault" {

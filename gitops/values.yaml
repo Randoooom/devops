@@ -1,3 +1,14 @@
 project: ""
 domain: ""
 clusterDomain: ""
+
+postgres:
+  username: ""
+  password: ""
+  database: ""
+
+zitadel:
+  project: ""
+  host: ""
+  clientId: ""
+  clientSecret: ""

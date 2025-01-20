@@ -13,3 +13,7 @@ variable "zitadel_host" {
 variable "zitadel_org" {
   type = string
 }
+
+variable "domain" {
+  type = string
+}
