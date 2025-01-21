@@ -15,7 +15,7 @@ spec:
     helm:
       values: |
         feedbackFusion:
-          log: TRACE
+          log: DEBUG
         api:
           image:
             pullPolicy: Always
