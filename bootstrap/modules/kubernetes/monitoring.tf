@@ -9,9 +9,82 @@ resource "kubernetes_namespace" "monitoring" {
     }
 
     annotations = {
-      "linkerd.io/inject"                        = "enabled"
+      "linkerd.io/inject" = "enabled"
     }
   }
+}
+
+resource "helm_release" "tempo" {
+  depends_on = [kubernetes_namespace.monitoring]
+
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "tempo"
+  version    = "1.18.1"
+
+  namespace = "sys-monitoring"
+  name      = "tempo"
+
+  values = [yamlencode({
+    persistence = {
+      enabled = true
+    }
+  })]
+}
+
+resource "helm_release" "opentelemetry_collector" {
+  depends_on = [helm_release.tempo]
+
+  repository = "https://open-telemetry.github.io/opentelemetry-helm-charts"
+  chart      = "opentelemetry-collector"
+  version    = "0.113.0"
+
+  namespace = "sys-monitoring"
+  name      = "opentelemetry-collector"
+
+  values = [yamlencode({
+    mode = "daemonset"
+
+    image = {
+      repository = "otel/opentelemetry-collector-k8s"
+    }
+
+    command = {
+      name = "otelcol-k8s"
+    }
+
+    presets = {
+      logsCollection = {
+        enabled = true
+      }
+    }
+
+    service = {
+      enabled = true
+    }
+
+    config = {
+      exporters = {
+        otlp = {
+          endpoint = "tempo:4317"
+        }
+      }
+
+      receivers = {
+        prometheus = null,
+        zipkin     = null,
+        jaeger     = null,
+      }
+
+      service = {
+        pipelines = {
+          traces = {
+            receivers = ["otlp"]
+          }
+          metrics = null
+        }
+      }
+    }
+  })]
 }
 
 resource "kubectl_manifest" "grafana_zitadel" {
@@ -52,7 +125,7 @@ resource "kubectl_manifest" "grafana_zitadel" {
 }
 
 resource "helm_release" "prometheus_operator" {
-  depends_on = [kubernetes_namespace.monitoring, helm_release.ingress, kubectl_manifest.grafana_zitadel]
+  depends_on = [kubernetes_namespace.monitoring, helm_release.ingress, kubectl_manifest.grafana_zitadel, helm_release.tempo]
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
@@ -183,6 +256,16 @@ resource "helm_release" "prometheus_operator" {
           }
         }
       }
+
+      additionalDataSources = [
+        {
+          name      = "Tempo"
+          type      = "tempo"
+          access    = "proxy"
+          url       = "http://tempo:3100"
+          isDefault = false
+        },
+      ]
 
       ingress = {
         enabled          = true

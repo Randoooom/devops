@@ -164,6 +164,7 @@ resource "kubernetes_secret" "feedback_fusion_config" {
           }
         ]
       }
+
       database = {
         postgres = {
           endpoint = "feedback-fusion-postgres-postgresql:5432"
@@ -171,6 +172,10 @@ resource "kubernetes_secret" "feedback_fusion_config" {
           password = data.kubernetes_secret.postgres_credentials.data.password
           database = "feedback-fusion"
         }
+      }
+
+      otlp = {
+        endpoint = "http://opentelemetry-collector.sys-monitoring.svc.cluster.local:4317"
       }
     })
   }
