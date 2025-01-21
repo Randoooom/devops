@@ -14,8 +14,6 @@ spec:
     targetRevision: feat/helm-dashboard-config
     helm:
       values: |
-        feedbackFusion:
-          log: DEBUG
         api:
           image:
             pullPolicy: Always
