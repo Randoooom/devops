@@ -94,3 +94,7 @@ variable "feedback_fusion_client_secret" {
   type = string
   sensitive = true
 }
+
+variable "zitadel_feedback_fusion_id" {
+  type = string
+}

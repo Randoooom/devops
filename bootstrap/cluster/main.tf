@@ -47,4 +47,5 @@ module "kubernetes" {
 
   feedback_fusion_client_id     = data.terraform_remote_state.oci.outputs.feedback_fusion_client_id
   feedback_fusion_client_secret = data.terraform_remote_state.oci.outputs.feedback_fusion_client_secret
+  zitadel_feedback_fusion_id    = data.terraform_remote_state.oci.outputs.zitadel_feedback_fusion_id
 }

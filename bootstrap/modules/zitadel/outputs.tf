@@ -41,3 +41,7 @@ output "feedback_fusion_client_secret" {
   sensitive = true
   value     = zitadel_application_oidc.feedback_fusion.client_secret
 }
+
+output "zitadel_feedback_fusion_id" {
+  value = zitadel_application_oidc.feedback_fusion.id
+}

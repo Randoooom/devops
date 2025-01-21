@@ -18,6 +18,7 @@ spec:
           log: DEBUG
         api:
           image:
+            pullPolicy: Always
             tag: "nightly"
 
           ingress:
@@ -33,6 +34,7 @@ spec:
 
         dashboard:
           image:
+            pullPolicy: Always
             tag: "nightly"
 
           ingress:

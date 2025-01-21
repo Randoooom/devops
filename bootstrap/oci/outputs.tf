@@ -41,10 +41,14 @@ output "zitadel_project" {
 
 output "feedback_fusion_client_id" {
   sensitive = true
-  value = module.zitadel.feedback_fusion_client_id
+  value     = module.zitadel.feedback_fusion_client_id
 }
 
 output "feedback_fusion_client_secret" {
   sensitive = true
-  value = module.zitadel.feedback_fusion_client_secret
+  value     = module.zitadel.feedback_fusion_client_secret
+}
+
+output "zitadel_feedback_fusion_id" {
+  value = module.zitadel.zitadel_feedback_fusion_id
 }

@@ -148,7 +148,7 @@ resource "kubernetes_secret" "feedback_fusion_config" {
     "config.yaml" = yamlencode({
       oidc = {
         provider     = "https://${var.zitadel_host}"
-        audience     = "https://${var.zitadel_host}"
+        audience     = "${var.zitadel_feedback_fusion_id}"
         issuer       = "https://${var.zitadel_host}"
         groups_claim = "groups"
         scopes       = []
