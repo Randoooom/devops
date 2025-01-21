@@ -35,8 +35,8 @@
 #cluster_domain             = ""
 #talos_image_oci_bucket_url = ""
 
-talos_version      = "1.8.3"
-kubernetes_version = "v1.30.3"
+talos_version      = "1.9.2"
+kubernetes_version = "v1.32.1"
 oracle_ccm_version = "v1.29.0"
 talos_ccm_version  = "v1.6.0"
 

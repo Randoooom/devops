@@ -62,11 +62,17 @@ resource "helm_release" "prometheus_operator" {
   name      = "prometheus"
 
   values = [yamlencode({
+    defaultRules = {
+      rules = {
+        kubeControllerManager = false
+        kubeSchedulerAlerting = false
+      }
+    }
+
     alertmanager = {
       config = {
         route = {
           receiver = "discord"
-          routes   = []
         }
         receivers = [
           {
@@ -76,6 +82,9 @@ resource "helm_release" "prometheus_operator" {
                 webhook_url = var.discord_webhook
               }
             ]
+          },
+          {
+            name = "null"
           }
         ]
       }

@@ -56,7 +56,6 @@ EOF
       features:
         kubePrism:
           enabled: true
-          port: 7445
       install:
         disk: ${local.talos_install_disk}
         extraKernelArgs:
@@ -65,6 +64,9 @@ EOF
         wipe: false
         image: ${local.talos_install_image}
     cluster:
+      proxy:
+        extraArgs:
+          metrics-bind-address: 0.0.0.0:10249
       discovery:
         enabled: true
       network:
@@ -81,7 +83,6 @@ EOF
           - https://github.com/oracle/oci-cloud-controller-manager/releases/download/${var.oracle_ccm_version}/oci-cloud-controller-manager.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-podmonitors.yaml
-          - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
           - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
       controllerManager:
         extraArgs:
