@@ -40,6 +40,7 @@ spec:
             enabled: true
             className: nginx
             annotations:
+              nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
               cert-manager.io/cluster-issuer: letsencrypt
             hosts:
               - host: feedback-fusion.{{ .Values.domain }}
