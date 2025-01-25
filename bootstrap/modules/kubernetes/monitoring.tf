@@ -137,8 +137,9 @@ resource "helm_release" "prometheus_operator" {
   values = [yamlencode({
     defaultRules = {
       rules = {
-        kubeControllerManager = false
-        kubeSchedulerAlerting = false
+        kubeControllerManager  = false
+        kubeSchedulerAlerting  = false
+        kubeSchedulerRecording = false
       }
     }
 

@@ -175,7 +175,7 @@ resource "kubernetes_secret" "feedback_fusion_config" {
       }
 
       otlp = {
-        endpoint = "http://opentelemetry-collector.sys-monitoring.svc.cluster.local:4317"
+        endpoint = "http://tempo.sys-monitoring.svc.cluster.local:4317"
       }
     })
   }
