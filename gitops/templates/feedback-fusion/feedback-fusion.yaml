@@ -23,6 +23,8 @@ spec:
             enabled: true
             className: nginx
             annotations:
+              nginx.ingress.kubernetes.io/configuration-snippet: |
+                grpc_set_header 'traceparent' $opentelemetry_context_traceparent;
               nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
               nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
             hosts:
