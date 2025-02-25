@@ -1,12 +1,11 @@
 on:
   workflow_dispatch:
-  pull_request:
   push:
     branches:
       - main
 
 jobs:
-  validate:
+  plan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,23 +33,16 @@ jobs:
         with:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: OCI
+      - name: Plan OCI
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./bootstrap
-        run: just validate oci 
+        run: just plan oci
 
-      - name: Bastion
+      - name: Plan Cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./bootstrap
-        run: just validate bastion
-
-      - name: Cluster
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        working-directory: ./bootstrap
-        run: just validate cluster 
+        run: just plan cluster 
