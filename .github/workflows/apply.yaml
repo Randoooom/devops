@@ -8,6 +8,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - uses: extractions/setup-just@v2
+
       - name: Setup terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -33,24 +35,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./bootstrap
-        run: make apply-oci
-
-      - name: Bastion
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        working-directory: ./bootstrap
-        run: |
-          make apply-bastion
-          make start-bastion-sessions
+        run: just apply oci
 
       - name: Apply Cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./bootstrap
-        run: make apply-cluster 
-
-      - name: stop bastion
-        working-directory: ./bootstrap
-        run: make stop-bastion-sessions
+        run: just apply cluster 
