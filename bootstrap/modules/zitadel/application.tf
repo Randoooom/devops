@@ -22,7 +22,7 @@ resource "zitadel_application_oidc" "grafana" {
   project_id = zitadel_project.this.id
 
   name                        = "Grafana"
-  redirect_uris               = ["https://grafana.internal.${var.cluster_domain}/login/generic_oauth"]
+  redirect_uris               = ["https://${replace(var.cluster_name, "-", "")}.grafana.net/login/generic_oauth"]
   response_types              = ["OIDC_RESPONSE_TYPE_CODE"]
   grant_types                 = ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]
   post_logout_redirect_uris   = []

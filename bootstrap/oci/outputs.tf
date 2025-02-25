@@ -52,3 +52,13 @@ output "feedback_fusion_client_secret" {
 output "zitadel_feedback_fusion_id" {
   value = module.zitadel.zitadel_feedback_fusion_id
 }
+
+output "grafana_client_id" {
+  sensitive = true
+  value     = module.zitadel.grafana_client_id
+}
+
+output "grafana_client_secret" {
+  sensitive = true
+  value     = module.zitadel.grafana_client_secret
+}

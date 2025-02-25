@@ -20,12 +20,13 @@ resource "helm_release" "longhorn" {
 
   values = [yamlencode({
     longhornUI = {
-      replicas = 0
+      replicas = 1
     }
-    metrics = {
-      serviceMonitor = {
-        enabled = true
-      }
+
+    ingress = {
+      enabled = true
+      ingressClassName = "internal"
+      host = "longhorn.internal.${var.cluster_domain}"
     }
   })]
 }

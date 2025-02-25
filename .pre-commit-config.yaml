@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: git-secret 
+        name: SecretEncryption
+        entry: sh -c "just git-secret-hide && git add -A"
+        language: system
+        pass_filenames: false
+        always_run: true

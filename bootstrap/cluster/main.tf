@@ -1,3 +1,15 @@
+module "grafana" {
+  source = "../modules/grafana"
+
+  cluster_name                      = var.cluster_name
+  grafana_cloud_access_policy_token = var.grafana_cloud_access_policy_token
+
+  zitadel_host                  = var.zitadel_host
+  zitadel_project               = data.terraform_remote_state.oci.outputs.zitadel_project
+  zitadel_grafana_client_id     = data.terraform_remote_state.oci.outputs.grafana_client_id
+  zitadel_grafana_client_secret = data.terraform_remote_state.oci.outputs.grafana_client_secret
+}
+
 module "talos" {
   source = "../modules/talos"
 
@@ -48,4 +60,8 @@ module "kubernetes" {
   feedback_fusion_client_id     = data.terraform_remote_state.oci.outputs.feedback_fusion_client_id
   feedback_fusion_client_secret = data.terraform_remote_state.oci.outputs.feedback_fusion_client_secret
   zitadel_feedback_fusion_id    = data.terraform_remote_state.oci.outputs.zitadel_feedback_fusion_id
+
+  grafana_prometheus_write_token = var.grafana_prometheus_write_token
+  grafana_tempo_write_token      = var.grafana_tempo_write_token
+  grafana_loki_write_token       = var.grafana_loki_write_token
 }

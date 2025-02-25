@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ./bastion/
+cd ./bootstrap/bastion/
 # get the bastion session data from the state
 SESSIONS=$(terraform output -raw bastion_sessions)
 

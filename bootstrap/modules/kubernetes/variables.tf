@@ -86,15 +86,30 @@ variable "public_domain" {
 }
 
 variable "feedback_fusion_client_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 
 variable "feedback_fusion_client_secret" {
-  type = string
+  type      = string
   sensitive = true
 }
 
 variable "zitadel_feedback_fusion_id" {
   type = string
+}
+
+variable "grafana_prometheus_write_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "grafana_tempo_write_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "grafana_loki_write_token" {
+  type      = string
+  sensitive = true
 }

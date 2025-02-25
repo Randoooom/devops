@@ -16,15 +16,6 @@ locals {
     },
 
     {
-      name  = "grafana-client-id"
-      value = var.grafana_client_id
-    },
-    {
-      name  = "grafana-client-secret"
-      value = var.grafana_client_secret
-    },
-
-    {
       name  = "argocd-client-id"
       value = var.argocd_client_id
     },

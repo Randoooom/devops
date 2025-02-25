@@ -60,9 +60,6 @@ module "vault" {
   oauth2_proxy_client_id     = module.zitadel.oauth2_proxy_client_id
   oauth2_proxy_client_secret = module.zitadel.oauth2_proxy_client_secret
 
-  grafana_client_id     = module.zitadel.grafana_client_id
-  grafana_client_secret = module.zitadel.grafana_client_secret
-
   argocd_client_id     = module.zitadel.argocd_client_id
   argocd_client_secret = module.zitadel.argocd_client_secret
 }

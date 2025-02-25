@@ -104,3 +104,23 @@ variable "discord_webhook" {
 variable "public_domain" {
   type = string
 }
+
+variable "grafana_cloud_access_policy_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "grafana_prometheus_write_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "grafana_tempo_write_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "grafana_loki_write_token" {
+  type      = string
+  sensitive = true
+}
