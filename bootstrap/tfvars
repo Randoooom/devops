@@ -35,33 +35,40 @@
 #cluster_domain             = ""
 #talos_image_oci_bucket_url = ""
 
-talos_version      = "1.8.3"
-kubernetes_version = "v1.30.3"
-oracle_ccm_version = "v1.29.0"
-talos_ccm_version  = "v1.6.0"
+#talos_version      = "1.9.2"
+#kubernetes_version = "v1.32.1"
+#oracle_ccm_version = "v1.29.0"
+#talos_ccm_version  = "v1.6.0"
 
 ## Monitoring
 # discord_webhook = ""
 
 ## CIDR
 
-vcn_cidrs            = ["10.0.0.0/16", "10.200.0.0/24", "10.32.0.0/16"]
-subnet_cidr          = "10.0.0.0/24"
-public_cidr          = "10.0.1.0/24"
-pod_subnet_block     = "10.32.0.0/16"
-service_subnet_block = "10.200.0.0/24"
+#vcn_cidrs            = ["10.0.0.0/16", "10.200.0.0/24", "10.32.0.0/16"]
+#subnet_cidr          = "10.0.0.0/24"
+#public_cidr          = "10.0.1.0/24"
+#pod_subnet_block     = "10.32.0.0/16"
+#service_subnet_block = "10.200.0.0/24"
 
 ## Nodes
 
-control_plane_count   = 1
-control_plane_ocpu    = 1
-control_plane_ram     = 6
+#control_plane_count   = 1
+#control_plane_ocpu    = 1
+#control_plane_ram     = 6
 
-worker_count          = 3
-worker_ocpu           = 1
-worker_ram            = 6
+#worker_count          = 3
+#worker_ocpu           = 1
+#worker_ram            = 6
 
 ### Zitadel
 
 #zitadel_host = ""
 #zitadel_org  = ""
+
+### Grafana
+
+#grafana_cloud_access_policy_token = ""
+#grafana_prometheus_write_token = ""
+#grafana_tempo_write_token = ""
+##grafana_loki_write_token = ""

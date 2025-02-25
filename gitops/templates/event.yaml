@@ -19,6 +19,8 @@ spec:
         clusterDomain: {{ .Values.clusterDomain }}
 
         ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
           hosts:
             - host: event.{{ .Values.domain }}
               paths:
@@ -30,6 +32,8 @@ spec:
               secretName: event-tls
         surrealdb:
           ingress:
+            annotations:
+              nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
             hosts:
               - host: surrealdb.{{ .Values.clusterDomain }}
                 paths:

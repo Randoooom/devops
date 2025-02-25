@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: feedback-fusion 
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: feedback-fusion
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/OneLiteFeatherNET/feedback-fusion.git
+    path: charts/feedback-fusion
+    targetRevision: feat/helm-dashboard-config
+    helm:
+      values: |
+        api:
+          image:
+            pullPolicy: Always
+            tag: nightly
+
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              nginx.ingress.kubernetes.io/configuration-snippet: |
+                grpc_set_header 'traceparent' $opentelemetry_context_traceparent;
+              nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+              nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+            hosts:
+              - host: feedback-fusion.{{ .Values.clusterDomain }}
+                paths:
+                  - path: /
+                    pathType: Prefix
+
+        dashboard:
+          image:
+            pullPolicy: Always
+            tag: "nightly"
+
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
+              cert-manager.io/cluster-issuer: letsencrypt
+            hosts:
+              - host: feedback-fusion.{{ .Values.domain }}
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - hosts:
+                  - feedback-fusion.{{ .Values.domain }}
+                secretName: feedback-fusion-tls
+  {{- include "common" (dict "linkerd" "enabled" "Values" .Values) | nindent 2 }}

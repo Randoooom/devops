@@ -157,6 +157,7 @@ resource "helm_release" "ingress" {
     controller = {
       config = {
         use-gzip = true
+        otlp-collector-host = "tempo.sys-monitoring.svc.cluster.local" 
       }
       ingressClass = each.value.className
       ingressClassResource = {

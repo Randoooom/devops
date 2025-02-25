@@ -1,3 +1,29 @@
+locals {
+  keep = [
+    "container_network_receive_bytes",
+    "container_network_transmit_bytes",
+    "container_memory_usage",
+    "container_memory_working_set_bytes",
+    "container_memory_cache",
+    "container_cpu",
+    "container_oom_events_total",
+    "node",
+    "kube_pod",
+    "kube_container_status",
+    "kube_node_info",
+    "nginx",
+    "node_network_receive_bytes_total",
+    "node_network_transmit_bytes_total",
+    "wireguard_received_bytes_total",
+    "wireguard_sent_bytes_total",
+    "wireguard_latest_handshake_seconds",
+    "wireguard_latest_handshake_delay_seconds",
+    "container_oom_events_total",
+    "container_network_receive_packets_dropped_total",
+    "container_network_receive_errors_total"
+  ]
+}
+
 resource "kubernetes_namespace" "monitoring" {
   depends_on = [helm_release.linkerd]
 
@@ -7,52 +33,180 @@ resource "kubernetes_namespace" "monitoring" {
     labels = {
       "pod-security.kubernetes.io/enforce" = "privileged"
     }
-
-    annotations = {
-      "linkerd.io/inject"                        = "enabled"
-    }
   }
 }
 
-resource "kubectl_manifest" "grafana_zitadel" {
-  depends_on = [kubectl_manifest.secret_store]
+resource "kubernetes_secret" "grafana_prometheus_credentials" {
+  depends_on = [kubernetes_namespace.monitoring]
 
-  yaml_body = yamlencode({
-    apiVersion = "external-secrets.io/v1beta1"
-    kind       = "ExternalSecret"
-    metadata = {
-      name      = "grafana-zitadel"
-      namespace = "sys-monitoring"
-    },
-    spec = {
-      secretStoreRef = {
-        kind = "ClusterSecretStore"
-        name = "oracle"
+  metadata {
+    name      = "grafana-prometheus-credentials"
+    namespace = "sys-monitoring"
+  }
+
+  data = {
+    username = "2284583"
+    password = var.grafana_prometheus_write_token
+  }
+}
+
+resource "helm_release" "alloy" {
+  depends_on = [kubernetes_namespace.monitoring]
+
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "alloy"
+  version    = "0.11.0"
+
+  namespace = "sys-monitoring"
+  name      = "alloy"
+
+  values = [yamlencode({
+    alloy = {
+      configMap = {
+        content = <<EOF
+otelcol.receiver.otlp "otlp_receiver" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.grafanacloud.input,]
+  }
+}
+
+otelcol.exporter.otlp "grafanacloud" {
+  client {
+    endpoint = "tempo-prod-15-prod-us-west-0.grafana.net:443"
+    auth = otelcol.auth.basic.grafanacloud.handler
+  }
+}
+
+otelcol.auth.basic "grafanacloud" {
+  username = "1132284"
+  password = "${var.grafana_tempo_write_token}"
+}
+
+logging {
+	level = "info"
+
+	write_to = [loki.write.grafanacloud.receiver]
+}
+
+// https://grafana.com/docs/alloy/latest/collect/logs-in-kubernetes/
+// discovery.kubernetes allows you to find scrape targets from Kubernetes resources.
+// It watches cluster state and ensures targets are continually synced with what is currently running in your cluster.
+discovery.kubernetes "pod" {
+  role = "pod"
+}
+
+// discovery.relabel rewrites the label set of the input targets by applying one or more relabeling rules.
+// If no rules are defined, then the input targets are exported as-is.
+discovery.relabel "pod_logs" {
+  targets = discovery.kubernetes.pod.targets
+
+  // Label creation - "namespace" field from "__meta_kubernetes_namespace"
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    action = "replace"
+    target_label = "namespace"
+  }
+
+  // Label creation - "pod" field from "__meta_kubernetes_pod_name"
+  rule {
+    source_labels = ["__meta_kubernetes_pod_name"]
+    action = "replace"
+    target_label = "pod"
+  }
+
+  // Label creation - "container" field from "__meta_kubernetes_pod_container_name"
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_name"]
+    action = "replace"
+    target_label = "container"
+  }
+
+  // Label creation -  "app" field from "__meta_kubernetes_pod_label_app_kubernetes_io_name"
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+    action = "replace"
+    target_label = "app"
+  }
+
+  // Label creation -  "job" field from "__meta_kubernetes_namespace" and "__meta_kubernetes_pod_container_name"
+  // Concatenate values __meta_kubernetes_namespace/__meta_kubernetes_pod_container_name
+  rule {
+    source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+    action = "replace"
+    target_label = "job"
+    separator = "/"
+    replacement = "$1"
+  }
+
+  // Label creation - "container" field from "__meta_kubernetes_pod_uid" and "__meta_kubernetes_pod_container_name"
+  // Concatenate values __meta_kubernetes_pod_uid/__meta_kubernetes_pod_container_name.log
+  rule {
+    source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+    action = "replace"
+    target_label = "__path__"
+    separator = "/"
+    replacement = "/var/log/pods/*$1/*.log"
+  }
+
+  // Label creation -  "container_runtime" field from "__meta_kubernetes_pod_container_id"
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_id"]
+    action = "replace"
+    target_label = "container_runtime"
+    regex = "^(\\S+):\\/\\/.+$"
+    replacement = "$1"
+  }
+}
+
+// loki.source.kubernetes tails logs from Kubernetes containers using the Kubernetes API.
+loki.source.kubernetes "pod_logs" {
+  targets    = discovery.relabel.pod_logs.output
+  forward_to = [loki.process.pod_logs.receiver]
+}
+
+// loki.process receives log entries from other Loki components, applies one or more processing stages,
+// and forwards the results to the list of receivers in the component's arguments.
+loki.process "pod_logs" {
+  stage.static_labels {
+      values = {
+        cluster = "${var.cluster_name}",
       }
-      target = {
-        name           = "grafana-zitadel"
-        creationPolicy = "Owner"
+  }
+
+  forward_to = [loki.write.grafanacloud.receiver]
+}
+
+loki.write "grafanacloud" {
+  endpoint {
+    url = "https://logs-prod-021.grafana.net/loki/api/v1/push"
+
+    basic_auth {
+      username = "1137969"
+      password = "${var.grafana_loki_write_token}"
+    }
+  }
+}
+EOF
       }
-      data = [
+
+      extraPorts = [
         {
-          secretKey = "client-secret"
-          remoteRef = {
-            key = "grafana-client-secret"
-          }
-        },
-        {
-          secretKey = "client-id"
-          remoteRef = {
-            key = "grafana-client-id"
-          }
+          port       = 4317
+          targetPort = 4317
+          name       = "otlp"
+          protocol   = "TCP"
         }
       ]
     }
-  })
+  })]
 }
 
 resource "helm_release" "prometheus_operator" {
-  depends_on = [kubernetes_namespace.monitoring, helm_release.ingress, kubectl_manifest.grafana_zitadel]
+  depends_on = [kubernetes_namespace.monitoring, helm_release.ingress, kubernetes_secret.grafana_prometheus_credentials]
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
@@ -62,11 +216,30 @@ resource "helm_release" "prometheus_operator" {
   name      = "prometheus"
 
   values = [yamlencode({
+    kubeScheduler = {
+      enabled = false
+    }
+
+    kubeControllerManager = {
+      enabled = false
+    }
+
+    kubeProxy = {
+      enabled = false
+    }
+
+    kubeEtcd = {
+      enabled = false
+    }
+
+    kubeApiServer = {
+      enabled = false
+    }
+
     alertmanager = {
       config = {
         route = {
           receiver = "discord"
-          routes   = []
         }
         receivers = [
           {
@@ -76,137 +249,61 @@ resource "helm_release" "prometheus_operator" {
                 webhook_url = var.discord_webhook
               }
             ]
+          },
+          {
+            name = "null"
           }
         ]
       }
     }
 
     grafana = {
-      "grafana.ini" = {
-        users = {
-          allow_sign_up = false
-        }
-        server = {
-          domain   = "grafana.internal.${var.cluster_domain}"
-          root_url = "https://grafana.internal.${var.cluster_domain}"
-        }
-        "auth.generic_oauth" = {
-          enabled           = true
-          allow_sign_up     = true
-          auto_login        = false
-          use_pkce          = false
-          use_refresh_token = true
-          name              = "Zitadel"
-
-          client_id     = "$__file{/etc/secrets/zitadel/client-id}"
-          client_secret = "$__file{/etc/secrets/zitadel/client-secret}"
-          scopes        = "openid profile email offline_access roles"
-          auth_url      = "https://${var.zitadel_host}/oauth/v2/authorize"
-          token_url     = "https://${var.zitadel_host}/oauth/v2/token"
-          api_url       = "https://${var.zitadel_host}/oidc/v1/userinfo"
-
-          email_attribute_name = "email"
-          login_attribute_path = "username"
-          name_attribute_path  = "fullname"
-
-          role_attribute_path = "contains(keys(\"urn:zitadel:iam:org:project:roles\"), 'admin') && 'Admin' || contains(keys(\"urn:zitadel:iam:org:project:roles\"), 'grafana-editor') && 'Editor' || contains(keys(\"urn:zitadel:iam:org:project:roles\"), 'grafana-viewer') && 'Viewer' || 'None'"
-        }
-      }
-
-      dashboardProviders = {
-        "dashboardproviders.yaml" = {
-          apiVersion = 1
-          providers = [
-            {
-              name  = "default"
-              orgId = 1
-              folder : ""
-              type            = "file"
-              disableDeletion = false
-              editable        = true
-              options = {
-                path = "/var/lib/grafana/dashboards/default"
-              }
-          }]
-        }
-      }
-
-      dashboards = {
-        default = {
-          ingress-nginx = {
-            gnetId     = 16677
-            datasource = "Prometheus"
-          }
-
-          external-dns = {
-            gnetId     = 15038
-            datasource = "Prometheus"
-          }
-
-          external-secrets = {
-            gnetId = 21640
-            datasource = [
-              {
-                name  = "DS_PROMETHEUS"
-                value = "Prometheus"
-              }
-            ]
-          }
-
-          longhorn = {
-            gnetId = 16888
-            datasource = [
-              {
-                name  = "DS_PROMETHEUS"
-                value = "Prometheus"
-              }
-            ]
-          }
-
-          cert-manager = {
-            gnetId = 11001
-            datasource = [
-              {
-                name  = "DS_PROMETHEUS"
-                value = "Prometheus"
-              }
-            ]
-          }
-        }
-      }
-
-      ingress = {
-        enabled          = true
-        hosts            = ["grafana.internal.${var.cluster_domain}"]
-        ingressClassName = "internal"
-      }
-
-      persistence = {
-        enabled          = true
-        storageClassName = "longhorn"
-        accessModes      = ["ReadWriteOnce"]
-        size             = "5Gi"
-        finalizers       = ["kubernetes.io/pvc-protection"]
-      }
-
-      extraSecretMounts = [
-        {
-          name       = "grafana-zitadel"
-          secretName = "grafana-zitadel"
-          readOnly   = true
-          optional   = false
-          mountPath  = "/etc/secrets/zitadel"
-        }
-      ]
+      enabled = false
     }
 
     prometheus = {
+      ingress = {
+        enabled          = true
+        hosts            = ["prometheus.internal.${var.cluster_domain}"]
+        ingressClassName = "internal"
+      }
+
       prometheusSpec = {
         serviceMonitorSelectorNilUsesHelmValues = false
         podMonitorSelectorNilUsesHelmValues     = false
         probeSelectorNilUsesHelmValues          = false
 
-        retentionSize = "9GB"
+        overrides = {
+
+        }
+
+        remoteWrite = [
+          {
+            url = "https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push"
+            basicAuth = {
+              username = {
+                name = "grafana-prometheus-credentials"
+                key  = "username"
+              }
+              password = {
+                name = "grafana-prometheus-credentials"
+                key  = "password"
+              }
+            }
+            writeRelabelConfigs = [
+              {
+                sourceLabels = ["__name__"]
+                regex        = "(kube_pod_tolerations|node_namespace|node_network).*"
+                action       = "drop"
+              },
+              {
+                sourceLabels = ["__name__"]
+                regex        = "(${join("|", local.keep)}).*"
+                action       = "keep"
+              }
+            ]
+          }
+        ]
 
         storageSpec = {
           volumeClaimTemplate = {
