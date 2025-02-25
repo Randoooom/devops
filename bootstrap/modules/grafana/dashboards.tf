@@ -1,5 +1,5 @@
 locals {
-  folders = ["node", "nginx", "vpn"]
+  folders = ["node", "nginx", "vpn", "kubernetes"]
 
   dashboards = flatten([
     for key in local.folders : [

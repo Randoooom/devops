@@ -1,3 +1,29 @@
+locals {
+  keep = [
+    "container_network_receive_bytes",
+    "container_network_transmit_bytes",
+    "container_memory_usage",
+    "container_memory_working_set_bytes",
+    "container_memory_cache",
+    "container_cpu",
+    "container_oom_events_total",
+    "node",
+    "kube_pod",
+    "kube_container_status",
+    "kube_node_info",
+    "nginx",
+    "node_network_receive_bytes_total",
+    "node_network_transmit_bytes_total",
+    "wireguard_received_bytes_total",
+    "wireguard_sent_bytes_total",
+    "wireguard_latest_handshake_seconds",
+    "wireguard_latest_handshake_delay_seconds",
+    "container_oom_events_total",
+    "container_network_receive_packets_dropped_total",
+    "container_network_receive_errors_total"
+  ]
+}
+
 resource "kubernetes_namespace" "monitoring" {
   depends_on = [helm_release.linkerd]
 
@@ -272,7 +298,7 @@ resource "helm_release" "prometheus_operator" {
               },
               {
                 sourceLabels = ["__name__"]
-                regex        = "(container_network_receive_bytes|cotnainer_network_transmit_bytes|container_memory_usage|container_memory_cache|container_cpu|node|kube_pod_status|kube_container_status|nginx|node_network_receive_bytes_total|node_network_transmit_bytes_total|wireguard_received_bytes_total|wireguard_sent_bytes_total|wireguard_latest_handshake_seconds|wireguard_latest_handshake_delay_seconds).*"
+                regex        = "(${join("|", local.keep)}).*"
                 action       = "keep"
               }
             ]
