@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-controller
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: arc
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: ghcr.io/actions/actions-runner-controller-charts
+    chart: gha-runner-scale-set-controller
+    targetRevision: 0.10.1
+    helm:
+      values: |
+        githubConfigSecret: arc-credentials
+  {{- include "common" . | nindent 2 }}

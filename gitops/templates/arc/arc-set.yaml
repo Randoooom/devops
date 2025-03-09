@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: arc
+  name: oci-arc
   namespace: sys-argocd
 spec:
   destination:
@@ -10,9 +10,10 @@ spec:
     server: https://kubernetes.default.svc
   source:
     repoURL: ghcr.io/actions/actions-runner-controller-charts
-    chart: gha-runner-scale-set-controller
+    chart: gha-runner-scale-set
     targetRevision: 0.10.1
     helm:
       values: |
         githubConfigSecret: arc-credentials
+        githubConfigUrl: "https://github.com/Randoooom/devops"
   {{- include "common" . | nindent 2 }}
