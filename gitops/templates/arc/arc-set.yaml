@@ -16,4 +16,7 @@ spec:
       values: |
         githubConfigSecret: arc-credentials
         githubConfigUrl: "https://github.com/Randoooom/devops"
+        controllerServiceAccount:
+          namespace: arc
+          name: arc-controller-gha-rs-controller
   {{- include "common" . | nindent 2 }}
