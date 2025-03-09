@@ -48,3 +48,4 @@ bootstrap/modules/kubernetes/secrets/event/surrealdb-credentials.yaml
 bootstrap/modules/kubernetes/secrets/feedback-fusion/postgres.yaml
 bootstrap/modules/kubernetes/secrets/feedback-fusion/feedback-fusion-config.yaml
 bootstrap/modules/kubernetes/secrets/feedback-fusion/feedback-fusion-dashboard-config.yaml
+bootstrap/modules/kubernetes/secrets/arc.yaml

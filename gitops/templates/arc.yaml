@@ -14,4 +14,5 @@ spec:
     targetRevision: 0.10.1
     helm:
       values: |
+        githubConfigSecret: arc-credentials
   {{- include "common" . | nindent 2 }}
