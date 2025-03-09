@@ -22,12 +22,6 @@ jobs:
 
       - uses: dcarbone/install-jq-action@v3
 
-      - name: Write zitadel key
-        env:
-          ZITADEL_KEY: ${{ secrets.ZITADEL_KEY }}
-        run: |
-          echo "$ZITADEL_KEY" > ./bootstrap/.zitadel
-
       - name: Reveal secrets 
         uses: entrostat/git-secret-action@v4
         with:

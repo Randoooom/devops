@@ -1,16 +1,6 @@
 resource "kubernetes_namespace" "cert_manager" {
-  depends_on = [helm_release.linkerd]
-
   metadata {
     name = "sys-cert-manager"
-
-    labels = {
-      "pod-security.kubernetes.io/enforce" = "privileged"
-    }
-
-    annotations = {
-      "linkerd.io/inject"                        = "enabled"
-    }
   }
 }
 
