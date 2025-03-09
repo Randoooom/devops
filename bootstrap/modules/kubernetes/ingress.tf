@@ -1,15 +1,6 @@
 resource "kubernetes_namespace" "ingress" {
-  depends_on = [helm_release.linkerd]
   metadata {
     name = "ingress-nginx"
-
-    labels = {
-      "pod-security.kubernetes.io/enforce" = "privileged"
-    }
-
-    annotations = {
-      "linkerd.io/inject" = "enabled"
-    }
   }
 }
 
@@ -157,7 +148,7 @@ resource "helm_release" "ingress" {
     controller = {
       config = {
         use-gzip = true
-        otlp-collector-host = "tempo.sys-monitoring.svc.cluster.local" 
+        otlp-collector-host = "alloy.sys-monitoring.svc.cluster.local" 
       }
       ingressClass = each.value.className
       ingressClassResource = {

@@ -2,14 +2,13 @@ locals {
   wireguard = <<EOF
 [Interface]
 Address = ${var.remote_wireguard_peer_cidr}
-ListenPort = 51871
-PostUp   = wg set wg0 private-key /etc/wireguard/privatekey && iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+ListenPort = 51820
+PostUp   = wg set wg0 private-key /etc/wireguard/privatekey && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 
 [Peer]
 PublicKey = ${var.remote_wireguard_public_key}
 AllowedIPs = ${var.remote_subnet_cidr}, ${var.remote_wireguard_cidr}
-Endpoint = ${var.remote_wireguard_host}
 PersistentKeepAlive = 25
 EOF
 }
@@ -66,9 +65,99 @@ resource "helm_release" "wireguard" {
         "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
       }
     }
-    replicaCount = 1
     metrics = {
       enabled = true
     }
+    replicaCount = 1
+    tolerations = [
+      {
+        key      = "node-role.kubernetes.io/control-plane"
+        operator = "Exists"
+        effect   = "NoSchedule"
+      },
+    ]
+    runPodOnHostNetwork = true
+    deploymentStrategy = {
+      type = "Recreate"
+    }
+    affinity = {
+      nodeAffinity = {
+        requiredDuringSchedulingIgnoredDuringExecution = {
+          nodeSelectorTerms = [
+            {
+              matchExpressions = [
+                {
+                  key      = "kubernetes.io/hostname"
+                  operator = "In"
+                  values = [
+                    "${var.cluster_name}-controlplane-0"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
   })]
+}
+
+resource "kubectl_manifest" "wireguard_egress" {
+  yaml_body = yamlencode({
+    apiVersion = "cilium.io/v2"
+    kind       = "CiliumEgressGatewayPolicy"
+    metadata = {
+      name = "wireguard"
+    }
+    spec = {
+      selectors = [
+        {
+          podSelector = {
+            matchLabels = {
+              wireguard = "true"
+            }
+          }
+        }
+      ]
+      destinationCIDRs = [var.remote_subnet_cidr]
+      egressGateway = {
+        nodeSelector = {
+          matchLabels = {
+            "kubernetes.io/hostname" = "${var.cluster_name}-controlplane-0"
+          }
+        }
+      }
+
+    }
+  })
+}
+
+resource "kubectl_manifest" "wireguard_probe" {
+  depends_on = [kubernetes_namespace.wireguard]
+
+  yaml_body = yamlencode({
+    apiVersion = "monitoring.coreos.com/v1"
+    kind       = "Probe"
+    metadata = {
+      name      = "wireguard"
+      namespace = "sys-wireguard"
+    }
+    spec = {
+      jobName  = "wireguard"
+      interval = "60s"
+      module   = "http_2xx"
+      prober = {
+        url    = "blackbox-exporter-prometheus-blackbox-exporter.sys-monitoring.svc.cluster.local:9115"
+        scheme = "http"
+        path   = "/probe"
+      }
+      targets = {
+        staticConfig = {
+          static = [
+            "http://192.168.1.2"
+          ]
+        }
+      }
+    }
+  })
 }

@@ -1,16 +1,6 @@
 resource "kubernetes_namespace" "external_secrets" {
-  depends_on = [helm_release.linkerd]
-
   metadata {
     name = "sys-external-secrets"
-
-    labels = {
-      "pod-security.kubernetes.io/enforce" = "privileged"
-    }
-
-    annotations = {
-      "linkerd.io/inject" = "enabled"
-    }
   }
 }
 

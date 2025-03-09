@@ -25,14 +25,8 @@ locals {
 }
 
 resource "kubernetes_namespace" "monitoring" {
-  depends_on = [helm_release.linkerd]
-
   metadata {
     name = "sys-monitoring"
-
-    labels = {
-      "pod-security.kubernetes.io/enforce" = "privileged"
-    }
   }
 }
 
@@ -61,6 +55,15 @@ resource "helm_release" "alloy" {
   name      = "alloy"
 
   values = [yamlencode({
+    controller = {
+      tolerations = [
+        {
+          key      = "node-role.kubernetes.io/control-plane"
+          operator = "Exists"
+          effect   = "NoSchedule"
+        },
+      ]
+    }
     alloy = {
       configMap = {
         content = <<EOF
@@ -293,7 +296,7 @@ resource "helm_release" "prometheus_operator" {
             writeRelabelConfigs = [
               {
                 sourceLabels = ["__name__"]
-                regex        = "(kube_pod_tolerations|node_namespace|node_network).*"
+                regex        = "(kube_pod_tolerations|node_namespace|node_network|kube_pod_status_phase|kube_pod_status_reason|kube_pod_status_scheduled|kube_pod_init).*"
                 action       = "drop"
               },
               {
@@ -318,6 +321,28 @@ resource "helm_release" "prometheus_operator" {
             }
           }
         }
+      }
+    }
+  })]
+}
+
+resource "helm_release" "blackbox_exporter" {
+  depends_on = [kubernetes_namespace.monitoring]
+
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "prometheus-blackbox-exporter"
+  version    = "9.3.0"
+
+  name      = "blackbox-exporter"
+  namespace = "sys-monitoring"
+
+  values = [yamlencode({
+    serviceMonitor = {
+      enabled = true
+    }
+    pod = {
+      labels = {
+        wireguard = "true"
       }
     }
   })]
