@@ -16,12 +16,21 @@ spec:
       values: |
         global:
           existingSecret: ldap-configuration
-          ldapDomain: {{ .Values.domain }} 
+          ldapDomain: {{ .Values.domain }}
+
+        persistence: 
+          enabled: true
 
         phpldapadmin:
           ingress:
             enabled: true
-            ingressClassName: nginx
+            ingressClassName: internal
             hosts:
               - ldap.internal.{{ .Values.clusterDomain }}
+
+        ltb-passwd:
+          ingress:
+            enabled: true
+            ingressClassName: internal
+            host: selfservice.internal.{{ .Values.clusterDomain }}
   {{- include "common" . | nindent 2 }}
