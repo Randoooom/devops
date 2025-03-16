@@ -27,10 +27,11 @@ spec:
             ingressClassName: internal
             hosts:
               - ldap.internal.{{ .Values.clusterDomain }}
-
+        
         ltb-passwd:
           ingress:
             enabled: true
             ingressClassName: internal
-            host: selfservice.internal.{{ .Values.clusterDomain }}
+            hosts:
+              - selfservice.internal.{{ .Values.clusterDomain }}
   {{- include "common" . | nindent 2 }}
