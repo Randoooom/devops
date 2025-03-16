@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openldap 
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: ldap
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: helm-openldap https://jp-gouin.github.io/helm-openldap/
+    chart: openldap-stack-ha
+    targetRevision: 4.3.3
+    helm:
+      values: |
+        global:
+          existingSecret: ldap-configuration
+          ldapDomain: {{ .Values.domain }} 
+
+        phpldapadmin:
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts:
+              - ldap.internal.{{ .Values.clusterDomain }}
+  {{- include "common" . | nindent 2 }}
