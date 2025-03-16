@@ -18,4 +18,6 @@ helm template \
     --set kubeProxyReplacementHealthzBindAddr="0.0.0.0:10256" \
     --set encryption.enabled=true \
     --set encryption.nodeEncryption=true \
-    --set encryption.type=wireguard > cilium.yaml
+    --set encryption.type=wireguard \
+    --set bpf.lbExternalClusterIP=true \
+    --set socketLB.hostNamespaceOnly=true > cilium.yaml

@@ -3,8 +3,9 @@ locals {
 [Interface]
 Address = ${var.remote_wireguard_peer_cidr}
 ListenPort = 51820
-PostUp   = wg set wg0 private-key /etc/wireguard/privatekey && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+PostUp = wg set wg0 private-key /etc/wireguard/privatekey; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o cilium_host -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables -t nat -D POSTROUTING -o cilium_host -j MASQUERADE
+
 
 [Peer]
 PublicKey = ${var.remote_wireguard_public_key}
