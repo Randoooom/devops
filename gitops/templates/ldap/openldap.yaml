@@ -9,7 +9,7 @@ spec:
     # TODO: solve this with yaml merging
     server: https://kubernetes.default.svc
   source:
-    repoURL: helm-openldap https://jp-gouin.github.io/helm-openldap/
+    repoURL: https://jp-gouin.github.io/helm-openldap
     chart: openldap-stack-ha
     targetRevision: 4.3.3
     helm:
