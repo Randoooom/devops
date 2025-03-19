@@ -30,21 +30,6 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/hostname: ldap.{{ .Values.clusterDomain }}
 
-        command: ["/bin/sh", "-c"]
-        args: 
-          - |
-            set -o errexit
-            set -o nounset
-            set -o pipefail
-
-            cp /etc/kerberos/configuration/krb5.conf /etc/krb5.conf
-            cp /etc/kerberos/keytab/krb5.keytab /etc/krb5.keytab
-
-            ls /opt/bitnami/scripts/openldap -R
-
-            sh /opt/bitnami/scripts/openldap/run.sh
-            sh /opt/bitnami/scripts/openldap/setup.sh
-
         extraVolumes:
           - name: keytab
             secret:
