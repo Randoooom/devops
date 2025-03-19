@@ -30,33 +30,25 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/hostname: ldap.{{ .Values.clusterDomain }}
 
-        env:
-          LDAP_ALLOW_ANON_BINDING: "yes"
+        command: ["/bin/sh", "-c"]
+        args: 
+          - |
+            cp /etc/kerberos/configuration/krb5.conf /etc/krb5.conf
+            cp /etc/kerberos/keytab/krb5.keytab /etc/krb5.keytab
 
         extraVolumes:
           - name: keytab
             secret:
               secretName: ldap-kerberos
-              items:
-                - key: krb5.keytab
-                  path: krb5.keytab
-              
           - name: kerberos-configuration
             configMap:
               name: ldap-kerberos
-              items:
-                - key: krb5.conf
-                  path: krb5.conf
 
         extraVolumeMounts:
           - name: keytab
-            mountPath: /etc
-            readOnly: true
-            subPath: krb5.keytab
+            mountPath: /etc/kerberos/keytab
           - name: kerberos-configuration
-            mountPath: /etc
-            readOnly: true
-            subPath: krb5.conf
+            mountPath: /etc/kerberos/configuration
         
         persistence: 
           enabled: true
