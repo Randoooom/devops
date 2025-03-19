@@ -40,9 +40,14 @@ spec:
             hosts:
               - ldap.internal.{{ .Values.clusterDomain }}
 
-        initialSchema: "cosine,inetorgperson,nis,kerberos"
+        initialSchema: "cosine,inetorgperson,nis,kerberos,sasl"
         
         customSchemaFiles:
+          sasl.ldif: |-
+            dn: cn=config
+            changetype: modify
+            add: olcSaslSecProps
+            olcSaslSecProps: none
           kerberos.ldif: |-
             dn: cn=kerberos,cn=schema,cn=config
             objectClass: olcSchemaConfig
