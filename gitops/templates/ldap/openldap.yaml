@@ -36,7 +36,7 @@ spec:
             cp /etc/kerberos/configuration/krb5.conf /etc/krb5.conf
             cp /etc/kerberos/keytab/krb5.keytab /etc/krb5.keytab
 
-            /opt/bitnami/scripts/openldap/entrypoint.sh /opt/bitnami/scripts/openldap/run.sh
+            sh /opt/bitnami/scripts/openldap/entrypoint.sh /opt/bitnami/scripts/openldap/run.sh
 
         extraVolumes:
           - name: keytab
