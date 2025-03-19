@@ -17,6 +17,9 @@ spec:
         global:
           existingSecret: ldap-configuration
           ldapDomain: {{ .Values.domain }}
+
+        initTLSSecret:
+          secret: openldap-tls
         
         service:
           annotations:
