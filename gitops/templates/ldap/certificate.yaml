@@ -6,6 +6,8 @@ metadata:
 spec:
   secretName: openldap-tls
   commonName: ldap.{{ .Values.clusterDomain }} 
+  dnsNames:
+    - ldap.{{ .Values.clusterDomain }} 
   issuerRef:
     name: letsencrypt 
     kind: ClusterIssuer
