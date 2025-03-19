@@ -22,6 +22,8 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/hostname: ldap.{{ .Values.clusterDomain }}
 
+        env:
+          LDAP_ALLOW_ANON_BINDING: "yes"
         
         persistence: 
           enabled: true
