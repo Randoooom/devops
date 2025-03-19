@@ -19,3 +19,4 @@ data:
     [domain_realm]
         .{{ .Values.domain }} = {{ .Values.domain | upper }}
         {{ .Values.domain }} = {{ .Values.domain | upper }}
+        .cluster.local = {{ .Values.domain | upper }}
