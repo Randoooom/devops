@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: openldap-kerberos
+  name: ldap-kerberos
   namespace: ldap
 data:
   krb5.conf: |
