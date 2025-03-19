@@ -9,6 +9,7 @@ data:
         default_realm = {{ .Values.domain | upper }}
         dns_lookup_realm = false
         dns_lookup_kdc = false
+        ignore_acceptor_hostname = true
 
     [realms]
         RANDOMS.ROCKS = {
