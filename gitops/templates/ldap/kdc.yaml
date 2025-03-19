@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openldap-kerberos
+  namespace: ldap
+data:
+  krb5.conf: |
+    [libdefaults]
+        default_realm = {{ .Values.domain | upper }}
+        dns_lookup_realm = false
+        dns_lookup_kdc = false
+
+    [realms]
+        RANDOMS.ROCKS = {
+            kdc = kdc.{{ .Values.clusterDomain }}
+            admin_server = kdc.{{ .Values.clusterDomain }}
+        }
+
+    [domain_realm]
+        .{{ .Values.domain }} = {{ .Values.domain | upper }}
+        {{ .Values.domain }} = {{ .Values.domain | upper }}
