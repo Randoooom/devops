@@ -32,6 +32,20 @@ spec:
 
         env:
           LDAP_ALLOW_ANON_BINDING: "yes"
+
+        extraVolumes:
+          - name: keytab
+            secret:
+              secretName: ldap-kerberos
+              items:
+                - key: krb5.keytab
+                  path: krb5.keytab
+
+        extraVolumeMounts:
+          - name: keytab
+            mountPath: /etc/krb5.keytab
+            subPath: krb5.keytab
+            readOnly: true
         
         persistence: 
           enabled: true
