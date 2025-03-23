@@ -66,9 +66,6 @@ resource "helm_release" "wireguard" {
         "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
       }
     }
-    metrics = {
-      enabled = true
-    }
     replicaCount = 1
     tolerations = [
       {
