@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: oci-arc
+  name: devops-set
   namespace: sys-argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io/background
 spec:
   destination:
-    namespace: arc
+    namespace: github-runner
     # TODO: solve this with yaml merging
     server: https://kubernetes.default.svc
   source:
@@ -16,9 +16,9 @@ spec:
     targetRevision: 0.10.1
     helm:
       values: |
-        githubConfigSecret: arc-credentials
+        githubConfigSecret: github-devops-credentials
         githubConfigUrl: "https://github.com/Randoooom/devops"
         controllerServiceAccount:
-          namespace: arc
-          name: arc-controller-gha-rs-controller
+          namespace: github-runner-controller
+          name: github-runner-controller-gha-rs-controller
   {{- include "common" . | nindent 2 }}

@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: arc-controller
+  name: github-runner-controller
   namespace: sys-argocd
 spec:
   destination:
-    namespace: arc
+    namespace: github-runner-controller
     # TODO: solve this with yaml merging
     server: https://kubernetes.default.svc
   source:
