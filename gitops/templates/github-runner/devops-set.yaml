@@ -21,4 +21,11 @@ spec:
         controllerServiceAccount:
           namespace: github-runner-controller
           name: github-runner-controller-gha-rs-controller
-  {{- include "common" . | nindent 2 }}
+  project: {{ .Values.project }}
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
