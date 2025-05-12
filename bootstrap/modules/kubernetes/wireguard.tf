@@ -66,6 +66,9 @@ resource "helm_release" "wireguard" {
         "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
       }
     }
+    metrics = {
+      enabled = true
+    }
     replicaCount = 1
     tolerations = [
       {
@@ -126,36 +129,6 @@ resource "kubectl_manifest" "wireguard_egress" {
         }
       }
 
-    }
-  })
-}
-
-resource "kubectl_manifest" "wireguard_probe" {
-  depends_on = [kubernetes_namespace.wireguard]
-
-  yaml_body = yamlencode({
-    apiVersion = "monitoring.coreos.com/v1"
-    kind       = "Probe"
-    metadata = {
-      name      = "wireguard"
-      namespace = "sys-wireguard"
-    }
-    spec = {
-      jobName  = "wireguard"
-      interval = "60s"
-      module   = "http_2xx"
-      prober = {
-        url    = "blackbox-exporter-prometheus-blackbox-exporter.sys-monitoring.svc.cluster.local:9115"
-        scheme = "http"
-        path   = "/probe"
-      }
-      targets = {
-        staticConfig = {
-          static = [
-            "http://192.168.1.2"
-          ]
-        }
-      }
     }
   })
 }

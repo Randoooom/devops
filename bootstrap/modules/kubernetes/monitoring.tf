@@ -1,47 +1,127 @@
-locals {
-  keep = [
-    "container_network_receive_bytes",
-    "container_network_transmit_bytes",
-    "container_memory_usage",
-    "container_memory_working_set_bytes",
-    "container_memory_cache",
-    "container_cpu",
-    "container_oom_events_total",
-    "node",
-    "kube_pod",
-    "kube_container_status",
-    "kube_node_info",
-    "nginx",
-    "node_network_receive_bytes_total",
-    "node_network_transmit_bytes_total",
-    "wireguard_received_bytes_total",
-    "wireguard_sent_bytes_total",
-    "wireguard_latest_handshake_seconds",
-    "wireguard_latest_handshake_delay_seconds",
-    "container_oom_events_total",
-    "container_network_receive_packets_dropped_total",
-    "container_network_receive_errors_total"
-  ]
-}
-
 resource "kubernetes_namespace" "monitoring" {
   metadata {
     name = "sys-monitoring"
+
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
   }
 }
 
-resource "kubernetes_secret" "grafana_prometheus_credentials" {
+resource "kubernetes_secret" "thanos_credentials" {
   depends_on = [kubernetes_namespace.monitoring]
 
   metadata {
-    name      = "grafana-prometheus-credentials"
+    name      = "thanos-credentials"
     namespace = "sys-monitoring"
   }
 
   data = {
-    username = "2284583"
-    password = var.grafana_prometheus_write_token
+    username = var.thanos_username
+    password = var.thanos_password
   }
+}
+
+resource "helm_release" "prometheus" {
+  depends_on = [kubernetes_namespace.monitoring]
+
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  version    = "70.4.2"
+
+  namespace = "sys-monitoring"
+  name      = "prometheus"
+
+  values = [yamlencode({
+    kubeScheduler = {
+      enabled = false
+    }
+
+    kubeControllerManager = {
+      enabled = false
+    }
+
+    kubeProxy = {
+      enabled = false
+    }
+
+    defaultRules = {
+      rules = {
+        node = false
+      }
+    }
+
+    alertmanager = {
+      config = {
+        route = {
+          receiver = "discord"
+        }
+        receivers = [
+          {
+            name = "discord"
+            discord_configs = [
+              {
+                webhook_url = var.discord_webhook
+              }
+            ]
+          },
+          {
+            name = "null"
+          }
+        ]
+      }
+    }
+
+    grafana = {
+      enabled = false
+    }
+
+    prometheus = {
+      prometheusSpec = {
+        podMetadata = {
+          labels = {
+            wireguard = "true"
+          }
+        }
+        serviceMonitorSelectorNilUsesHelmValues = false
+        podMonitorSelectorNilUsesHelmValues     = false
+        probeSelectorNilUsesHelmValues          = false
+
+        retention = "3d"
+        retentionSize = "3GB"
+
+        remoteWrite = [
+          {
+            url = "${var.thanos_endpoint}"
+            basicAuth = {
+              username = {
+                name = "thanos-credentials"
+                key  = "username"
+              }
+              password = {
+                name = "thanos-credentials"
+                key  = "password"
+              }
+            }
+          }
+        ]
+
+        storageSpec = {
+          volumeClaimTemplate = {
+            spec = {
+              storageClassName = "longhorn"
+              accessModes      = ["ReadWriteOnce"]
+              resources = {
+                requests = {
+                  storage = "4Gi"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })]
 }
 
 resource "helm_release" "alloy" {
@@ -63,7 +143,12 @@ resource "helm_release" "alloy" {
           effect   = "NoSchedule"
         },
       ]
+
+      podLabels = {
+        wireguard = "true"
+      }
     }
+
     alloy = {
       configMap = {
         content = <<EOF
@@ -73,26 +158,26 @@ otelcol.receiver.otlp "otlp_receiver" {
   }
 
   output {
-    traces = [otelcol.exporter.otlp.grafanacloud.input,]
+    traces = [otelcol.exporter.otlphttp.tempo.input,]
   }
 }
 
-otelcol.exporter.otlp "grafanacloud" {
+otelcol.exporter.otlphttp "tempo" {
   client {
-    endpoint = "tempo-prod-15-prod-us-west-0.grafana.net:443"
-    auth = otelcol.auth.basic.grafanacloud.handler
+    endpoint = "${var.tempo_endpoint}"
+    auth = otelcol.auth.basic.tempo.handler
   }
 }
 
-otelcol.auth.basic "grafanacloud" {
-  username = "1132284"
-  password = "${var.grafana_tempo_write_token}"
+otelcol.auth.basic "tempo" {
+  username = "${var.tempo_username}"
+  password = "${var.tempo_password}"
 }
 
 logging {
 	level = "info"
 
-	write_to = [loki.write.grafanacloud.receiver]
+	write_to = [loki.write.loki.receiver]
 }
 
 // https://grafana.com/docs/alloy/latest/collect/logs-in-kubernetes/
@@ -180,16 +265,16 @@ loki.process "pod_logs" {
       }
   }
 
-  forward_to = [loki.write.grafanacloud.receiver]
+  forward_to = [loki.write.loki.receiver]
 }
 
-loki.write "grafanacloud" {
+loki.write "loki" {
   endpoint {
-    url = "https://logs-prod-021.grafana.net/loki/api/v1/push"
+    url = "${var.loki_endpoint}"
 
     basic_auth {
-      username = "1137969"
-      password = "${var.grafana_loki_write_token}"
+      username = "${var.loki_username}"
+      password = "${var.loki_password}"
     }
   }
 }
@@ -204,146 +289,6 @@ EOF
           protocol   = "TCP"
         }
       ]
-    }
-  })]
-}
-
-resource "helm_release" "prometheus_operator" {
-  depends_on = [kubernetes_namespace.monitoring, helm_release.ingress, kubernetes_secret.grafana_prometheus_credentials]
-
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "kube-prometheus-stack"
-  version    = "66.3.0"
-
-  namespace = "sys-monitoring"
-  name      = "prometheus"
-
-  values = [yamlencode({
-    kubeScheduler = {
-      enabled = false
-    }
-
-    kubeControllerManager = {
-      enabled = false
-    }
-
-    kubeProxy = {
-      enabled = false
-    }
-
-    kubeEtcd = {
-      enabled = false
-    }
-
-    kubeApiServer = {
-      enabled = false
-    }
-
-    alertmanager = {
-      config = {
-        route = {
-          receiver = "discord"
-        }
-        receivers = [
-          {
-            name = "discord"
-            discord_configs = [
-              {
-                webhook_url = var.discord_webhook
-              }
-            ]
-          },
-          {
-            name = "null"
-          }
-        ]
-      }
-    }
-
-    grafana = {
-      enabled = false
-    }
-
-    prometheus = {
-      ingress = {
-        enabled          = true
-        hosts            = ["prometheus.internal.${var.cluster_domain}"]
-        ingressClassName = "internal"
-      }
-
-      prometheusSpec = {
-        serviceMonitorSelectorNilUsesHelmValues = false
-        podMonitorSelectorNilUsesHelmValues     = false
-        probeSelectorNilUsesHelmValues          = false
-
-        overrides = {
-
-        }
-
-        remoteWrite = [
-          {
-            url = "https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push"
-            basicAuth = {
-              username = {
-                name = "grafana-prometheus-credentials"
-                key  = "username"
-              }
-              password = {
-                name = "grafana-prometheus-credentials"
-                key  = "password"
-              }
-            }
-            writeRelabelConfigs = [
-              {
-                sourceLabels = ["__name__"]
-                regex        = "(kube_pod_tolerations|node_namespace|node_network|kube_pod_status_phase|kube_pod_status_reason|kube_pod_status_scheduled|kube_pod_init).*"
-                action       = "drop"
-              },
-              {
-                sourceLabels = ["__name__"]
-                regex        = "(${join("|", local.keep)}).*"
-                action       = "keep"
-              }
-            ]
-          }
-        ]
-
-        storageSpec = {
-          volumeClaimTemplate = {
-            spec = {
-              storageClassName = "longhorn"
-              accessModes      = ["ReadWriteOnce"]
-              resources = {
-                requests = {
-                  storage = "10Gi"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  })]
-}
-
-resource "helm_release" "blackbox_exporter" {
-  depends_on = [kubernetes_namespace.monitoring]
-
-  repository = "https://prometheus-community.github.io/helm-charts"
-  chart      = "prometheus-blackbox-exporter"
-  version    = "9.3.0"
-
-  name      = "blackbox-exporter"
-  namespace = "sys-monitoring"
-
-  values = [yamlencode({
-    serviceMonitor = {
-      enabled = true
-    }
-    pod = {
-      labels = {
-        wireguard = "true"
-      }
     }
   })]
 }
