@@ -41,9 +41,3 @@ resource "kubectl_manifest" "secret_store" {
     }
   })
 }
-
-resource "kubernetes_manifest" "secrets" {
-  for_each = fileset("${path.module}/secrets", "**/*.yaml")
-
-  manifest = yamldecode(file("${path.module}/secrets/${each.value}"))
-}

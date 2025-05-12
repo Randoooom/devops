@@ -3,8 +3,9 @@ locals {
 [Interface]
 Address = ${var.remote_wireguard_peer_cidr}
 ListenPort = 51820
-PostUp   = wg set wg0 private-key /etc/wireguard/privatekey && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+PostUp = wg set wg0 private-key /etc/wireguard/privatekey; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o cilium_host -j MASQUERADE
+PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables -t nat -D POSTROUTING -o cilium_host -j MASQUERADE
+
 
 [Peer]
 PublicKey = ${var.remote_wireguard_public_key}
@@ -128,36 +129,6 @@ resource "kubectl_manifest" "wireguard_egress" {
         }
       }
 
-    }
-  })
-}
-
-resource "kubectl_manifest" "wireguard_probe" {
-  depends_on = [kubernetes_namespace.wireguard]
-
-  yaml_body = yamlencode({
-    apiVersion = "monitoring.coreos.com/v1"
-    kind       = "Probe"
-    metadata = {
-      name      = "wireguard"
-      namespace = "sys-wireguard"
-    }
-    spec = {
-      jobName  = "wireguard"
-      interval = "60s"
-      module   = "http_2xx"
-      prober = {
-        url    = "blackbox-exporter-prometheus-blackbox-exporter.sys-monitoring.svc.cluster.local:9115"
-        scheme = "http"
-        path   = "/probe"
-      }
-      targets = {
-        staticConfig = {
-          static = [
-            "http://192.168.1.2"
-          ]
-        }
-      }
     }
   })
 }

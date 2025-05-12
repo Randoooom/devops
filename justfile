@@ -18,7 +18,7 @@ bastion:
     sleep 2
 
     if grep -q "Permission denied" temp; then \
-        terraform -chdir=./bootstrap/bastion apply -input=false -auto-approve -var-file ../.tfvars; \
+        AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/bastion apply -input=false -auto-approve -var-file ../.tfvars; \
         sleep 5; \
         rm -f temp; \
         just bastion; \
@@ -28,19 +28,19 @@ bastion:
 # terraform
 
 init MODULE:
-  terraform -chdir=./bootstrap/{{MODULE}} init -var-file ../.tfvars -backend-config ../.backend.config -backend-config .backend.config
+  AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/{{MODULE}} init -var-file ../.tfvars -backend-config ../.backend.config -backend-config .backend.config
 
 validate MODULE:
   just init {{MODULE}}
 
-  terraform -chdir=./bootstrap/{{MODULE}} validate 
+  AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/{{MODULE}} validate 
 
 plan MODULE: bastion
   just validate {{MODULE}}
 
-  terraform -chdir=./bootstrap/{{MODULE}} plan -input=false -var-file ../.tfvars
+  AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/{{MODULE}} plan -input=false -var-file ../.tfvars
 
 apply MODULE: bastion
   just validate {{MODULE}}
 
-  terraform -chdir=./bootstrap/{{MODULE}} apply -input=false -auto-approve -var-file ../.tfvars
+  AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/{{MODULE}} apply -input=false -auto-approve -var-file ../.tfvars
