@@ -50,16 +50,16 @@ spec:
 
         postgresql:
           enabled: true
-            global:
-              postgresql:
-                auth:
-                  username: nextcloud
-                  database: nextcloud
-                  existingSecret: nextcloud-postgres
-                  secretKeys:
-                    adminPasswordKey: adminPassword
-                    userPasswordKey: nextcloudPassword
-                    replicationPasswordKey: replicationPassword
+          global:
+            postgresql:
+              auth:
+                username: nextcloud
+                database: nextcloud
+                existingSecret: nextcloud-postgres
+                secretKeys:
+                  adminPasswordKey: adminPassword
+                  userPasswordKey: nextcloudPassword
+                  replicationPasswordKey: replicationPassword
           primary:
             persistence:
               enabled: true
