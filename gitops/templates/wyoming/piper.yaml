@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: tccr.io/truecharts 
     chart: wyoming-piper
-    targetRevision: 1.5.0
+    targetRevision: 6.5.1
     helm:
       values: |
         global:
