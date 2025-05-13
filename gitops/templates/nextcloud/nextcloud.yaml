@@ -63,6 +63,7 @@ spec:
           primary:
             persistence:
               enabled: true
+              size: 4Gi
 
         nextcloud:
           configs:

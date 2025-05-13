@@ -20,4 +20,8 @@ spec:
               username: feedback-fusion
               database: feedback-fusion
               existingSecret: postgres-credentials
+
+        primary:
+          persistence:
+            size: 4Gi
   {{- include "common" . | nindent 2 }}
