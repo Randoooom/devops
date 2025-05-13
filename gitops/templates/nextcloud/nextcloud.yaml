@@ -35,6 +35,35 @@ spec:
           enabled: true
           size: 5Gi
 
+        internalDatabase:
+          enabled: false
+
+        externalDatabase:
+          type: postgresql
+          existingSecret: 
+            enabled: true
+            secretName: nextcloud-postgres
+            usernameKey: username
+            passwordKey: nextcloudPassword
+            hostKey: host
+            databaseKey: database
+
+        postgresql:
+          enabled: true
+            global:
+              postgresql:
+                auth:
+                  username: nextcloud
+                  database: nextcloud
+                  existingSecret: nextcloud-postgres
+                  secretKeys:
+                    adminPasswordKey: adminPassword
+                    userPasswordKey: nextcloudPassword
+                    replicationPasswordKey: replicationPassword
+          primary:
+            persistence:
+              enabled: true
+
         nextcloud:
           configs:
             logging.config.php: |-
