@@ -18,6 +18,10 @@ spec:
           enabled: true
           className: nginx
           host: nextcloud.{{ .Values.domain }}
+          tls:
+            - hosts:
+              - nextcloud.{{ .Values.domain }}
+                secretName: nextcloud-tls
           annotations:
             nginx.ingress.kubernetes.io/affinity: cookie
             nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
