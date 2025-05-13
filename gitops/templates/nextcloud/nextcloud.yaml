@@ -23,7 +23,13 @@ spec:
             nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
             cert-manager.io/cluster-issuer: letsencrypt
 
+        persistence:
+          enabled: true
+          size: 5Gi
+
         nextcloud:
+          host: nextcloud.{{ .Values.domain }}
+
           existingSecret:
             enabled: true
             secretName: nextcloud-credentials
