@@ -16,7 +16,7 @@ spec:
       values: |
         ingress:
           enabled: true
-          className: internal
+          className: nginx
           host: nextcloud.{{ .Values.domain }}
           annotations:
             nginx.ingress.kubernetes.io/affinity: cookie
