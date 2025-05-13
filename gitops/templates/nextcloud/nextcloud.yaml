@@ -27,6 +27,9 @@ spec:
             nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
             cert-manager.io/cluster-issuer: letsencrypt
 
+        startupProbe:
+          initialDelaySeconds: 120
+
         persistence:
           enabled: true
           size: 5Gi
