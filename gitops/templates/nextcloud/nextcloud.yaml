@@ -28,7 +28,7 @@ spec:
             cert-manager.io/cluster-issuer: letsencrypt
 
         startupProbe:
-          initialDelaySeconds: 120
+          enabled: true
 
         persistence:
           enabled: true
