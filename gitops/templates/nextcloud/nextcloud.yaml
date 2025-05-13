@@ -25,6 +25,7 @@ spec:
           annotations:
             nginx.ingress.kubernetes.io/affinity: cookie
             nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
+            nginx.ingress.kubernetes.io/proxy-body-size: "4096m"
             cert-manager.io/cluster-issuer: letsencrypt
 
         startupProbe:
