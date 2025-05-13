@@ -51,7 +51,7 @@ resource "kubernetes_secret" "nextcloud" {
   data = {
     id     = var.nextcloud_access_key_id
     key    = var.nextcloud_secret_access_key
-    bucket = "nextcloud"
+    bucket = "${var.cluster_name}-nextcloud"
     host   = "${var.bucket_namespace}.compat.objectstorage.eu-frankfurt-1.oraclecloud.com"
   }
 }

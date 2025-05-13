@@ -19,7 +19,8 @@ spec:
             pvcSize: 1Gi
 
         podOptions:
-          nodeSelector: {}
+          nodeSelector:
+            kubernetes.io/arch: arm64
 
         wyoming_whisper:
           language: de

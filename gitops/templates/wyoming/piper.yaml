@@ -19,5 +19,6 @@ spec:
             pvcSize: 1Gi
 
         podOptions:
-          nodeSelector: {}
+          nodeSelector:
+            kubernetes.io/arch: arm64
   {{- include "common" . | nindent 2 }}
