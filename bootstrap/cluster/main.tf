@@ -60,4 +60,8 @@ module "kubernetes" {
   thanos_endpoint = var.thanos_endpoint
   thanos_username = var.thanos_username
   thanos_password = var.thanos_password
+
+  bucket_namespace            = data.terraform_remote_state.oci.outputs.bucket_namespace
+  nextcloud_access_key_id     = data.terraform_remote_state.oci.outputs.nextcloud_access_key_id
+  nextcloud_secret_access_key = data.terraform_remote_state.oci.outputs.nextcloud_secret_access_key
 }

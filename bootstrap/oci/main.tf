@@ -63,3 +63,12 @@ module "vault" {
   argocd_client_id     = module.zitadel.argocd_client_id
   argocd_client_secret = module.zitadel.argocd_client_secret
 }
+
+module "storage" {
+  source = "../modules/storage"
+
+  tenancy_ocid     = var.tenancy_ocid
+  compartment_ocid = var.compartment_ocid
+  cluster_name     = var.cluster_name
+  domain           = var.public_domain
+}

@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nextcloud
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: nextcloud
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://nextcloud.github.io/helm/ 
+    chart: nextcloud
+    targetRevision: 6.6.10
+    helm:
+      values: |
+        ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/affinity: cookie
+
+        nextcloud:
+          objectStore:
+            s3:
+              enabled: true
+              existingSecret: nextcloud-oci
+  {{- include "common" . | nindent 2 }}

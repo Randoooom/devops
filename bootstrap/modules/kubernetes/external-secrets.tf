@@ -41,3 +41,15 @@ resource "kubectl_manifest" "secret_store" {
     }
   })
 }
+
+resource "kubernetes_secret" "nextcloud" {
+  metadata {
+    name      = "nextcloud-oci"
+    namespace = "nextcloud"
+  }
+
+  data = {
+    id  = var.nextcloud_access_key_id
+    key = var.nextcloud_secret_access_key
+  }
+}

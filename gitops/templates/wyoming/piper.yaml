@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: piper
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: wyoming
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: oci://tccr.io/truecharts 
+    chart: wyoming-piper
+    targetRevision: 1.5.0
+    helm:
+      values: |
+        global:
+          fallbackDefaults:
+            pvcSize: 1Gi
+
+        podOptions:
+          nodeSelector: {}
+  {{- include "common" . | nindent 2 }}

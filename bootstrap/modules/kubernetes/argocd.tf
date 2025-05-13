@@ -165,13 +165,14 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
       source = {
         repoURL        = "https://github.com/randoooom/devops"
         path           = "gitops"
-        targetRevision = "feat/arc"
+        targetRevision = "feat/nextcloud"
 
         helm = {
           values = <<EOF
 project: ${var.cluster_name}
 domain: ${var.public_domain}
 clusterDomain: ${var.cluster_domain}
+bucketNamespace: ${var.bucket_namespace}
 EOF
         }
       }

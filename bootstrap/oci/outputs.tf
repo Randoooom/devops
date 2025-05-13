@@ -62,3 +62,19 @@ output "grafana_client_secret" {
   sensitive = true
   value     = module.zitadel.grafana_client_secret
 }
+
+output "bucket_namespace" {
+  sensitive = true
+  value     = module.storage.bucket_namespace
+}
+
+output "nextcloud_access_key_id" {
+  sensitive = true
+  value     = module.storage.nextcloud_access_key_id
+}
+
+
+output "nextcloud_secret_access_key" {
+  sensitive = true
+  value     = module.storage.nextcloud_secret_access_key
+}
