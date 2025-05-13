@@ -15,12 +15,29 @@ spec:
     helm:
       values: |
         ingress:
+          enabled: true
+          className: internal
+          host: nextcloud.{{ .Values.domain }}
           annotations:
             nginx.ingress.kubernetes.io/affinity: cookie
+            nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
+            cert-manager.io/cluster-issuer: letsencrypt
 
         nextcloud:
+          existingSecret:
+            enabled: true
+            secretName: nextcloud-credentials
+            usernameKey: username
+            passwordKey: password
+
           objectStore:
             s3:
               enabled: true
               existingSecret: nextcloud-oci
+              region: eu-frankfurt-1
+              secretKeys:
+                accessKey: id
+                secretKey: key
+                bucket: bucket
+                host: host
   {{- include "common" . | nindent 2 }}
