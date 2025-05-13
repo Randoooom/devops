@@ -55,6 +55,7 @@ spec:
 
           objectStore:
             s3:
+              usePathStyle: true
               enabled: true
               existingSecret: nextcloud-oci
               region: eu-frankfurt-1
