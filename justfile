@@ -13,17 +13,17 @@ stop-bastion:
   sh ./bootstrap/scripts/stop_bastion_sessions.sh
 
 bastion:
-    sh ./bootstrap/scripts/start_bastion_sessions.sh 2> temp
+    sh ./bootstrap/scripts/start_bastion_sessions.sh 2> .bastion
 
     sleep 2
 
     if grep -q "Permission denied" temp; then \
         AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/bastion apply -input=false -auto-approve -var-file ../.tfvars; \
         sleep 5; \
-        rm -f temp; \
+        rm -f .bastion; \
         just bastion; \
     fi
-    rm -f temp || true
+    rm -f .bastion || true
 
 # terraform
 

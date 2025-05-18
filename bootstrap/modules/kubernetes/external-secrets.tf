@@ -41,17 +41,3 @@ resource "kubectl_manifest" "secret_store" {
     }
   })
 }
-
-resource "kubernetes_secret" "nextcloud" {
-  metadata {
-    name      = "nextcloud-oci"
-    namespace = "nextcloud"
-  }
-
-  data = {
-    id     = var.nextcloud_access_key_id
-    key    = var.nextcloud_secret_access_key
-    bucket = "${var.cluster_name}-nextcloud"
-    host   = "${var.bucket_namespace}.compat.objectstorage.eu-frankfurt-1.oraclecloud.com"
-  }
-}

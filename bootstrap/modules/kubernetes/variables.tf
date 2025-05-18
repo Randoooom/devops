@@ -137,19 +137,3 @@ variable "thanos_password" {
   type      = string
   sensitive = true
 }
-
-variable "bucket_namespace" {
-  type      = string
-  sensitive = true
-}
-
-variable "nextcloud_access_key_id" {
-  type      = string
-  sensitive = true
-}
-
-
-variable "nextcloud_secret_access_key" {
-  type      = string
-  sensitive = true
-}

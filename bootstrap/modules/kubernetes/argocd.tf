@@ -172,7 +172,6 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
 project: ${var.cluster_name}
 domain: ${var.public_domain}
 clusterDomain: ${var.cluster_domain}
-bucketNamespace: ${var.bucket_namespace}
 EOF
         }
       }

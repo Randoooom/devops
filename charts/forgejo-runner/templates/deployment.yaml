@@ -1,0 +1,79 @@
+# https://code.forgejo.org/forgejo-integration/runner/src/branch/main/examples/kubernetes/dind-docker.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    wireguard: true
+    app: forgejo-runner
+  name: forgejo-runner
+spec:
+  # Two replicas means that if one is busy, the other can pick up jobs.
+  replicas: 2
+  selector:
+    matchLabels:
+      app: forgejo-runner
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: forgejo-runner
+        wireguard: true
+    spec:
+      restartPolicy: Always
+      volumes:
+      - name: docker-certs
+        emptyDir: {}
+      - name: runner-data
+        emptyDir: {}
+      # Initialise our configuration file using offline registration
+      # https://forgejo.org/docs/v1.21/admin/actions/#offline-registration
+      initContainers:
+        - name: runner-register
+          image: code.forgejo.org/forgejo/runner:6.0.1
+          command: ["forgejo-runner", "register", "--no-interactive", "--token", $(RUNNER_SECRET), "--name", $(RUNNER_NAME), "--instance", $(FORGEJO_INSTANCE_URL)]
+          env:
+            - name: RUNNER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: RUNNER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: token
+            - name: FORGEJO_INSTANCE_URL
+              value: {{ .Values.forgejo.url }} 
+          resources:
+            limits:
+              cpu: "0.50"
+              memory: "64Mi"
+          volumeMounts:
+            - name: runner-data
+              mountPath: /data
+      containers:
+      - name: runner
+        image: code.forgejo.org/forgejo/runner:6.0.1
+        command: ["sh", "-c", "while ! nc -z localhost 2376 </dev/null; do echo 'waiting for docker daemon...'; sleep 5; done; forgejo-runner daemon"]
+        env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2376
+        - name: DOCKER_CERT_PATH
+          value: /certs/client
+        - name: DOCKER_TLS_VERIFY
+          value: "1"
+        volumeMounts:
+        - name: docker-certs
+          mountPath: /certs
+        - name: runner-data
+          mountPath: /data
+      - name: daemon
+        image: docker:27.4.1-dind
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: /certs
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-certs
+          mountPath: /certs
