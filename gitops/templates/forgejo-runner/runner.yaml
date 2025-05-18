@@ -18,5 +18,5 @@ spec:
         forgejo: 
           url: https://git.{{ .Values.domain }}
 
-        existingSecret: forgejo-runner-token
+        existingSecret: forgejo-runner-secret
   {{- include "common" . | nindent 2 }}
