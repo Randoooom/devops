@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    wireguard: true
+    wireguard: "true"
     app: forgejo-runner
   name: forgejo-runner
 spec:
@@ -18,7 +18,7 @@ spec:
       creationTimestamp: null
       labels:
         app: forgejo-runner
-        wireguard: true
+        wireguard: "true"
     spec:
       restartPolicy: Always
       volumes:
