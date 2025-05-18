@@ -10,7 +10,7 @@ spec:
     server: https://kubernetes.default.svc
   source:
     repoURL: https://github.com/randoooom/devops
-    path: charts/event 
+    path: charts/forgejo-runner
     targetRevision: feat/nextcloud
 
     helm:
