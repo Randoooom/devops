@@ -14,12 +14,27 @@ spec:
     targetRevision: 8.13.1
     helm:
       values: |
+        ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          hosts:
+            - host: auth.{{ .Values.domain }}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - auth.{{ .Values.domain }}
+              secretName: zitadel-tls
+
         zitadel:
           masterkeySecretName: zitadel-masterkey
           configSecretName: zitadel-config
 
           configmapConfig:
-            ExternalDomain: zitadel.{{ .Values.domain }}
+            ExternalDomain: auth.{{ .Values.domain }}
             TLS:
               enabled: false
             Database:
