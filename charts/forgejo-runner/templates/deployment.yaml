@@ -46,7 +46,7 @@ spec:
               value: {{ .Values.forgejo.url }} 
           resources:
             limits:
-              cpu: "0.50"
+              cpu: "0.2"
               memory: "64Mi"
           volumeMounts:
             - name: runner-data
