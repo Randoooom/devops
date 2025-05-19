@@ -42,6 +42,9 @@ spec:
             FirstInstance:
               Org:
                 Machine:
+                  Machine:
+                    Username: Terraform
+                    Name: Terraform
             ExternalDomain: secure.{{ .Values.domain }}
             TLS:
               enabled: false
