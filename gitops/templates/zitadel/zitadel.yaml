@@ -19,14 +19,17 @@ spec:
           className: internal
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt
+            nginx.ingress.kubernetes.io/backend-protocol: GRPC
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              grpc_set_header Host $http_host;
           hosts:
-            - host: auth.{{ .Values.domain }}
+            - host: secure.{{ .Values.domain }}
               paths:
                 - path: /
                   pathType: Prefix
           tls:
             - hosts:
-                - auth.{{ .Values.domain }}
+                - secure.{{ .Values.domain }}
               secretName: zitadel-tls
 
         zitadel:
@@ -34,7 +37,7 @@ spec:
           configSecretName: zitadel-config
 
           configmapConfig:
-            ExternalDomain: auth.{{ .Values.domain }}
+            ExternalDomain: secure.{{ .Values.domain }}
             TLS:
               enabled: false
             Database:
