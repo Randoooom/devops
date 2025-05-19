@@ -43,8 +43,11 @@ spec:
               Org:
                 Machine:
                   Machine:
-                    Username: Terraform
-                    Name: Terraform
+                    Username: terraform
+                    Name: terraform
+                  MachineKey:
+                    Type: 1
+                    ExpirationDate: "2030-01-01T00:00:00Z"
             ExternalDomain: secure.{{ .Values.domain }}
             TLS:
               enabled: false
