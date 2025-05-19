@@ -16,7 +16,7 @@ spec:
       values: |
         ingress:
           enabled: true
-          className: nginx
+          className: internal
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt
           hosts:
