@@ -34,16 +34,14 @@ spec:
 
         replicaCount: 1
 
-        setupJob:
-          machinekeyWriter:
-            image:
-              tag: v1.32.2
-
         zitadel:
           masterkeySecretName: zitadel-masterkey
           configSecretName: zitadel-config
 
           configmapConfig:
+            FirstInstance:
+              Org:
+                Machine:
             ExternalDomain: secure.{{ .Values.domain }}
             TLS:
               enabled: false
