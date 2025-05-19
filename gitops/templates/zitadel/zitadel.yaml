@@ -16,7 +16,7 @@ spec:
       values: |
         ingress:
           enabled: true
-          className: internal
+          className: nginx
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt
             nginx.ingress.kubernetes.io/backend-protocol: GRPC
@@ -31,6 +31,8 @@ spec:
             - hosts:
                 - secure.{{ .Values.domain }}
               secretName: zitadel-tls
+
+        replicaCount: 1
 
         zitadel:
           masterkeySecretName: zitadel-masterkey
