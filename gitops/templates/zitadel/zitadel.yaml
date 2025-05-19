@@ -35,7 +35,7 @@ spec:
         replicaCount: 1
 
         setupJob:
-          machineKeyWriter:
+          machinekeyWriter:
             image:
               tag: v1.32.2
 
