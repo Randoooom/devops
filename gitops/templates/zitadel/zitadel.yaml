@@ -32,7 +32,7 @@ spec:
                   SSL:
                     Mode: disable
                 Admin:
-                  Username: zitadel
+                  Username: postgres
                   SSL:
                     Mode: disable
   {{- include "common" . | nindent 2 }}
