@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zitadel
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: zitadel
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://charts.zitadel.com
+    chart: zitadel
+    targetRevision: 8.13.1
+    helm:
+      values: |
+        zitadel:
+          masterkeySecretName: zitadel-masterkey
+          configSecretName: zitadel-config
+
+          configmapConfig:
+            ExternalDomain: zitadel.{{ .Values.domain }}
+            TLS:
+              enabled: false
+            Database:
+              Postgres:
+                Host: zitadel-postgres-postgresql
+                Port: 5432
+                Database: zitadel
+                User:
+                  Username: zitadel
+                  SSL:
+                    Mode: disable
+                Admin:
+                  Username: zitadel
+                  SSL:
+                    Mode: disable
+  {{- include "common" . | nindent 2 }}

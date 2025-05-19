@@ -44,3 +44,13 @@ apply MODULE: bastion
   just validate {{MODULE}}
 
   AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/{{MODULE}} apply -input=false -auto-approve -var-file ../.tfvars
+
+seal:
+    #!/usr/bin/env sh
+    find gitops/templates/**/secrets/ -type f -name '*.yaml' | while read -r file; do
+        if grep -q "kind: Secret" "$file"; then
+            echo "Sealing $file..."
+            kubeseal -f "$file" -w "$file"
+        fi
+    done
+
