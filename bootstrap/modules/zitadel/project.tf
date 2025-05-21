@@ -1,5 +1,5 @@
 resource "zitadel_project" "this" {
-  org_id = var.zitadel_org
+  org_id = local.zitadel_org
 
   name = var.cluster_name
 

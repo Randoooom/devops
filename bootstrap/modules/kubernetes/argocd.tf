@@ -4,48 +4,20 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-resource "kubectl_manifest" "argocd_zitadel" {
-  depends_on = [kubectl_manifest.secret_store, kubernetes_namespace.argocd]
+resource "kubernetes_secret" "argocd" {
+  metadata {
+    name      = "argocd-zitadel"
+    namespace = kubernetes_namespace.argocd.metadata[0].name
+  }
 
-  yaml_body = yamlencode({
-    apiVersion = "external-secrets.io/v1beta1"
-    kind       = "ExternalSecret"
-    metadata = {
-      name      = "argocd-zitadel"
-      namespace = "sys-argocd"
-      labels = {
-        "app.kubernetes.io/part-of" = "argocd"
-      }
-    },
-    spec = {
-      secretStoreRef = {
-        kind = "ClusterSecretStore"
-        name = "oracle"
-      }
-      target = {
-        name           = "argocd-zitadel"
-        creationPolicy = "Owner"
-      }
-      data = [
-        {
-          secretKey = "client-secret"
-          remoteRef = {
-            key = "argocd-client-secret"
-          }
-        },
-        {
-          secretKey = "client-id"
-          remoteRef = {
-            key = "argocd-client-id"
-          }
-        }
-      ]
-    }
-  })
+  data = {
+    client-id     = module.zitadel.oauth2_proxy_client_id
+    client-secret = module.zitadel.oauth2_proxy_client_secret
+  }
 }
 
 resource "helm_release" "argocd" {
-  depends_on = [kubernetes_namespace.argocd, kubectl_manifest.argocd_zitadel]
+  depends_on = [kubernetes_namespace.argocd, kubernetes_secret.argocd]
 
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
@@ -165,7 +137,7 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
       source = {
         repoURL        = "https://github.com/randoooom/devops"
         path           = "gitops"
-        targetRevision = "feat/nextcloud"
+        targetRevision = "refactor/zitadel"
 
         helm = {
           values = <<EOF

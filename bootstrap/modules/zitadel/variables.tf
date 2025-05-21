@@ -10,10 +10,11 @@ variable "zitadel_host" {
   type = string
 }
 
-variable "zitadel_org" {
+variable "domain" {
   type = string
 }
 
-variable "domain" {
-  type = string
+variable "zitadel_key" {
+  type      = string
+  sensitive = true
 }

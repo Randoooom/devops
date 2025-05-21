@@ -45,10 +45,6 @@ module "kubernetes" {
   remote_subnet_cidr          = var.remote_subnet_cidr
   remote_wireguard_cidr       = var.remote_wireguard_cidr
 
-  feedback_fusion_client_id     = data.terraform_remote_state.oci.outputs.feedback_fusion_client_id
-  feedback_fusion_client_secret = data.terraform_remote_state.oci.outputs.feedback_fusion_client_secret
-  zitadel_feedback_fusion_id    = data.terraform_remote_state.oci.outputs.zitadel_feedback_fusion_id
-
   loki_endpoint = var.loki_endpoint
   loki_username = var.loki_username
   loki_password = var.loki_password
@@ -60,4 +56,11 @@ module "kubernetes" {
   thanos_endpoint = var.thanos_endpoint
   thanos_username = var.thanos_username
   thanos_password = var.thanos_password
+
+  zitadel_admin_mail    = var.zitadel_admin_mail
+  zitadel_smtp_tls      = var.zitadel_smtp_tls
+  zitadel_smtp_username = var.zitadel_smtp_username
+  zitadel_smtp_password = var.zitadel_smtp_password
+  zitadel_smtp_host     = var.zitadel_smtp_host
+  zitadel_smtp_sender   = var.zitadel_smtp_sender
 }

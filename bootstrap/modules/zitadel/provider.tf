@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     zitadel = {
-      source = "zitadel/zitadel"
+      source  = "zitadel/zitadel"
       version = "2.0.1"
     }
   }
@@ -9,5 +9,5 @@ terraform {
 
 provider "zitadel" {
   domain           = var.zitadel_host
-  jwt_profile_file = "../.zitadel"
+  jwt_profile_json = var.zitadel_key
 }

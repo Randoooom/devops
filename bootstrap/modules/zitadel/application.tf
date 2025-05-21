@@ -1,5 +1,5 @@
 resource "zitadel_application_oidc" "oauth2_proxy" {
-  org_id     = var.zitadel_org
+  org_id     = local.zitadel_org
   project_id = zitadel_project.this.id
 
   name                        = "OAuth2Proxy"
@@ -17,27 +17,8 @@ resource "zitadel_application_oidc" "oauth2_proxy" {
   id_token_userinfo_assertion = false
 }
 
-resource "zitadel_application_oidc" "grafana" {
-  org_id     = var.zitadel_org
-  project_id = zitadel_project.this.id
-
-  name                        = "Grafana"
-  redirect_uris               = ["https://${replace(var.cluster_name, "-", "")}.grafana.net/login/generic_oauth"]
-  response_types              = ["OIDC_RESPONSE_TYPE_CODE"]
-  grant_types                 = ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]
-  post_logout_redirect_uris   = []
-  app_type                    = "OIDC_APP_TYPE_WEB"
-  auth_method_type            = "OIDC_AUTH_METHOD_TYPE_BASIC"
-  version                     = "OIDC_VERSION_1_0"
-  clock_skew                  = "0s"
-  access_token_type           = "OIDC_TOKEN_TYPE_BEARER"
-  access_token_role_assertion = true
-  id_token_role_assertion     = true
-  id_token_userinfo_assertion = false
-}
-
 resource "zitadel_application_oidc" "argocd" {
-  org_id     = var.zitadel_org
+  org_id     = local.zitadel_org
   project_id = zitadel_project.this.id
 
   name                        = "ArgoCD"
@@ -56,7 +37,7 @@ resource "zitadel_application_oidc" "argocd" {
 }
 
 resource "zitadel_application_oidc" "feedback_fusion" {
-  org_id     = var.zitadel_org
+  org_id     = local.zitadel_org
   project_id = zitadel_project.this.id
 
   name                        = "feedback-fusion"

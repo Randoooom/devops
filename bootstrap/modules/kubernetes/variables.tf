@@ -85,20 +85,6 @@ variable "public_domain" {
   type = string
 }
 
-variable "feedback_fusion_client_id" {
-  type      = string
-  sensitive = true
-}
-
-variable "feedback_fusion_client_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "zitadel_feedback_fusion_id" {
-  type = string
-}
-
 variable "loki_endpoint" {
   type = string
 }
@@ -136,4 +122,28 @@ variable "thanos_username" {
 variable "thanos_password" {
   type      = string
   sensitive = true
+}
+
+variable "zitadel_admin_mail" {
+  type = string
+}
+
+variable "zitadel_smtp_tls" {
+  type = bool
+}
+
+variable "zitadel_smtp_host" {
+  type = string
+}
+
+variable "zitadel_smtp_username" {
+  type = string
+}
+
+variable "zitadel_smtp_password" {
+  type = string
+}
+
+variable "zitadel_smtp_sender" {
+  type = string
 }
