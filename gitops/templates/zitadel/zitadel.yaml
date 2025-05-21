@@ -1,0 +1,67 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zitadel
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: zitadel
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://charts.zitadel.com
+    chart: zitadel
+    targetRevision: 8.13.1
+    helm:
+      values: |
+        ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+            nginx.ingress.kubernetes.io/backend-protocol: GRPC
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              grpc_set_header Host $http_host;
+          hosts:
+            - host: secure.{{ .Values.domain }}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - secure.{{ .Values.domain }}
+              secretName: zitadel-tls
+
+        replicaCount: 1
+
+        zitadel:
+          masterkeySecretName: zitadel-masterkey
+          configSecretName: zitadel-config
+
+          configmapConfig:
+            FirstInstance:
+              Org:
+                Machine:
+                  Machine:
+                    Username: terraform
+                    Name: terraform
+                  MachineKey:
+                    Type: 1
+                    ExpirationDate: "2030-01-01T00:00:00Z"
+            ExternalDomain: secure.{{ .Values.domain }}
+            TLS:
+              enabled: false
+            Database:
+              Postgres:
+                Host: zitadel-postgres-postgresql
+                Port: 5432
+                Database: zitadel
+                User:
+                  Username: zitadel
+                  SSL:
+                    Mode: disable
+                Admin:
+                  Username: postgres
+                  SSL:
+                    Mode: disable
+  {{- include "common" . | nindent 2 }}

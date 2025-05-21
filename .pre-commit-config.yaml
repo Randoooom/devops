@@ -7,3 +7,9 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: kubeseal 
+        name: KubeSeal
+        entry: sh -c "just seal && git add -A"
+        language: system
+        pass_filenames: false
+        always_run: true

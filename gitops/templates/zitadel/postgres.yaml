@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: feedback-fusion-postgres 
+  name: zitadel-postgres 
   namespace: sys-argocd
 spec:
   destination:
-    namespace: feedback-fusion
+    namespace: zitadel
     # TODO: solve this with yaml merging
     server: https://kubernetes.default.svc
   source:
@@ -17,8 +17,8 @@ spec:
         global:
           postgresql:
             auth:
-              username: feedback-fusion
-              database: feedback-fusion
+              username: zitadel
+              database: zitadel
               existingSecret: postgres-credentials
 
         primary:

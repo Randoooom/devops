@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: whisper
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: wyoming
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: tccr.io/truecharts 
+    chart: wyoming-whisper
+    targetRevision: 7.7.1
+    helm:
+      values: |
+        global:
+          fallbackDefaults:
+            pvcSize: 1Gi
+
+        podOptions:
+          nodeSelector:
+            kubernetes.io/arch: arm64
+
+        wyoming_whisper:
+          language: de
+  {{- include "common" . | nindent 2 }}

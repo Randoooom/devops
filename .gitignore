@@ -35,6 +35,7 @@ terraform.rc
 
 # baston pids
 .session
+.bastion
 
 # local creds
 .tfvars
