@@ -141,7 +141,7 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
       source = {
         repoURL        = "https://github.com/randoooom/devops"
         path           = "gitops"
-        targetRevision = "refactor/zitadel"
+        targetRevision = "main"
 
         helm = {
           values = <<EOF
