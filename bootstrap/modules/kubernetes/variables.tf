@@ -39,10 +39,6 @@ variable "acme_email" {
   type = string
 }
 
-variable "zitadel_host" {
-  type = string
-}
-
 variable "vault" {
   type      = string
   sensitive = true
@@ -72,30 +68,12 @@ variable "remote_wireguard_cidr" {
   type = string
 }
 
-variable "zitadel_project" {
-  type = string
-}
-
 variable "discord_webhook" {
   type      = string
   sensitive = true
 }
 
 variable "public_domain" {
-  type = string
-}
-
-variable "feedback_fusion_client_id" {
-  type      = string
-  sensitive = true
-}
-
-variable "feedback_fusion_client_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "zitadel_feedback_fusion_id" {
   type = string
 }
 
@@ -136,4 +114,28 @@ variable "thanos_username" {
 variable "thanos_password" {
   type      = string
   sensitive = true
+}
+
+variable "zitadel_admin_mail" {
+  type = string
+}
+
+variable "zitadel_smtp_tls" {
+  type = bool
+}
+
+variable "zitadel_smtp_host" {
+  type = string
+}
+
+variable "zitadel_smtp_username" {
+  type = string
+}
+
+variable "zitadel_smtp_password" {
+  type = string
+}
+
+variable "zitadel_smtp_sender" {
+  type = string
 }
