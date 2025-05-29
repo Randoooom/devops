@@ -8,11 +8,15 @@ resource "kubernetes_secret" "argocd" {
   metadata {
     name      = "argocd-zitadel"
     namespace = kubernetes_namespace.argocd.metadata[0].name
+
+    labels = {
+      "app.kubernetes.io/part-of" = "argocd"
+    }
   }
 
   data = {
-    client-id     = module.zitadel.oauth2_proxy_client_id
-    client-secret = module.zitadel.oauth2_proxy_client_secret
+    client-id     = module.zitadel.argocd_client_id
+    client-secret = module.zitadel.argocd_client_secret
   }
 }
 
@@ -48,7 +52,7 @@ resource "helm_release" "argocd" {
       cm = {
         "oidc.config" = <<EOF
 name: Zitadel
-issuer: https://${var.zitadel_host}
+issuer: https://secure.${var.public_domain}
 clientID: $argocd-zitadel:client-id 
 clientSecret: $argocd-zitadel:client-secret
 requestedScopes:
@@ -62,7 +66,7 @@ EOF
 
       rbac = {
         "policy.csv" = <<EOF
-g, ${var.zitadel_project}:admin, role:admin
+g, ${module.zitadel.zitadel_project}:admin, role:admin
 EOF
       }
     }

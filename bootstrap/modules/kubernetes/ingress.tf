@@ -9,64 +9,6 @@ resource "kubernetes_namespace" "ingress" {
   }
 }
 
-resource "random_password" "oauth2_proxy_cookie_secret" {
-  length  = 32
-  special = false
-}
-
-resource "kubernetes_secret" "oauth2_proxy" {
-  metadata {
-    name      = "oauth2-proxy"
-    namespace = kubernetes_namespace.ingress.metadata[0].name
-  }
-
-  data = {
-    cookie-secret = random_password.oauth2_proxy_cookie_secret.result
-    client-id     = module.zitadel.oauth2_proxy_client_id
-    client-secret = module.zitadel.oauth2_proxy_client_secret
-  }
-}
-
-resource "helm_release" "oauth2_proxy" {
-  depends_on = [kubernetes_secret.oauth2_proxy]
-
-  repository = "https://oauth2-proxy.github.io/manifests"
-  chart      = "oauth2-proxy"
-  version    = "7.8.1"
-
-  namespace = kubernetes_namespace.ingress.metadata[0].name
-  name      = "oauth2-proxy"
-
-  values = [yamlencode({
-    config = {
-      existingSecret = "oauth2-proxy"
-      configFile     = <<EOF
-provider = "oidc"
-redirect_url = "https://secure.${var.cluster_domain}/oauth2/callback"
-oidc_issuer_url = "https://${var.zitadel_host}"
-email_domains = ["*"]
-cookie_domains = [".${var.cluster_domain}"]
-whitelist_domains = [".${var.cluster_domain}"]
-user_id_claim = "sub"
-provider_display_name = "ZITADEL"
-pass_access_token = true
-set_xauthrequest = true
-EOF
-    }
-    metrics = {
-      serviceMonitor = {
-        enabled = true
-      }
-    }
-    ingress = {
-      enabled   = true
-      hosts     = ["secure.${var.cluster_domain}"]
-      className = "nginx"
-      path      = "/oauth2"
-    }
-  })]
-}
-
 resource "kubectl_manifest" "ingress_certificate" {
   depends_on = [kubectl_manifest.letsencrypt]
 
@@ -114,7 +56,7 @@ locals {
 }
 
 resource "helm_release" "ingress" {
-  depends_on = [kubernetes_namespace.ingress, helm_release.oauth2_proxy, kubectl_manifest.ingress_certificate]
+  depends_on = [kubernetes_namespace.ingress, kubectl_manifest.ingress_certificate]
   for_each   = { for i, data in local.ingresses : i => data }
 
   repository = "https://kubernetes.github.io/ingress-nginx"
@@ -141,7 +83,7 @@ resource "helm_release" "ingress" {
         annotations = each.value.annotations
       }
       extraArgs = {
-        default-ssl-certificate = "ingress-nginx/ingress-tls"
+        default-ssl-certificate = "sys-ingress-nginx/ingress-tls"
         enable-ssl-passthrough  = true
       }
       metrics = {

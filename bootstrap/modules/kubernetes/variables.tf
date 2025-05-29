@@ -39,10 +39,6 @@ variable "acme_email" {
   type = string
 }
 
-variable "zitadel_host" {
-  type = string
-}
-
 variable "vault" {
   type      = string
   sensitive = true
@@ -69,10 +65,6 @@ variable "remote_wireguard_peer_cidr" {
 }
 
 variable "remote_wireguard_cidr" {
-  type = string
-}
-
-variable "zitadel_project" {
   type = string
 }
 

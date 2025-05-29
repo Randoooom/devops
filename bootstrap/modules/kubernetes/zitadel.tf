@@ -24,10 +24,28 @@ resource "random_password" "zitadel_admin" {
   special = true
 }
 
-resource "helm_release" "zitadel_postgres" {
-  depends_on = [kubernetes_namespace.zitadel, helm_release.longhorn]
+resource "random_password" "zitadel_masterkey" {
+  length  = 32
+  special = false
+}
 
-  repository = "registry-1.docker.io/bitnamicharts"
+resource "kubernetes_secret" "zitadel_postgres" {
+  metadata {
+    name      = "postgres-credentials"
+    namespace = kubernetes_namespace.zitadel.metadata[0].name
+  }
+
+  data = {
+    password             = random_password.zitadel_postgres_zitadel.result
+    postgres-password    = random_password.zitadel_postgres_admin.result
+    replication-password = random_password.zitadel_postgres_replication.result
+  }
+}
+
+resource "helm_release" "zitadel_postgres" {
+  depends_on = [kubernetes_namespace.zitadel, helm_release.longhorn, kubernetes_secret.zitadel_postgres]
+
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
   version    = "16.2.5"
 
@@ -90,8 +108,19 @@ EOF
   }
 }
 
+resource "kubernetes_secret" "zitadel_masterkey" {
+  metadata {
+    name      = "zitadel-masterkey"
+    namespace = kubernetes_namespace.zitadel.metadata[0].name
+  }
+
+  data = {
+    masterkey = random_password.zitadel_masterkey.result
+  }
+}
+
 resource "helm_release" "zitadel" {
-  depends_on = [helm_release.zitadel_postgres]
+  depends_on = [helm_release.zitadel_postgres, kubernetes_secret.zitadel_masterkey]
 
   repository = "https://charts.zitadel.com"
   chart      = "zitadel"
@@ -199,26 +228,4 @@ resource "null_resource" "wait_for_zitadel" {
     exit 1
     EOT
   }
-}
-
-
-data "kubernetes_secret" "zitadel_machine" {
-  depends_on = [null_resource.wait_for_zitadel]
-
-  metadata {
-    name      = "terraform"
-    namespace = kubernetes_namespace.zitadel.metadata[0].name
-  }
-}
-
-module "zitadel" {
-  source = "../zitadel"
-
-  zitadel_host = var.zitadel_host
-
-  cluster_domain = var.cluster_domain
-  cluster_name   = var.cluster_name
-
-  domain      = var.public_domain
-  zitadel_key = data.kubernetes_secret.zitadel_machine.data["terraform.json"]
 }

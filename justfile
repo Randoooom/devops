@@ -17,7 +17,7 @@ bastion:
 
     sleep 2
 
-    if grep -q "Permission denied" temp; then \
+    if grep -q "Permission denied" .bastion; then \
         AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terraform -chdir=./bootstrap/bastion apply -input=false -auto-approve -var-file ../.tfvars; \
         sleep 5; \
         rm -f .bastion; \

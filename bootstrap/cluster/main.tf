@@ -35,8 +35,6 @@ module "kubernetes" {
   discord_webhook      = var.discord_webhook
   public_domain        = var.public_domain
 
-  zitadel_host    = var.zitadel_host
-  zitadel_project = data.terraform_remote_state.oci.outputs.zitadel_project
   vault           = data.terraform_remote_state.oci.outputs.vault
 
   remote_wireguard_peer_cidr  = var.remote_wireguard_peer_cidr

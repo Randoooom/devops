@@ -1,5 +1,5 @@
 locals {
-  zitadel_org = data.zitadel_orgs.this.id
+  zitadel_org = data.zitadel_orgs.this.ids[0]
 }
 
 data "zitadel_orgs" "this" {

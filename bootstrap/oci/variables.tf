@@ -61,14 +61,6 @@ variable "public_cidr" {
   type = string
 }
 
-variable "zitadel_host" {
-  type = string
-}
-
-variable "zitadel_org" {
-  type = string
-}
-
 variable "control_plane_count" {
   type = number
 }

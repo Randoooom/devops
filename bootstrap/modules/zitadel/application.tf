@@ -3,7 +3,7 @@ resource "zitadel_application_oidc" "oauth2_proxy" {
   project_id = zitadel_project.this.id
 
   name                        = "OAuth2Proxy"
-  redirect_uris               = ["https://auth.${var.cluster_domain}/oauth2/callback"]
+  redirect_uris               = ["https://secure.${var.cluster_domain}/oauth2/callback"]
   response_types              = ["OIDC_RESPONSE_TYPE_CODE"]
   grant_types                 = ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]
   post_logout_redirect_uris   = []
