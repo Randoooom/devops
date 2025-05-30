@@ -29,9 +29,6 @@ jobs:
         with:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Source env
-        run: source bootstrap/.env
-
       - name: Start bastion sessions
         run: just bastion
 
@@ -40,4 +37,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./bootstrap
-        run: terragrunt run -a apply --queue-exclude-dir bastion --experiment cli-redesign 
+        run: source .env && terragrunt run -a apply --queue-exclude-dir bastion --experiment cli-redesign 
