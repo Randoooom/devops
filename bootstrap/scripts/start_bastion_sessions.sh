@@ -2,10 +2,8 @@
 
 cd ./bootstrap/bastion/
 # get the bastion session data from the state
-SESSIONS=$(terraform output -raw bastion_sessions)
-
-cd ../oci/
-region=$(terraform output -raw region)
+SESSIONS=$(terragrunt output -raw bastion_sessions)
+region=$(terragrunt output -raw region)
 
 cd ../
 

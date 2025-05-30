@@ -45,3 +45,6 @@ terraform.rc
 
 .gitsecret/keys/random_seed
 !*.secret
+bootstrap/.env
+
+.terragrunt-cache
