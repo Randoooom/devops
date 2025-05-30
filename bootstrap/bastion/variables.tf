@@ -31,3 +31,15 @@ variable "bastion_ssh_public_key" {
 variable "cluster_name" {
   type = string
 }
+
+variable "controlplane" {
+  type = list(any)
+}
+
+variable "worker" {
+  type = list(any)
+}
+
+variable "subnet_id" {
+  type = string
+}

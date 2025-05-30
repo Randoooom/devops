@@ -1,6 +1,6 @@
 resource "oci_bastion_bastion" "this" {
   compartment_id               = var.compartment_ocid
-  target_subnet_id             = data.terraform_remote_state.oci.outputs.subnet_id 
+  target_subnet_id             = var.subnet_id 
   bastion_type                 = "STANDARD"
   client_cidr_block_allow_list = ["0.0.0.0/0"]
 }
@@ -13,7 +13,7 @@ resource "null_resource" "always_run" {
 }
 
 resource "oci_bastion_session" "controlplane" {
-  for_each = { for controlplane in data.terraform_remote_state.oci.outputs.controlplane: controlplane.id => controlplane }
+  for_each = { for controlplane in var.controlplane: controlplane.id => controlplane }
 
   bastion_id   = oci_bastion_bastion.this.id
   display_name = "${var.cluster_name}-${each.value.display_name}"
@@ -37,7 +37,7 @@ resource "oci_bastion_session" "controlplane" {
 }
 
 resource "oci_bastion_session" "worker" {
-  for_each = { for worker in data.terraform_remote_state.oci.outputs.worker: worker.id => worker }
+  for_each = { for worker in var.worker: worker.id => worker }
 
   bastion_id   = oci_bastion_bastion.this.id
   display_name = "${var.cluster_name}-${each.value.display_name}"
@@ -70,8 +70,8 @@ resource "oci_bastion_session" "kubernetes_controlplane" {
 
   target_resource_details {
     session_type                       = "PORT_FORWARDING"
-    target_resource_id                 = data.terraform_remote_state.oci.outputs.controlplane[0].id
-    target_resource_private_ip_address = data.terraform_remote_state.oci.outputs.controlplane[0].private_ip
+    target_resource_id                 = var.controlplane[0].id
+    target_resource_private_ip_address = var.controlplane[0].private_ip
     target_resource_port               = 6443
   }
 
