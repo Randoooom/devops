@@ -47,7 +47,7 @@ resource "helm_release" "zitadel_postgres" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "postgresql"
-  version    = "16.2.5"
+  version    = "16.7.8"
 
   name      = "zitadel-postgres"
   namespace = kubernetes_namespace.zitadel.metadata[0].name
