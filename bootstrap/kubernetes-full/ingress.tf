@@ -21,7 +21,7 @@ resource "helm_release" "oauth2_proxy" {
 
   repository = "https://oauth2-proxy.github.io/manifests"
   chart      = "oauth2-proxy"
-  version    = "7.8.1"
+  version    = "7.12.17"
 
   namespace = "sys-ingress-nginx"
   name      = "oauth2-proxy"
