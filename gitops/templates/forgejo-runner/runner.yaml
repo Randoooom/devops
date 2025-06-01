@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/randoooom/devops
     path: charts/forgejo-runner
-    targetRevision: feat/nextcloud
+    targetRevision: main
 
     helm:
       values: |
