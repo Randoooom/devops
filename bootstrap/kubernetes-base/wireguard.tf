@@ -42,7 +42,7 @@ resource "helm_release" "wireguard" {
 
   repository = "https://bryopsida.github.io/wireguard-chart"
   chart      = "wireguard"
-  version    = "0.26.0"
+  version    = "0.30.0"
 
   name      = "wireguard"
   namespace = "sys-wireguard"
