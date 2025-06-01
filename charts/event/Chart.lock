@@ -1,6 +1,6 @@
 dependencies:
 - name: surrealdb
   repository: https://helm.surrealdb.com
-  version: 0.3.5
-digest: sha256:fab2261c0384a61410edd1808ff21c972b96589a0806d68c9b2faae68459037d
-generated: "2024-12-29T00:14:38.09783136+01:00"
+  version: 0.3.7
+digest: sha256:1560d914cd9b08434f304c53c847a8853a1c8257b2a493d6a129610ead5658ce
+generated: "2025-06-01T19:56:43.298455601Z"
