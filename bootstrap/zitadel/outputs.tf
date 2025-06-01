@@ -35,3 +35,13 @@ output "feedback_fusion_client_secret" {
 output "zitadel_feedback_fusion_id" {
   value = zitadel_application_oidc.feedback_fusion.id
 }
+
+output "forgejo_client_id" {
+  value     = zitadel_application_oidc.forgejo.client_id
+  sensitive = true
+}
+
+output "forgejo_client_secret" {
+  value     = zitadel_application_oidc.forgejo.client_secret
+  sensitive = true
+}

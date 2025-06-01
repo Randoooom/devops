@@ -1,6 +1,6 @@
 resource "oci_bastion_bastion" "this" {
   compartment_id               = var.compartment_ocid
-  target_subnet_id             = var.subnet_id 
+  target_subnet_id             = var.subnet_id
   bastion_type                 = "STANDARD"
   client_cidr_block_allow_list = ["0.0.0.0/0"]
 }
@@ -13,7 +13,7 @@ resource "null_resource" "always_run" {
 }
 
 resource "oci_bastion_session" "controlplane" {
-  for_each = { for controlplane in var.controlplane: controlplane.id => controlplane }
+  for_each = { for controlplane in var.controlplane : controlplane.id => controlplane }
 
   bastion_id   = oci_bastion_bastion.this.id
   display_name = "${var.cluster_name}-${each.value.display_name}"
@@ -37,7 +37,7 @@ resource "oci_bastion_session" "controlplane" {
 }
 
 resource "oci_bastion_session" "worker" {
-  for_each = { for worker in var.worker: worker.id => worker }
+  for_each = { for worker in var.worker : worker.id => worker }
 
   bastion_id   = oci_bastion_bastion.this.id
   display_name = "${var.cluster_name}-${each.value.display_name}"

@@ -6,10 +6,6 @@ variable "compartment_ocid" {
   type = string
 }
 
-variable "labels" {
-  type = map(string)
-}
-
 variable "vcn_cidrs" {
   type = list(string)
 }

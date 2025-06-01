@@ -14,5 +14,10 @@ terraform {
       source  = "alekc/kubectl"
       version = "2.1.3"
     }
+
+    oci = {
+      source  = "oracle/oci"
+      version = "6.18.0"
+    }
   }
 }

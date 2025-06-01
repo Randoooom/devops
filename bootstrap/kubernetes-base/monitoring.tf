@@ -87,7 +87,7 @@ resource "helm_release" "prometheus" {
         podMonitorSelectorNilUsesHelmValues     = false
         probeSelectorNilUsesHelmValues          = false
 
-        retention = "3d"
+        retention     = "3d"
         retentionSize = "3GB"
 
         remoteWrite = [

@@ -6,10 +6,6 @@ variable "compartment_ocid" {
   type = string
 }
 
-variable "labels" {
-  type = map(string)
-}
-
 variable "talos_image_oci_bucket_url" {
   type = string
 }

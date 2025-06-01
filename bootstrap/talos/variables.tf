@@ -7,11 +7,11 @@ variable "talos_version" {
 }
 
 variable "controlplane" {
-  type = list(object({ private_ip: string }))
+  type = list(object({ private_ip : string }))
 }
 
 variable "worker" {
-  type = list(object({ private_ip: string }))
+  type = list(object({ private_ip : string }))
 }
 
 variable "talos_ccm_version" {
