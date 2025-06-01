@@ -32,3 +32,21 @@ terraform {
 }
 EOF
 }
+
+generate "common" {
+  path = "common_variables.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
+  variable "labels" {
+    type = map(string)
+  }
+
+  variable "module_path" {
+    type = string
+  }
+  EOF
+}
+
+inputs = {
+  module_path = "${get_terragrunt_dir()}/../modules"
+}

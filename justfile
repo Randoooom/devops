@@ -18,7 +18,7 @@ bastion:
     sleep 2
 
     if grep -q "Permission denied" .bastion; then \
-        AWS_REQUEST_CHECKSUM_CALCULATION="when_required" terragrunt -chdir=./bootstrap/bastion apply -input=false -auto-approve; \
+        cd ./bootstrap/bastion && terragrunt  apply -input=false -auto-approve && cd ../..; \
         sleep 5; \
         rm -f .bastion; \
         just bastion; \
