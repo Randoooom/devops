@@ -69,8 +69,9 @@ resource "helm_release" "ingress" {
   values = [yamlencode({
     controller = {
       config = {
-        use-gzip            = true
-        otlp-collector-host = "alloy.sys-monitoring.svc.cluster.local"
+        use-gzip               = true
+        otlp-collector-host    = "alloy.sys-monitoring.svc.cluster.local"
+        annotations-risk-level = "Critical"
       }
       ingressClass = each.value.className
       ingressClassResource = {
