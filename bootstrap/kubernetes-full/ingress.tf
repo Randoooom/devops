@@ -23,7 +23,7 @@ resource "helm_release" "oauth2_proxy" {
   chart      = "oauth2-proxy"
   version    = "7.8.1"
 
-  namespace = "sys-ingress-nginx" 
+  namespace = "sys-ingress-nginx"
   name      = "oauth2-proxy"
 
   values = [yamlencode({

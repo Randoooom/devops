@@ -119,5 +119,5 @@ EOF
               hard:
                 requests.storage: 50Gi
     EOT
-  cert_sans = concat([ for controlplane in var.controlplane: controlplane.private_ip ], [ for worker in var.worker: worker.private_ip ])
+  cert_sans                   = concat([for controlplane in var.controlplane : controlplane.private_ip], [for worker in var.worker : worker.private_ip])
 }

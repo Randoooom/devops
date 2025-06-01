@@ -57,7 +57,7 @@ resource "kubernetes_secret" "forgejo_config" {
   }
 
   data = {
-    database   = <<EOF
+    database      = <<EOF
 DB_TYPE=postgres
 HOST=forgejo-postgresql
 NAME=gitea
@@ -65,11 +65,11 @@ USER=gitea
 PASSWD=${random_password.forgejo_postgres_gitea.result}
 SCHEMA=public
 EOF
-    server     = <<EOF
+    server        = <<EOF
 DOMAIN=git.${var.public_domain}
 SSH_DOMAIN=ssh.git.${var.public_domain}
 EOF
-    storage    = <<EOF
+    storage       = <<EOF
 STORAGE_TYPE=minio
 MINIO_ENDPOINT=${var.bucket_endpoint}
 MINIO_USE_SSL=true
@@ -78,20 +78,20 @@ MINIO_SECRET_ACCESS_KEY=${var.forgejo_bucket.key}
 MINIO_BUCKET=${var.forgejo_bucket.name}
 MINIO_LOCATION=${var.region}
 EOF
-    queue      = <<EOF
+    queue         = <<EOF
 TYPE=redis
 CONN_STR=redis://:${random_password.redis_password.result}@forgejo-redis-master:6379/0
 EOF
-    cache      = <<EOF
+    cache         = <<EOF
 ENABLED=true
 ADAPTER=redis
 HOST=redis://:${random_password.redis_password.result}@forgejo-redis-master:6379/0
 EOF
-    session    = <<EOF
+    session       = <<EOF
 PROVIDER=redis
 PROVIDER_CONFIG=redis://:${random_password.redis_password.result}@forgejo-redis-master:6379/0
 EOF
-    service    = <<EOF
+    service       = <<EOF
 DISABLE_REGISTRATION=false
 SHOW_REGISTRATION_BUTTON=false
 REGISTER_EMAIL_CONFIRM=true
@@ -102,10 +102,10 @@ DEFAULT_ORG_VISIBILITY=limited
 ALLOWED_USER_VISIBILITY_MODES=limited,private
 ALLOW_ONLY_EXTERNAL_REGISTRATION=true
 EOF
-    actions    = <<EOF
+    actions       = <<EOF
 DEFAULT_ACTIONS_URL=https://git.${var.public_domain}
 EOF
-    mailer     = <<EOF
+    mailer        = <<EOF
 ENABLED=true
 PROTOCOL=smtp+starttls
 SMTP_PORT=587
