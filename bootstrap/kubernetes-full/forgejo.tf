@@ -117,7 +117,11 @@ EOF
     oauth2_client = <<EOF
 ENABLE_AUTO_REGISTRATION=true
 EOF
+    migrations    = <<EOF
+ALLOW_LOCALNETWORKS=true
+EOF
   }
+
 }
 
 resource "random_password" "forgejo_admin" {
@@ -270,6 +274,12 @@ resource "helm_release" "forgejo" {
     persistence = {
       enabled = true
       size    = "5Gi"
+    }
+
+    deployment = {
+      labels = {
+        wireguard = "true"
+      }
     }
   })]
 }
