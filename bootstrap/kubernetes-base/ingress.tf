@@ -93,6 +93,11 @@ resource "helm_release" "ingress" {
           enabled = true
         }
       }
+      resources = {
+        requests = {
+          cpu = "25m"
+        }
+      }
     }
   })]
 }

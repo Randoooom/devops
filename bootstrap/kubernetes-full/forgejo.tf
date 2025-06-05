@@ -182,6 +182,19 @@ resource "helm_release" "forgejo" {
         persistence = {
           size = "2Gi"
         }
+
+        resources = {
+          requests = {
+            cpu              = "40m"
+            memory           = "60Mi"
+            ephemeral-storage = "50Mi"
+          }
+          limits = {
+            cpu              = "150m"
+            memory           = "200Mi"
+            ephemeral-storage = "2Gi"
+          }
+        }
       }
     }
 
@@ -208,6 +221,19 @@ resource "helm_release" "forgejo" {
       primary = {
         persistence = {
           size = "5Gi"
+        }
+
+        resources = {
+          requests = {
+            cpu              = "40m"
+            memory           = "60Mi"
+            ephemeral-storage = "50Mi"
+          }
+          limits = {
+            cpu              = "150m"
+            memory           = "200Mi"
+            ephemeral-storage = "2Gi"
+          }
         }
       }
     }

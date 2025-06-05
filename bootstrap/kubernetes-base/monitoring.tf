@@ -105,20 +105,6 @@ resource "helm_release" "prometheus" {
             }
           }
         ]
-
-        storageSpec = {
-          volumeClaimTemplate = {
-            spec = {
-              storageClassName = "longhorn"
-              accessModes      = ["ReadWriteOnce"]
-              resources = {
-                requests = {
-                  storage = "4Gi"
-                }
-              }
-            }
-          }
-        }
       }
     }
   })]

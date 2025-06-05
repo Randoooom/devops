@@ -67,6 +67,19 @@ resource "helm_release" "zitadel_postgres" {
         persistence = {
           size = "4Gi"
         }
+
+        resources = {
+          requests = {
+            cpu              = "40m"
+            memory           = "60Mi"
+            ephemeral-storage = "50Mi"
+          }
+          limits = {
+            cpu              = "150m"
+            memory           = "200Mi"
+            ephemeral-storage = "2Gi"
+          }
+        }
       }
     })
   ]
