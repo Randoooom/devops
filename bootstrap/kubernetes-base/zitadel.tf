@@ -70,13 +70,13 @@ resource "helm_release" "zitadel_postgres" {
 
         resources = {
           requests = {
-            cpu              = "40m"
-            memory           = "60Mi"
+            cpu               = "40m"
+            memory            = "60Mi"
             ephemeral-storage = "50Mi"
           }
           limits = {
-            cpu              = "150m"
-            memory           = "200Mi"
+            cpu               = "150m"
+            memory            = "200Mi"
             ephemeral-storage = "2Gi"
           }
         }
