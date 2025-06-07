@@ -76,10 +76,12 @@ resource "helm_release" "s3" {
   namespace = kubernetes_namespace.s3.metadata[0].name
 
   values = [yamlencode({
+    mountMode = "process"
+
     sidecars = {
       livenessProbeImage = {
         repository = "registry.k8s.io/sig-storage/livenessprobe"
-        tag        = "v2.6.0"
+        tag        = "v2.14.0"
       }
       csiProvisionerImage = {
         repository = "registry.k8s.io/sig-storage/csi-provisioner"
@@ -87,7 +89,7 @@ resource "helm_release" "s3" {
       }
       nodeDriverRegistrarImage = {
         repository = "registry.k8s.io/sig-storage/csi-node-driver-registrar"
-        tag        = "v2.5.0"
+        tag        = "v2.14.0"
       }
       csiResizerImage = {
         repository = "registry.k8s.io/sig-storage/csi-resizer"
@@ -120,6 +122,17 @@ resource "helm_release" "s3" {
     }
 
     node = {
+      envs = [
+        {
+          name = "JUICEFS_MOUNT_NAMESPACE"
+          valueFrom = {
+            fieldRef = {
+              fieldPath = "metadata.namespace"
+            }
+          }
+        }
+      ]
+
       resources = {
         requests = {
           cpu = "20m"
@@ -146,7 +159,7 @@ resource "kubernetes_secret" "juicefs_s3_credentials" {
     name       = "juicefs"
     metaurl    = "redis://:${random_password.juicefs_redis_password.result}@juicefs-redis-master:6379/0"
     storage    = "s3"
-    bucket     = "${var.buckets["${var.cluster_name}-csi"].name}.${var.bucket_endpoint}"
+    bucket     = "https://${var.buckets["${var.cluster_name}-csi"].name}.${var.bucket_endpoint}"
     access-key = var.buckets["${var.cluster_name}-csi"].id
     secret-key = var.buckets["${var.cluster_name}-csi"].key
   }
