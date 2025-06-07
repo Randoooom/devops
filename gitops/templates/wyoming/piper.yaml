@@ -17,6 +17,7 @@ spec:
         global:
           fallbackDefaults:
             pvcSize: 1Gi
+            storageClass: s3
 
         podOptions:
           nodeSelector:

@@ -126,3 +126,17 @@ variable "zitadel_smtp_password" {
 variable "zitadel_smtp_sender" {
   type = string
 }
+
+variable "bucket_endpoint" {
+  type      = string
+  sensitive = true
+}
+
+variable "buckets" {
+  type = map(object({
+    id   = string,
+    key  = string
+    name = string
+  }))
+  sensitive = true
+}
