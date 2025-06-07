@@ -26,6 +26,10 @@ dependency "mail" {
   config_path = "${get_terragrunt_dir()}/../mail"
 }
 
+dependency "kubernetes" {
+  config_path = "${get_terragrunt_dir()}/../kubernetes-base"
+}
+
 inputs = {
   kubeconfig                  = dependency.talos.outputs.kubeconfig
   argocd_client_id            = dependency.zitadel.outputs.argocd_client_id
@@ -38,6 +42,9 @@ inputs = {
   forgejo_bucket              = dependency.storage.outputs.buckets["forgejo"]
   bucket_endpoint             = dependency.storage.outputs.bucket_endpoint
 
-  smtp_host = dependency.mail.outputs.smtp_host
+  smtp_host   = dependency.mail.outputs.smtp_host
   smtp_sender = dependency.mail.outputs.senders
+
+  redis_host     = dependency.kubernetes.outputs.redis_host
+  redis_password = dependency.kubernetes.outputs.redis_password
 }

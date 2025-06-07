@@ -69,3 +69,13 @@ variable "smtp_sender" {
   type      = map(any)
   sensitive = true
 }
+
+variable "redis_host" {
+  sensitive = true
+  type      = string
+}
+
+variable "redis_password" {
+  sensitive = true
+  type      = string
+}
