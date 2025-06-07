@@ -29,7 +29,7 @@ resource "helm_release" "s3_redis" {
 
   repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "redis"
-  version    = "21.1.11"
+  version    = "21.2.0"
 
   name      = "juicefs-redis"
   namespace = kubernetes_namespace.s3.metadata[0].name
