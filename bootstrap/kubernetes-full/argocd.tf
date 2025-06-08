@@ -15,8 +15,9 @@ resource "kubernetes_secret" "argocd" {
   }
 
   data = {
-    client-id     = var.argocd_client_id
-    client-secret = var.argocd_client_secret
+    client-id      = var.argocd_client_id
+    client-secret  = var.argocd_client_secret
+    redis-password = var.redis_password
   }
 }
 
@@ -34,6 +35,20 @@ resource "helm_release" "argocd" {
     global = {
       domain = "argocd.internal.${var.cluster_domain}"
     }
+
+    redis = {
+      enabled = false
+    }
+
+    externalRedis = {
+      host           = "${var.redis_host}"
+      existingSecret = kubernetes_secret.argocd.metadata[0].name
+    }
+
+    redisSecretInit = {
+      enabled = false
+    }
+
     configs = {
       repositories = {
         docker-registry = {
@@ -70,7 +85,13 @@ g, ${var.zitadel_project}:admin, role:admin
 EOF
       }
     }
+
     server = {
+      extraArgs = [
+        "--redisdb=4",
+        "--redis-use-tls"
+      ]
+
       ingress = {
         enabled          = true
         ingressClassName = "internal"
@@ -82,6 +103,21 @@ EOF
         tls = true
       }
     }
+
+    controller = {
+      extraArgs = [
+        "--redisdb=4",
+        "--redis-use-tls"
+      ]
+    }
+
+    repoServer = {
+      extraArgs = [
+        "--redisdb=4",
+        "--redis-use-tls"
+      ]
+    }
+
     dex = {
       enabled = false
     }

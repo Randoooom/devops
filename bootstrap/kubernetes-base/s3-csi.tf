@@ -8,63 +8,6 @@ resource "kubernetes_namespace" "s3" {
   }
 }
 
-resource "random_password" "juicefs_redis_password" {
-  special = false
-  length  = 40
-}
-
-resource "kubernetes_secret" "juicefs_redis_credentials" {
-  metadata {
-    name      = "juicefs-redis-credentials"
-    namespace = kubernetes_namespace.s3.metadata[0].name
-  }
-
-  data = {
-    password = random_password.juicefs_redis_password.result
-  }
-}
-
-resource "helm_release" "s3_redis" {
-  depends_on = [kubernetes_namespace.s3, kubernetes_secret.juicefs_redis_credentials]
-
-  repository = "oci://registry-1.docker.io/bitnamicharts"
-  chart      = "redis"
-  version    = "21.1.11"
-
-  name      = "juicefs-redis"
-  namespace = kubernetes_namespace.s3.metadata[0].name
-
-  values = [yamlencode({
-    architecture = "standalone"
-
-    auth = {
-      existingSecret            = "juicefs-redis-credentials"
-      existingSecretPasswordKey = "password"
-    }
-
-    master = {
-      count = 1
-
-      persistence = {
-        size = "4Gi"
-      }
-
-      resources = {
-        requests = {
-          cpu               = "40m"
-          memory            = "60Mi"
-          ephemeral-storage = "50Mi"
-        }
-        limits = {
-          cpu               = "150m"
-          memory            = "200Mi"
-          ephemeral-storage = "2Gi"
-        }
-      }
-    }
-  })]
-}
-
 resource "helm_release" "s3" {
   depends_on = [kubernetes_namespace.s3]
 
@@ -157,7 +100,7 @@ resource "kubernetes_secret" "juicefs_s3_credentials" {
 
   data = {
     name       = "juicefs"
-    metaurl    = "redis://:${random_password.juicefs_redis_password.result}@juicefs-redis-master:6379/0"
+    metaurl    = "rediss://:${random_password.dragonfly_password.result}@${local.redis_domain}:6379/0"
     storage    = "s3"
     bucket     = "https://${var.buckets["${var.cluster_name}-csi"].name}.${var.bucket_endpoint}"
     access-key = var.buckets["${var.cluster_name}-csi"].id

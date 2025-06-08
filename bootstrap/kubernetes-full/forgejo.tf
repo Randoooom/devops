@@ -1,50 +1,17 @@
+locals {
+  forgejo_redis = "rediss://:${var.redis_password}@${var.redis_host}:6379"
+}
+
 resource "kubernetes_namespace" "forgejo" {
   metadata {
     name = "forgejo"
   }
 }
 
-resource "random_password" "redis_password" {
-  length  = 40
-  special = false
-}
-
-resource "kubernetes_secret" "redis_password" {
+data "kubernetes_secret" "forgejo_postgres" {
   metadata {
-    name      = "forgejo-redis-credentials"
+    name      = "forgejo.forgejo.postgresql.credentials.postgresql.acid.zalan.do"
     namespace = kubernetes_namespace.forgejo.metadata[0].name
-  }
-
-  data = {
-    password = random_password.redis_password.result
-  }
-}
-
-resource "random_password" "forgejo_postgres_admin" {
-  length  = 40
-  special = false
-}
-
-resource "random_password" "forgejo_postgres_gitea" {
-  length  = 40
-  special = false
-}
-
-resource "random_password" "forgejo_postgres_replication" {
-  length  = 40
-  special = false
-}
-
-resource "kubernetes_secret" "forgejo_postgres" {
-  metadata {
-    name      = "forgejo-postgres-credentials"
-    namespace = kubernetes_namespace.forgejo.metadata[0].name
-  }
-
-  data = {
-    password             = random_password.forgejo_postgres_gitea.result
-    postgres-password    = random_password.forgejo_postgres_admin.result
-    replication-password = random_password.forgejo_postgres_replication.result
   }
 }
 
@@ -59,11 +26,12 @@ resource "kubernetes_secret" "forgejo_config" {
   data = {
     database      = <<EOF
 DB_TYPE=postgres
-HOST=forgejo-postgresql
-NAME=gitea
-USER=gitea
-PASSWD=${random_password.forgejo_postgres_gitea.result}
+HOST=postgres.${var.cluster_domain}
+NAME=forgejo
+USER=forgejo.forgejo
+PASSWD=${data.kubernetes_secret.forgejo_postgres.data.password}
 SCHEMA=public
+SSL_MODE=require
 EOF
     server        = <<EOF
 DOMAIN=git.${var.public_domain}
@@ -80,16 +48,16 @@ MINIO_LOCATION=${var.region}
 EOF
     queue         = <<EOF
 TYPE=redis
-CONN_STR=redis://:${random_password.redis_password.result}@forgejo-redis-master:6379/0
+CONN_STR=${local.forgejo_redis}/1
 EOF
     cache         = <<EOF
 ENABLED=true
 ADAPTER=redis
-HOST=redis://:${random_password.redis_password.result}@forgejo-redis-master:6379/0
+HOST=${local.forgejo_redis}/2
 EOF
     session       = <<EOF
 PROVIDER=redis
-PROVIDER_CONFIG=redis://:${random_password.redis_password.result}@forgejo-redis-master:6379/0
+PROVIDER_CONFIG=${local.forgejo_redis}/3
 EOF
     service       = <<EOF
 DISABLE_REGISTRATION=false
@@ -158,7 +126,7 @@ resource "kubernetes_secret" "forgejo_oauth" {
 }
 
 resource "helm_release" "forgejo" {
-  depends_on = [kubernetes_namespace.forgejo, kubernetes_secret.redis_password, kubernetes_secret.forgejo_config, kubernetes_secret.forgejo_admin, kubernetes_secret.forgejo_oauth]
+  depends_on = [kubernetes_namespace.forgejo, kubernetes_secret.forgejo_config, kubernetes_secret.forgejo_admin, kubernetes_secret.forgejo_oauth]
 
   chart = "oci://code.forgejo.org/forgejo-helm/forgejo"
 
@@ -171,31 +139,7 @@ resource "helm_release" "forgejo" {
     }
 
     redis = {
-      enabled = true
-
-      auth = {
-        existingSecret            = "forgejo-redis-credentials"
-        existingSecretPasswordKey = "password"
-      }
-
-      master = {
-        persistence = {
-          size = "2Gi"
-        }
-
-        resources = {
-          requests = {
-            cpu               = "40m"
-            memory            = "60Mi"
-            ephemeral-storage = "50Mi"
-          }
-          limits = {
-            cpu               = "150m"
-            memory            = "200Mi"
-            ephemeral-storage = "2Gi"
-          }
-        }
-      }
+      enabled = false
     }
 
     postgresql-ha = {
@@ -203,39 +147,7 @@ resource "helm_release" "forgejo" {
     }
 
     postgresql = {
-      enabled = true
-
-      global = {
-        postgresql = {
-          auth = {
-            existingSecret = "forgejo-postgres-credentials"
-            secretKeys = {
-              adminPasswordKey       = "postgres-password"
-              userPasswordKey        = "password"
-              replicationPasswordKey = "replication-password"
-            }
-          }
-        }
-      }
-
-      primary = {
-        persistence = {
-          size = "5Gi"
-        }
-
-        resources = {
-          requests = {
-            cpu               = "40m"
-            memory            = "60Mi"
-            ephemeral-storage = "50Mi"
-          }
-          limits = {
-            cpu               = "150m"
-            memory            = "200Mi"
-            ephemeral-storage = "2Gi"
-          }
-        }
-      }
+      enabled = false
     }
 
     gitea = {
