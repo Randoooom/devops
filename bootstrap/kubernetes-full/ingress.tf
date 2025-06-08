@@ -27,6 +27,7 @@ resource "helm_release" "oauth2_proxy" {
   name      = "oauth2-proxy"
 
   values = [yamlencode({
+    replicaCount = 2
     config = {
       existingSecret = "oauth2-proxy"
       configFile     = <<EOF
