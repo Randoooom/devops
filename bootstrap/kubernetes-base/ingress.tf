@@ -68,6 +68,7 @@ resource "helm_release" "ingress" {
 
   values = [yamlencode({
     controller = {
+      replicaCount = 2
       config = {
         use-gzip               = true
         otlp-collector-host    = "alloy.sys-monitoring.svc.cluster.local"

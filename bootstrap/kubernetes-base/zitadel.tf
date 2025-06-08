@@ -115,7 +115,7 @@ EOF
         ]
       }
 
-      replicaCount = 1
+      replicaCount = 2
 
       zitadel = {
         masterkeySecretName = "zitadel-masterkey"
