@@ -4,21 +4,6 @@ resource "kubernetes_namespace" "zitadel" {
   }
 }
 
-resource "random_password" "zitadel_postgres_admin" {
-  length  = 40
-  special = false
-}
-
-resource "random_password" "zitadel_postgres_zitadel" {
-  length  = 40
-  special = false
-}
-
-resource "random_password" "zitadel_postgres_replication" {
-  length  = 40
-  special = false
-}
-
 resource "random_password" "zitadel_admin" {
   length  = 40
   special = true
@@ -29,60 +14,13 @@ resource "random_password" "zitadel_masterkey" {
   special = false
 }
 
-resource "kubernetes_secret" "zitadel_postgres" {
+data "kubernetes_secret" "zitadel_postgres" {
+  depends_on = [kubectl_manifest.postgres]
+
   metadata {
-    name      = "postgres-credentials"
+    name      = "sys-zitadel.zitadel.postgresql.credentials.postgresql.acid.zalan.do"
     namespace = kubernetes_namespace.zitadel.metadata[0].name
   }
-
-  data = {
-    password             = random_password.zitadel_postgres_zitadel.result
-    postgres-password    = random_password.zitadel_postgres_admin.result
-    replication-password = random_password.zitadel_postgres_replication.result
-  }
-}
-
-resource "helm_release" "zitadel_postgres" {
-  depends_on = [kubernetes_namespace.zitadel, helm_release.longhorn, kubernetes_secret.zitadel_postgres]
-
-  repository = "oci://registry-1.docker.io/bitnamicharts"
-  chart      = "postgresql"
-  version    = "16.7.9"
-
-  name      = "zitadel-postgres"
-  namespace = kubernetes_namespace.zitadel.metadata[0].name
-
-  values = [
-    yamlencode({
-      global = {
-        postgresql = {
-          auth = {
-            username       = "zitadel"
-            database       = "zitadel"
-            existingSecret = "postgres-credentials"
-          }
-        }
-      }
-      primary = {
-        persistence = {
-          size = "4Gi"
-        }
-
-        resources = {
-          requests = {
-            cpu               = "40m"
-            memory            = "60Mi"
-            ephemeral-storage = "50Mi"
-          }
-          limits = {
-            cpu               = "150m"
-            memory            = "200Mi"
-            ephemeral-storage = "2Gi"
-          }
-        }
-      }
-    })
-  ]
 }
 
 resource "kubernetes_secret" "zitadel" {
@@ -96,9 +34,7 @@ resource "kubernetes_secret" "zitadel" {
 Database:
   postgres:
     User:
-      password: ${random_password.zitadel_postgres_zitadel.result} 
-    Admin:
-      password: ${random_password.zitadel_postgres_admin.result} 
+      password: ${data.kubernetes_secret.zitadel_postgres.data.password} 
 FirstInstance:
   InstanceName: ${var.cluster_name}
   Org:
@@ -133,7 +69,7 @@ resource "kubernetes_secret" "zitadel_masterkey" {
 }
 
 resource "helm_release" "zitadel" {
-  depends_on = [helm_release.zitadel_postgres, kubernetes_secret.zitadel_masterkey]
+  depends_on = [kubernetes_secret.zitadel_masterkey]
 
   repository = "https://charts.zitadel.com"
   chart      = "zitadel"
@@ -146,6 +82,10 @@ resource "helm_release" "zitadel" {
 
   values = [
     yamlencode({
+      initJob = {
+        enabled = false
+      }
+
       ingress = {
         enabled   = true
         className = local.ingress
@@ -204,19 +144,13 @@ EOF
 
           Database = {
             Postgres = {
-              Host     = "zitadel-postgres-postgresql"
+              Host     = "postgres.${var.cluster_domain}"
               Port     = 5432
               Database = "zitadel"
               User = {
-                Username = "zitadel"
+                Username = data.kubernetes_secret.zitadel_postgres.data.username
                 SSL = {
-                  Mode = "disable"
-                }
-              }
-              Admin = {
-                Username = "postgres"
-                SSL = {
-                  Mode = "disable"
+                  Mode = "require"
                 }
               }
             }

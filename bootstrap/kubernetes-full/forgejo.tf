@@ -8,31 +8,10 @@ resource "kubernetes_namespace" "forgejo" {
   }
 }
 
-resource "random_password" "forgejo_postgres_admin" {
-  length  = 40
-  special = false
-}
-
-resource "random_password" "forgejo_postgres_gitea" {
-  length  = 40
-  special = false
-}
-
-resource "random_password" "forgejo_postgres_replication" {
-  length  = 40
-  special = false
-}
-
-resource "kubernetes_secret" "forgejo_postgres" {
+data "kubernetes_secret" "forgejo_postgres" {
   metadata {
-    name      = "forgejo-postgres-credentials"
+    name      = "forgejo.forgejo.postgresql.credentials.postgresql.acid.zalan.do"
     namespace = kubernetes_namespace.forgejo.metadata[0].name
-  }
-
-  data = {
-    password             = random_password.forgejo_postgres_gitea.result
-    postgres-password    = random_password.forgejo_postgres_admin.result
-    replication-password = random_password.forgejo_postgres_replication.result
   }
 }
 
@@ -47,11 +26,12 @@ resource "kubernetes_secret" "forgejo_config" {
   data = {
     database      = <<EOF
 DB_TYPE=postgres
-HOST=forgejo-postgresql
-NAME=gitea
-USER=gitea
-PASSWD=${random_password.forgejo_postgres_gitea.result}
+HOST=postgres.${var.cluster_domain}
+NAME=forgejo
+USER=forgejo.forgejo
+PASSWD=${data.kubernetes_secret.forgejo_postgres.data.password}
 SCHEMA=public
+SSL_MODE=require
 EOF
     server        = <<EOF
 DOMAIN=git.${var.public_domain}
@@ -167,39 +147,7 @@ resource "helm_release" "forgejo" {
     }
 
     postgresql = {
-      enabled = true
-
-      global = {
-        postgresql = {
-          auth = {
-            existingSecret = "forgejo-postgres-credentials"
-            secretKeys = {
-              adminPasswordKey       = "postgres-password"
-              userPasswordKey        = "password"
-              replicationPasswordKey = "replication-password"
-            }
-          }
-        }
-      }
-
-      primary = {
-        persistence = {
-          size = "5Gi"
-        }
-
-        resources = {
-          requests = {
-            cpu               = "40m"
-            memory            = "60Mi"
-            ephemeral-storage = "50Mi"
-          }
-          limits = {
-            cpu               = "150m"
-            memory            = "200Mi"
-            ephemeral-storage = "2Gi"
-          }
-        }
-      }
+      enabled = false
     }
 
     gitea = {
