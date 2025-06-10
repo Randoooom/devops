@@ -1,6 +1,61 @@
 locals {
   redis_domain = "redis.${var.cluster_domain}"
   redis_bucket = var.buckets["redis"]
+
+  dragonfly_manifest = {
+    apiVersion = "dragonflydb.io/v1alpha1"
+    kind       = "Dragonfly"
+    metadata = {
+      name      = "dragonfly"
+      namespace = kubernetes_namespace.redis.metadata[0].name
+    }
+    spec = {
+      authentication = {
+        passwordFromSecret = {
+          name = kubernetes_secret.dragonfly_password.metadata[0].name
+          key  = "password"
+        }
+      }
+      replicas = 2
+      tlsSecretRef = {
+        name = "dragonfly-tls"
+      }
+      serviceSpec = {
+        annotations = {
+          "external-dns.alpha.kubernetes.io/hostname" = local.redis_domain
+        }
+      }
+      snapshot = {
+        cron = "0 * * * *"
+        dir  = "s3://${local.redis_bucket.name}/"
+      }
+      env = [
+        {
+          name = "AWS_ACCESS_KEY_ID"
+          valueFrom = {
+            secretKeyRef = {
+              name = kubernetes_secret.dragonfly_s3.metadata[0].name
+              key  = "id"
+            }
+          }
+        },
+        {
+          name = "AWS_SECRET_ACCESS_KEY"
+          valueFrom = {
+            secretKeyRef = {
+              name = kubernetes_secret.dragonfly_s3.metadata[0].name
+              key  = "key"
+            }
+          }
+        },
+        {
+          name  = "DFLY_s3_endpoint"
+          value = "${var.bucket_endpoint}"
+        }
+      ]
+
+    }
+  }
 }
 
 resource "kubernetes_namespace" "redis" {
@@ -77,61 +132,61 @@ resource "kubernetes_secret" "dragonfly_s3" {
   }
 }
 
+resource "null_resource" "dragonfly_dump" {
+  triggers = {
+    manifest = sha256(yamlencode(local.dragonfly_manifest))
+  }
+}
+
+resource "kubernetes_job" "dragonfly_dump" {
+  depends_on = [null_resource.dragonfly_dump]
+
+  metadata {
+    name      = "dragonfly-dump"
+    namespace = kubernetes_namespace.redis.metadata[0].name
+  }
+
+  spec {
+    template {
+      metadata {
+        labels = {
+          job = "dragonfly-dump"
+        }
+      }
+
+      spec {
+        container {
+          name  = "dragonfly-dump"
+          image = "redis:7.2-alpine"
+          command = [
+            "sh", "-c",
+            <<EOT
+if redis-cli --tls -h ${local.redis_domain} PING | grep -q PONG; then
+  redis-cli --tls -h ${local.redis_domain} SAVE
+fi
+EOT
+          ]
+
+          env {
+            name = "REDISCLI_AUTH"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.dragonfly_password.metadata[0].name
+                key  = "password"
+              }
+            }
+          }
+        }
+
+        restart_policy = "Never"
+      }
+    }
+    backoff_limit = 1
+  }
+}
+
 resource "kubectl_manifest" "dragonfly" {
-  depends_on = [helm_release.dragonfly]
+  depends_on = [helm_release.dragonfly, null_resource.dragonfly_dump]
 
-  yaml_body = yamlencode({
-    apiVersion = "dragonflydb.io/v1alpha1"
-    kind       = "Dragonfly"
-    metadata = {
-      name      = "dragonfly"
-      namespace = kubernetes_namespace.redis.metadata[0].name
-    }
-    spec = {
-      authentication = {
-        passwordFromSecret = {
-          name = kubernetes_secret.dragonfly_password.metadata[0].name
-          key  = "password"
-        }
-      }
-      replicas = 2
-      tlsSecretRef = {
-        name = "dragonfly-tls"
-      }
-      serviceSpec = {
-        annotations = {
-          "external-dns.alpha.kubernetes.io/hostname" = local.redis_domain
-        }
-      }
-      snapshot = {
-        cron = "0 0 * * *"
-        dir  = "s3://${local.redis_bucket.name}/"
-      }
-      env = [
-        {
-          name = "AWS_ACCESS_KEY_ID"
-          valueFrom = {
-            secretKeyRef = {
-              name = kubernetes_secret.dragonfly_s3.metadata[0].name
-              key  = "id"
-            }
-          }
-        },
-        {
-          name = "AWS_SECRET_ACCESS_KEY"
-          valueFrom = {
-            secretKeyRef = {
-              name = kubernetes_secret.dragonfly_s3.metadata[0].name
-              key  = "key"
-            }
-          }
-        },
-        {
-          name  = "DFLY_s3_endpoint"
-          value = "${var.bucket_endpoint}"
-        }
-      ]
-
-    }
-  })
+  yaml_body = yamlencode(local.dragonfly_manifest)
 }
