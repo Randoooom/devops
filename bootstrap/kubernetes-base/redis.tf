@@ -157,7 +157,7 @@ resource "kubernetes_job" "dragonfly_dump" {
       spec {
         container {
           name  = "dragonfly-dump"
-          image = "redis:7.2-alpine"
+          image = "redis:8.0-alpine"
           command = [
             "sh", "-c",
             <<EOT
