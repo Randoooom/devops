@@ -95,7 +95,6 @@ EOF
           cloud-provider: external
       apiServer:
         extraArgs:
-          cloud-provider: external
           anonymous-auth: true
       inlineManifests:
         - name: oci-cloud-controller-manager
