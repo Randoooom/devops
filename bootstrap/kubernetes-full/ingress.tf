@@ -10,9 +10,10 @@ resource "kubernetes_secret" "oauth2_proxy" {
   }
 
   data = {
-    cookie-secret = random_password.oauth2_proxy_cookie_secret.result
-    client-id     = var.oauth2_proxy_client_id
-    client-secret = var.oauth2_proxy_client_secret
+    cookie-secret  = random_password.oauth2_proxy_cookie_secret.result
+    client-id      = var.oauth2_proxy_client_id
+    client-secret  = var.oauth2_proxy_client_secret
+    redis-password = var.redis_password
   }
 }
 
@@ -44,6 +45,7 @@ set_xauthrequest = true
 EOF
     }
     metrics = {
+      enabled = true
       serviceMonitor = {
         enabled = true
       }
@@ -53,6 +55,18 @@ EOF
       hosts     = ["secure.${var.cluster_domain}"]
       className = "nginx"
       path      = "/oauth2"
+    }
+
+    sessionStorage = {
+      type = "redis"
+
+      redis = {
+        existingSecret = "oauth2-proxy"
+        passwordKey    = "redis-password"
+        standalone = {
+          connectionUrl = "rediss://${var.redis_host}:6379/5"
+        }
+      }
     }
   })]
 }
