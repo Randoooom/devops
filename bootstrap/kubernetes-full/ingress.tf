@@ -55,6 +55,8 @@ EOF
       hosts     = ["secure.${var.cluster_domain}"]
       className = "cilium"
       path      = "/oauth2"
+      pathType  = "Prefix"
+
 
       tls = [
         {
