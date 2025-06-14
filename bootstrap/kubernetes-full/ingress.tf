@@ -57,7 +57,6 @@ EOF
       path      = "/oauth2"
       pathType  = "Prefix"
 
-
       tls = [
         {
           hosts = ["secure.${var.cluster_domain}"]
