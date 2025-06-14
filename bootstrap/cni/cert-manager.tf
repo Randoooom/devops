@@ -5,11 +5,9 @@ resource "kubernetes_namespace" "cert_manager" {
 }
 
 resource "kubernetes_secret" "cert_manager" {
-  depends_on = [kubernetes_namespace.cert_manager]
-
   metadata {
     name      = "cloudflare-api-token"
-    namespace = "sys-cert-manager"
+    namespace = kubernetes_namespace.cert_manager.metadata[0].name
   }
 
   data = {

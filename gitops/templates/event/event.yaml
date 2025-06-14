@@ -19,8 +19,7 @@ spec:
         clusterDomain: {{ .Values.clusterDomain }}
 
         ingress:
-          annotations:
-            nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
+          className: cilium
           hosts:
             - host: event.{{ .Values.domain }}
               paths:
@@ -32,11 +31,13 @@ spec:
               secretName: event-tls
         surrealdb:
           ingress:
-            annotations:
-              nginx.ingress.kubernetes.io/enable-opentelemetry: "false"
+            className: cilium
             hosts:
               - host: surrealdb.{{ .Values.clusterDomain }}
                 paths:
                   - path: /
                     pathType: Prefix
+            tls:
+              - hosts:
+                  - surrealdb.{{ .Values.clusterDomain }} 
   {{- include "common" . | nindent 2 }}

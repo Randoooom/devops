@@ -53,8 +53,15 @@ EOF
     ingress = {
       enabled   = true
       hosts     = ["secure.${var.cluster_domain}"]
-      className = "nginx"
+      className = "cilium"
       path      = "/oauth2"
+      pathType  = "Prefix"
+
+      tls = [
+        {
+          hosts = ["secure.${var.cluster_domain}"]
+        }
+      ]
     }
 
     sessionStorage = {

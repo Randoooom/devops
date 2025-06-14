@@ -4,6 +4,7 @@ locals {
       for repo in data.mirrors : {
         organization = org
         repository   = repo
+        name         = regex("([^/]+)\\.git$", repo)[0]
       }
     ]
   ])
@@ -16,10 +17,13 @@ resource "forgejo_organization" "this" {
   visibility = each.value.public ? "public" : "limited"
 }
 
-# https://github.com/svalabs/terraform-provider-forgejo/issues/25
-# resource "forgejo_repository" "this" {
-#   for_each = toset(local.repositories)
-#
-#   name  = each.key.repository
-#   owner = forgejo_repository.this[each.key.organization].name
-# }
+resource "forgejo_repository" "this" {
+  for_each = { for idx, repository in local.repositories : idx => repository }
+
+  name  = each.value.name
+  owner = forgejo_organization.this[each.value.organization].name
+
+  mirror          = true
+  clone_addr      = each.value.repository
+  mirror_interval = "12h0m0s"
+}

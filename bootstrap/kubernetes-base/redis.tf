@@ -97,8 +97,6 @@ resource "helm_release" "dragonfly" {
 }
 
 resource "kubectl_manifest" "dragonfly_certificate" {
-  depends_on = [kubectl_manifest.letsencrypt]
-
   yaml_body = yamlencode({
     apiVersion = "cert-manager.io/v1"
     kind       = "Certificate"
