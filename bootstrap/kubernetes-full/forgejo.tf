@@ -206,7 +206,7 @@ resource "helm_release" "forgejo" {
       annotations = {
         "cert-manager.io/cluster-issuer" = "letsencrypt"
       }
-      className = "nginx"
+      className = "cilium"
     }
 
     persistence = {

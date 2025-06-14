@@ -53,7 +53,7 @@ EOF
     ingress = {
       enabled   = true
       hosts     = ["secure.${var.cluster_domain}"]
-      className = "nginx"
+      className = "cilium"
       path      = "/oauth2"
     }
 

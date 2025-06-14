@@ -10,8 +10,6 @@ resource "kubernetes_namespace" "ingress" {
 }
 
 resource "kubectl_manifest" "ingress_certificate" {
-  depends_on = [kubectl_manifest.letsencrypt]
-
   yaml_body = yamlencode({
     apiVersion = "cert-manager.io/v1"
     kind       = "Certificate"
@@ -33,17 +31,17 @@ resource "kubectl_manifest" "ingress_certificate" {
 
 locals {
   ingresses = [
-    {
-      name      = "ingress-nginx"
-      className = local.ingress
-      internal  = false
-      annotations = {
-        "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
-        "oci.oraclecloud.com/load-balancer-type"                                  = "nlb"
-        "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
-        "external-dns.alpha.kubernetes.io/hostname"                               = "*.${var.cluster_domain}"
-      }
-    },
+    # {
+    #   name      = "ingress-nginx"
+    #   className = local.ingress
+    #   internal  = false
+    #   annotations = {
+    #     "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
+    #     "oci.oraclecloud.com/load-balancer-type"                                  = "nlb"
+    #     "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
+    #     "external-dns.alpha.kubernetes.io/hostname"                               = "*.${var.cluster_domain}"
+    #   }
+    # },
     {
       name      = "internal-ingress-nginx"
       className = local.internalIngress

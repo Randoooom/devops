@@ -18,6 +18,10 @@ dependency "storage" {
   config_path = "${get_terragrunt_dir()}/../storage"
 }
 
+dependencies {
+  paths = ["${get_terragrunt_dir()}/../cni"]
+}
+
 inputs = {
   public_subnet        = dependency.network.outputs.public_subnet
   public_subnet_cidr   = dependency.network.outputs.public_subnet_cidr

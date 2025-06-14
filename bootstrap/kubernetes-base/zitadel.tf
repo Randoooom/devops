@@ -88,7 +88,7 @@ resource "helm_release" "zitadel" {
 
       ingress = {
         enabled   = true
-        className = local.ingress
+        className = "cilium"
         annotations = {
           "cert-manager.io/cluster-issuer"                    = "letsencrypt"
           "nginx.ingress.kubernetes.io/backend-protocol"      = "GRPC"

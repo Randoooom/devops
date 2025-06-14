@@ -72,6 +72,10 @@ EOF
           metrics-bind-address: 0.0.0.0:10249
       discovery:
         enabled: true
+        registries:
+          kubernetes:
+            disabled: true
+          service: {}
       network:
         cni:
           name: none
@@ -88,7 +92,6 @@ EOF
           - https://github.com/oracle/oci-cloud-controller-manager/releases/download/${var.oracle_ccm_version}/oci-cloud-controller-manager.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-podmonitors.yaml
-          - https://frme9idv6uqw.objectstorage.eu-frankfurt-1.oci.customer-oci.com/n/frme9idv6uqw/b/public/o/cilium.yaml
           - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
       controllerManager:
         extraArgs:

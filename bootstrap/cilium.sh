@@ -3,7 +3,7 @@
 helm template \
     cilium \
     cilium/cilium \
-    --version 1.16.6 \
+    --version 1.17.4 \
     --namespace kube-system \
     --set ipam.mode=kubernetes \
     --set kubeProxyReplacement=true \
@@ -20,4 +20,7 @@ helm template \
     --set encryption.nodeEncryption=true \
     --set encryption.type=wireguard \
     --set bpf.lbExternalClusterIP=true \
-    --set socketLB.hostNamespaceOnly=true > cilium.yaml
+    --set operator.prometheus.serviceMonitor.enabled=true \
+    --set prometheus.serviceMonitor.enabled=true \
+    --set envoy.prometheus.serviceMonitor.enabled=true \
+    --set prometheus.serviceMonitor.trustCRDsExist=true | kubectl apply -f -

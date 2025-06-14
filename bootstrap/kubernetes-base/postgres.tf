@@ -62,8 +62,6 @@ resource "helm_release" "postgres" {
 }
 
 resource "kubectl_manifest" "postgres_certificate" {
-  depends_on = [kubectl_manifest.letsencrypt, kubernetes_namespace.postgres]
-
   yaml_body = yamlencode({
     apiVersion = "cert-manager.io/v1"
     kind       = "Certificate"
@@ -83,6 +81,7 @@ resource "kubectl_manifest" "postgres_certificate" {
   })
 }
 
+
 resource "kubectl_manifest" "postgres" {
   depends_on = [kubectl_manifest.postgres_certificate]
 
@@ -98,6 +97,14 @@ resource "kubectl_manifest" "postgres" {
       teamId       = "acid"
       postgresql = {
         version = "17"
+        parameters = {
+          log_connections    = "off"
+          log_disconnections = "off"
+          log_statement      = "none"
+          log_duration       = "off"
+          log_rotation_age   = "1d"
+          log_rotation_size  = "100MB"
+        }
       }
       enableLogicalBackup = true
       masterServiceAnnotations = {
@@ -115,3 +122,4 @@ resource "kubectl_manifest" "postgres" {
     }
   })
 }
+

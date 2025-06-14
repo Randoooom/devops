@@ -31,15 +31,6 @@ resource "helm_release" "longhorn" {
         "nginx.ingress.kubernetes.io/auth-response-headers" = "Authorization"
         "nginx.ingress.kubernetes.io/auth-signin"           = "https://secure.${var.cluster_domain}/oauth2/start?rd=$scheme://$host$escaped_request_uri"
         "nginx.ingress.kubernetes.io/auth-url"              = "https://secure.${var.cluster_domain}/oauth2/auth"
-        "nginx.ingress.kubernetes.io/configuration-snippet" = <<EOF
-auth_request_set $name_upstream_1 $upstream_cookie_name_1;
-
-access_by_lua_block {
-  if ngx.var.name_upstream_1 ~= "" then
-    ngx.header["Set-Cookie"] = "name_1=" .. ngx.var.name_upstream_1 .. ngx.var.auth_cookie:match("(; .*)")
-  end
-}
-EOF
       }
     }
   })]
