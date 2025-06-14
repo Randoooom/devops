@@ -87,9 +87,11 @@ resource "helm_release" "cilium" {
     }
 
     ingressController = {
-      enabled           = true
-      defaultSecretName = kubernetes_namespace.cilium.metadata[0].name
-      loadbalancerMode  = "shared"
+      enabled                = true
+      enforceHttps           = true
+      defaultSecretName      = "cilium-ingress-tls"
+      defaultSecretNamespace = kubernetes_namespace.cilium.metadata[0].name
+      loadbalancerMode       = "shared"
 
       service = {
         annotations = {
@@ -113,6 +115,7 @@ resource "helm_release" "cilium" {
           "icmp",
           "http"
         ]
+
         serviceMonitor = {
           enabled = true
         }

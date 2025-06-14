@@ -55,6 +55,12 @@ EOF
       hosts     = ["secure.${var.cluster_domain}"]
       className = "cilium"
       path      = "/oauth2"
+
+      tls = [
+        {
+          hosts = ["secure.${var.cluster_domain}"]
+        }
+      ]
     }
 
     sessionStorage = {
