@@ -13,7 +13,7 @@ resource "helm_release" "s3" {
 
   repository = "https://juicedata.github.io/charts"
   chart      = "juicefs-csi-driver"
-  version    = "0.28.2"
+  version    = "0.28.4"
 
   name      = "juicefs"
   namespace = kubernetes_namespace.s3.metadata[0].name
