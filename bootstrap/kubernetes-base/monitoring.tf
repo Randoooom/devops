@@ -115,7 +115,7 @@ resource "helm_release" "alloy" {
 
   repository = "https://grafana.github.io/helm-charts"
   chart      = "alloy"
-  version    = "1.1.1"
+  version    = "1.1.2"
 
   namespace = "sys-monitoring"
   name      = "alloy"
