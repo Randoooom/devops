@@ -1,6 +1,11 @@
 variable "organizations" {
   type = map(object({
     public  = bool,
-    mirrors = list(string)
+    mirrors = map(string)
   }))
+}
+
+variable "access_tokens" {
+  type      = map(string)
+  sensitive = true
 }
