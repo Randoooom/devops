@@ -106,6 +106,20 @@ resource "helm_release" "cilium" {
     hubble = {
       enabled = true
 
+      relay = {
+        enabled = true
+      }
+
+      ui = {
+        enabled = true
+
+        ingress = {
+          className = "internal"
+          enabled   = true
+          hosts     = ["hubble.internal.${var.cluster_domain}"]
+        }
+      }
+
       metrics = {
         enabled = [
           "dns:query;ignoreAAAA",
