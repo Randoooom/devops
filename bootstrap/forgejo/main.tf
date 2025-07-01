@@ -1,10 +1,11 @@
 locals {
   repositories = flatten([
     for org, data in var.organizations : [
-      for repo in data.mirrors : {
+      for repo, branch in data.mirrors : {
         organization = org
         repository   = repo
         name         = regex("([^/]+)\\.git$", repo)[0]
+        branch       = branch
       }
     ]
   ])
@@ -25,5 +26,7 @@ resource "forgejo_repository" "this" {
 
   mirror          = true
   clone_addr      = each.value.repository
-  mirror_interval = "12h0m0s"
+  mirror_interval = "24h0m0s"
+  auth_token      = var.access_tokens[regex("https?://([^/]+)", each.value.repository)[0]]
+  default_branch = each.value.branch
 }

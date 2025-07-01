@@ -33,43 +33,8 @@ resource "helm_release" "prometheus" {
   name      = "prometheus"
 
   values = [yamlencode({
-    kubeScheduler = {
-      enabled = false
-    }
-
-    kubeControllerManager = {
-      enabled = false
-    }
-
-    kubeProxy = {
-      enabled = false
-    }
-
-    defaultRules = {
-      rules = {
-        node = false
-      }
-    }
-
     alertmanager = {
-      config = {
-        route = {
-          receiver = "discord"
-        }
-        receivers = [
-          {
-            name = "discord"
-            discord_configs = [
-              {
-                webhook_url = var.discord_webhook
-              }
-            ]
-          },
-          {
-            name = "null"
-          }
-        ]
-      }
+      enabled = false
     }
 
     grafana = {
