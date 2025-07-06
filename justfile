@@ -34,3 +34,8 @@ seal:
         fi
     done
 
+plan:
+  cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a plan --queue-exclude-dir bastion --experiment cli-redesign
+
+apply:
+  cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a apply --queue-exclude-dir bastion --experiment cli-redesign

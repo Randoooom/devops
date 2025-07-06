@@ -20,6 +20,8 @@ spec:
 
         ingress:
           className: cilium
+          annotations:
+            external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
           hosts:
             - host: event.{{ .Values.domain }}
               paths:
@@ -31,6 +33,8 @@ spec:
               secretName: event-tls
         surrealdb:
           ingress:
+            annotations:
+              external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
             className: cilium
             hosts:
               - host: surrealdb.{{ .Values.clusterDomain }}

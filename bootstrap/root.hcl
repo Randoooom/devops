@@ -37,13 +37,21 @@ generate "common" {
   path = "common_variables.tf"
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
-  variable "labels" {
-    type = map(string)
-  }
+variable "labels" {
+  type = map(string)
+}
 
-  variable "module_path" {
-    type = string
-  }
+variable "module_path" {
+  type = string
+}
+
+variable "services" {
+  type = map(object({
+    port      = number
+    node_port = number
+    protocol  = string
+  }))
+}
   EOF
 }
 

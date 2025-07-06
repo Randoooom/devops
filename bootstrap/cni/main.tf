@@ -86,32 +86,15 @@ resource "helm_release" "cilium" {
       }
     }
 
-    ingressController = {
-      enabled                = true
-      enforceHttps           = true
-      defaultSecretName      = "cilium-ingress-tls"
-      defaultSecretNamespace = kubernetes_namespace.cilium.metadata[0].name
-      loadbalancerMode       = "shared"
-
-      service = {
-        annotations = {
-          "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
-          "oci.oraclecloud.com/load-balancer-type"                                  = "nlb"
-          "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
-          "external-dns.alpha.kubernetes.io/hostname"                               = "*.${var.cluster_domain}"
-        }
-      }
-    }
-
     hubble = {
-      enabled = true
+      enabled = false
 
       relay = {
-        enabled = true
+        enabled = false
       }
 
       ui = {
-        enabled = true
+        enabled = false
 
         ingress = {
           className = "internal"
@@ -135,5 +118,126 @@ resource "helm_release" "cilium" {
         }
       }
     }
+
+    gatewayAPI = {
+      enabled    = true
+      enableAlpn = true
+      hostNetwork = {
+        enabled = true
+      }
+    }
   })]
+}
+
+resource "kubectl_manifest" "cilium_gateway" {
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "Gateway"
+    metadata = {
+      name = "cilium"
+      annotations = {
+        "cert-manager.io/cluster-issuer"          = "letsencrypt"
+        "external-dns.alpha.kubernetes.io/target" = local.loadbalancer_ip
+      }
+    }
+    spec = {
+      addresses = [
+        {
+          type  = "IPAddress"
+          value = local.loadbalancer_ip
+        }
+      ]
+      gatewayClassName = "cilium"
+      listeners = [
+        {
+          name     = "http"
+          protocol = "HTTP"
+          port     = var.services.http.node_port
+        },
+        {
+          name     = "https"
+          protocol = "HTTPS"
+          port     = var.services.https.node_port
+          hostname = "*.${var.cluster_domain}"
+
+          allowedRoutes = {
+            namespaces = {
+              from = "All"
+            }
+          }
+
+          tls = {
+            mode = "Terminate"
+            certificateRefs = [
+              {
+                name  = "gateway-cluster-tls"
+                kind  = "Secret"
+                group = ""
+              }
+            ]
+          }
+        },
+        {
+          name     = "https-public"
+          protocol = "HTTPS"
+          port     = var.services.https.node_port
+          hostname = "*.${var.public_domain}"
+
+          allowedRoutes = {
+            namespaces = {
+              from = "All"
+            }
+          }
+
+          tls = {
+            mode = "Terminate"
+            certificateRefs = [
+              {
+                name  = "gateway-public-tls"
+                kind  = "Secret"
+                group = ""
+              }
+            ]
+          }
+        }
+      ]
+    }
+  })
+}
+
+resource "kubectl_manifest" "gateway_https_redirect" {
+  depends_on = [kubectl_manifest.cilium_gateway]
+
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute"
+    metadata = {
+      name = "https-redirect"
+    }
+    spec = {
+      parentRefs = [
+        {
+          name        = "cilium"
+          sectionName = "http"
+        }
+      ]
+      hostnames = [
+        "*.${var.cluster_domain}",
+        "*.${var.public_domain}"
+      ]
+      rules = [
+        {
+          filters = [
+            {
+              type = "RequestRedirect"
+              requestRedirect = {
+                scheme     = "https"
+                statusCode = 301
+              }
+            }
+          ]
+        }
+      ]
+    }
+  })
 }

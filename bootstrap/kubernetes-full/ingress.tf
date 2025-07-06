@@ -50,19 +50,6 @@ EOF
         enabled = true
       }
     }
-    ingress = {
-      enabled   = true
-      hosts     = ["secure.${var.cluster_domain}"]
-      className = "cilium"
-      path      = "/oauth2"
-      pathType  = "Prefix"
-
-      tls = [
-        {
-          hosts = ["secure.${var.cluster_domain}"]
-        }
-      ]
-    }
 
     sessionStorage = {
       type = "redis"
@@ -75,5 +62,53 @@ EOF
         }
       }
     }
+
+    extraVolumes      = [var.ca_volume]
+    extraVolumeMounts = [var.ca_volume_mount]
   })]
+}
+
+
+resource "kubectl_manifest" "oauth2_proxy_route" {
+  depends_on = [helm_release.forgejo]
+
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute"
+    metadata = {
+      name      = "oauth2-proxy"
+      namespace = "sys-ingress-nginx"
+      annotations = {
+        "external-dns.alpha.kubernetes.io/target" = var.loadbalancer_ip
+      }
+    }
+    spec = {
+      parentRefs = [
+        {
+          name        = "cilium"
+          sectionName = "https-public"
+          namespace   = "default"
+        }
+      ]
+      hostnames = ["secure.${var.public_domain}"]
+      rules = [
+        {
+          matches = [
+            {
+              path = {
+                type  = "PathPrefix"
+                value = "/oauth2"
+              }
+            }
+          ]
+          backendRefs = [
+            {
+              name = "oauth2-proxy"
+              port = 80
+            }
+          ]
+        }
+      ]
+    }
+  })
 }

@@ -22,6 +22,8 @@ spec:
           ingress:
             enabled: true
             className: cilium
+            annotations:
+              external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
             hosts:
               - host: feedback-fusion.{{ .Values.clusterDomain }}
                 paths:
@@ -40,6 +42,7 @@ spec:
             enabled: true
             className: cilium
             annotations:
+              external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
               cert-manager.io/cluster-issuer: letsencrypt
             hosts:
               - host: feedback-fusion.{{ .Values.domain }}

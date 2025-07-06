@@ -35,67 +35,8 @@ variable "public_subnet_cidr" {
   type = string
 }
 
-variable "remote_wireguard_host" {
-  type = string
-}
-
-variable "remote_wireguard_public_key" {
-  type = string
-}
-
-variable "remote_subnet_cidr" {
-  type = string
-}
-
-variable "remote_wireguard_peer_cidr" {
-  type = string
-}
-
-variable "remote_wireguard_cidr" {
-  type = string
-}
-
 variable "public_domain" {
   type = string
-}
-
-variable "loki_endpoint" {
-  type = string
-}
-
-variable "loki_username" {
-  type = string
-}
-
-variable "loki_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "tempo_endpoint" {
-  type = string
-}
-
-variable "tempo_username" {
-  type = string
-}
-
-variable "tempo_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "thanos_endpoint" {
-  type = string
-}
-
-variable "thanos_username" {
-  type = string
-}
-
-variable "thanos_password" {
-  type      = string
-  sensitive = true
 }
 
 variable "zitadel_admin_mail" {
@@ -134,4 +75,34 @@ variable "buckets" {
     name = string
   }))
   sensitive = true
+}
+
+variable "loadbalancer_ip" {
+  sensitive = true
+  type      = string
+}
+
+variable "postgres_admin_password" {
+  sensitive = true
+  type      = string
+}
+
+variable "postgres_databases" {
+  sensitive = true
+  type = map(object({
+    username = string
+    password = string
+  }))
+}
+
+variable "postgres_host" {
+  type = string
+}
+
+variable "ca_volume" {
+  type = any
+}
+
+variable "ca_volume_mount" {
+  type = any
 }

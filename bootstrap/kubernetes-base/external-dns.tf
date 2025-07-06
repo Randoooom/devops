@@ -48,6 +48,21 @@ resource "helm_release" "external_dns" {
       }
     ]
 
-    extraArgs = ["--exclude-target-net=${var.public_subnet_cidr}", "--publish-internal-services"]
+    rbac = {
+      additionalPermissions = [
+        {
+          apiGroups = ["gateway.networking.k8s.io"]
+          resources = ["gateways", "httproutes", "grpcroutes", "tlsroutes", "tcproutes", "udproutes"]
+          verbs     = ["get", "watch", "list"]
+        },
+        {
+          apiGroups = [""]
+          resources = ["namespaces"]
+          verbs     = ["get", "watch", "list"]
+        }
+      ]
+    }
+
+    extraArgs = ["--exclude-target-net=${var.public_subnet_cidr}", "--publish-internal-services", "--source=gateway-httproute", "--source=gateway-grpcroute"]
   })]
 }
