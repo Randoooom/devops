@@ -86,11 +86,11 @@ resource "kubectl_manifest" "oauth2_proxy_route" {
       parentRefs = [
         {
           name        = "cilium"
-          sectionName = "https-public"
+          sectionName = "https"
           namespace   = "default"
         }
       ]
-      hostnames = ["secure.${var.public_domain}"]
+      hostnames = ["secure.${var.cluster_domain}"]
       rules = [
         {
           matches = [

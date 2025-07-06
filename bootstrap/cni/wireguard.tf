@@ -119,6 +119,27 @@ resource "kubectl_manifest" "wireguard_egress" {
               wireguard = "true"
             }
           }
+        },
+        {
+          podSelector = {
+            matchLabels = {
+              app = "csi-snapshotter"
+            }
+          }
+        },
+        {
+          podSelector = {
+            matchLabels = {
+              "app" = "longhorn-manager"
+            }
+          }
+        },
+        {
+          podSelector = {
+            matchLabels = {
+              "longhorn.io/component" = "instance-manager"
+            }
+          }
         }
       ]
       destinationCIDRs = [var.remote_subnet_cidr]

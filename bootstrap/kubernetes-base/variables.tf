@@ -106,3 +106,23 @@ variable "ca_volume" {
 variable "ca_volume_mount" {
   type = any
 }
+
+variable "backup_bucket_endpoint" {
+  sensitive = true
+  type      = string
+}
+
+variable "backup_bucket_name" {
+  sensitive = true
+  type      = string
+}
+
+variable "backup_bucket_access_key_id" {
+  sensitive = true
+  type      = string
+}
+
+variable "backup_bucket_secret_access_key" {
+  sensitive = true
+  type      = string
+}
