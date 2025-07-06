@@ -51,4 +51,4 @@ bootstrap/.env
 gitops/templates/forgejo-runner/secrets/forgejo-runner-token.yaml
 gitops/templates/feedback-fusion/secrets/feedback-fusion-config.yaml
 gitops/templates/feedback-fusion/secrets/feedback-fusion-dashboard-config.yaml
-gitops/templates/event/credentials/surrealdb-credentials.yaml
+gitops/templates/event/secrets/surrealdb-credentials.yaml
