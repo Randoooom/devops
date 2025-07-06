@@ -30,7 +30,7 @@ seal:
     find gitops/templates/**/secrets/ -type f -name '*.yaml' | while read -r file; do
         if grep -q "kind: Secret" "$file"; then
             echo "Sealing $file..."
-            kubeseal -f "$file" -w "$file"
+            kubeseal -f "$file" -w "${file%.yaml}-sealed.yaml"
         fi
     done
 
