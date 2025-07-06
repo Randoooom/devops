@@ -20,18 +20,7 @@ spec:
             tag: nightly
 
           ingress:
-            enabled: true
-            className: cilium
-            annotations:
-              external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
-            hosts:
-              - host: feedback-fusion.{{ .Values.clusterDomain }}
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - hosts:
-                  - feedback-fusion.{{ .Values.clusterDomain }}
+            enabled: false 
 
         dashboard:
           image:
@@ -39,18 +28,5 @@ spec:
             tag: "nightly"
 
           ingress:
-            enabled: true
-            className: cilium
-            annotations:
-              external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
-              cert-manager.io/cluster-issuer: letsencrypt
-            hosts:
-              - host: feedback-fusion.{{ .Values.domain }}
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - hosts:
-                  - feedback-fusion.{{ .Values.domain }}
-                secretName: feedback-fusion-tls
+            enabled: false
   {{- include "common" . | nindent 2 }}
