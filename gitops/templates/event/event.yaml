@@ -19,25 +19,8 @@ spec:
         clusterDomain: {{ .Values.clusterDomain }}
 
         ingress:
-          className: cilium
-          hosts:
-            - host: event.{{ .Values.domain }}
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - hosts:
-                - event.{{ .Values.domain }}
-              secretName: event-tls
+          enabled: false 
         surrealdb:
           ingress:
-            className: cilium
-            hosts:
-              - host: surrealdb.{{ .Values.clusterDomain }}
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - hosts:
-                  - surrealdb.{{ .Values.clusterDomain }} 
+            enabled: false 
   {{- include "common" . | nindent 2 }}

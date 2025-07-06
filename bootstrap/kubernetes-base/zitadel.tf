@@ -1,3 +1,7 @@
+locals {
+  zitadel_database = var.postgres_databases.zitadel
+}
+
 resource "kubernetes_namespace" "zitadel" {
   metadata {
     name = "sys-zitadel"
@@ -14,15 +18,6 @@ resource "random_password" "zitadel_masterkey" {
   special = false
 }
 
-data "kubernetes_secret" "zitadel_postgres" {
-  depends_on = [kubectl_manifest.postgres]
-
-  metadata {
-    name      = "sys-zitadel.zitadel.postgresql.credentials.postgresql.acid.zalan.do"
-    namespace = kubernetes_namespace.zitadel.metadata[0].name
-  }
-}
-
 resource "kubernetes_secret" "zitadel" {
   metadata {
     name      = "zitadel-config"
@@ -34,7 +29,9 @@ resource "kubernetes_secret" "zitadel" {
 Database:
   postgres:
     User:
-      password: ${data.kubernetes_secret.zitadel_postgres.data.password} 
+      password: ${local.zitadel_database.password}
+    Admin:
+      password: ${var.postgres_admin_password}
 FirstInstance:
   InstanceName: ${var.cluster_name}
   Org:
@@ -82,38 +79,8 @@ resource "helm_release" "zitadel" {
 
   values = [
     yamlencode({
-      initJob = {
-        enabled = false
-      }
-
-      ingress = {
-        enabled   = true
-        className = "cilium"
-        annotations = {
-          "cert-manager.io/cluster-issuer"                    = "letsencrypt"
-          "nginx.ingress.kubernetes.io/backend-protocol"      = "GRPC"
-          "nginx.ingress.kubernetes.io/configuration-snippet" = <<EOF
-grpc_set_header Host $http_host;
-EOF
-        }
-        hosts = [
-          {
-            host = "secure.${var.public_domain}"
-            paths = [
-              {
-                path     = "/"
-                pathType = "Prefix"
-              }
-            ]
-          }
-        ]
-        tls = [
-          {
-            hosts      = ["secure.${var.public_domain}"]
-            secretName = "zitadel-tls"
-          }
-        ]
-      }
+      extraVolumes      = [var.ca_volume]
+      extraVolumeMounts = [var.ca_volume_mount]
 
       replicaCount = 2
 
@@ -144,11 +111,19 @@ EOF
 
           Database = {
             Postgres = {
-              Host     = "postgres.${var.cluster_domain}"
+              Host     = var.postgres_host
               Port     = 5432
               Database = "zitadel"
+
               User = {
-                Username = data.kubernetes_secret.zitadel_postgres.data.username
+                Username = local.zitadel_database.username
+                SSL = {
+                  Mode = "require"
+                }
+              }
+
+              Admin = {
+                Username = "postgres"
                 SSL = {
                   Mode = "require"
                 }
@@ -159,6 +134,50 @@ EOF
       }
     })
   ]
+}
+
+resource "kubectl_manifest" "zitadel_route" {
+  depends_on = [helm_release.zitadel]
+
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "GRPCRoute"
+    metadata = {
+      name      = "zitadel"
+      namespace = kubernetes_namespace.zitadel.metadata[0].name
+      annotations = {
+        "external-dns.alpha.kubernetes.io/target" = var.loadbalancer_ip
+      }
+    }
+    spec = {
+      parentRefs = [
+        {
+          name        = "cilium"
+          sectionName = "https-public"
+          namespace   = "default"
+        }
+      ]
+      hostnames = ["secure.${var.public_domain}"]
+      rules = [
+        {
+          matches = [
+            {
+              path = {
+                type  = "PathPrefix"
+                value = "/"
+              }
+            }
+          ]
+          backendRefs = [
+            {
+              name = "zitadel"
+              port = 8080
+            }
+          ]
+        }
+      ]
+    }
+  })
 }
 
 resource "null_resource" "wait_for_zitadel" {

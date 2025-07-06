@@ -1,3 +1,4 @@
 project: ""
 domain: ""
 clusterDomain: ""
+loadBalancerIp: ""

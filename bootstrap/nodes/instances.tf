@@ -50,7 +50,8 @@ resource "oci_core_instance" "controlplane" {
   lifecycle {
     create_before_destroy = "true"
     ignore_changes = [
-      defined_tags
+      defined_tags,
+      # source_details
     ]
   }
 }
@@ -108,7 +109,8 @@ resource "oci_core_instance" "worker" {
   lifecycle {
     create_before_destroy = "true"
     ignore_changes = [
-      defined_tags
+      defined_tags,
+      # source_details
     ]
   }
 }

@@ -64,6 +64,7 @@ resource "helm_release" "wireguard" {
         "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
         "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
         "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
+        // "external-dns.alpha.kubernetes.io/target"                                 = var.loadbalancer_ip
       }
     }
     metrics = {
@@ -116,6 +117,27 @@ resource "kubectl_manifest" "wireguard_egress" {
           podSelector = {
             matchLabels = {
               wireguard = "true"
+            }
+          }
+        },
+        {
+          podSelector = {
+            matchLabels = {
+              app = "csi-snapshotter"
+            }
+          }
+        },
+        {
+          podSelector = {
+            matchLabels = {
+              "app" = "longhorn-manager"
+            }
+          }
+        },
+        {
+          podSelector = {
+            matchLabels = {
+              "longhorn.io/component" = "instance-manager"
             }
           }
         }

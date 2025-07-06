@@ -1,5 +1,5 @@
 locals {
-  redis_domain = "redis.${var.cluster_domain}"
+  redis_domain = "dragonfly.${kubernetes_namespace.redis.metadata[0].name}.svc.cluster.local"
   redis_bucket = var.buckets["redis"]
 
   dragonfly_manifest = {
@@ -10,6 +10,9 @@ locals {
       namespace = kubernetes_namespace.redis.metadata[0].name
     }
     spec = {
+      annotations = {
+        "reloader.stakater.com/auto" = "true"
+      }
       authentication = {
         passwordFromSecret = {
           name = kubernetes_secret.dragonfly_password.metadata[0].name
@@ -66,7 +69,7 @@ resource "kubernetes_namespace" "redis" {
 
 resource "random_password" "dragonfly_password" {
   special = false
-  length  = 40
+  length  = 80
 }
 
 resource "kubernetes_secret" "dragonfly_password" {
@@ -107,7 +110,7 @@ resource "kubectl_manifest" "dragonfly_certificate" {
     spec = {
       secretName = "dragonfly-tls"
       issuerRef = {
-        name = "letsencrypt"
+        name = "cluster-authority"
         kind = "ClusterIssuer"
       }
       commonName = local.redis_domain

@@ -22,8 +22,6 @@ EOF
       network:
         kubespan:
           enabled: false
-      sysctls:
-        user.max_user_namespaces: "11255"
       time:
         servers:
           - 169.254.169.254
@@ -93,6 +91,7 @@ EOF
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-podmonitors.yaml
           - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+          - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
       controllerManager:
         extraArgs:
           cloud-provider: external

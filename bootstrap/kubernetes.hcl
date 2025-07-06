@@ -1,13 +1,22 @@
 generate "kubernetes_provider" {
-path       = "kubernetes_provider.tf"
-if_exists  = "overwrite_terragrunt"
-contents   = <<EOF
+  path      = "kubernetes_provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
 variable "kubeconfig" {
   type = string
 }
 
+variable "controlplane" {
+  type = list(any)
+}
+
+variable "vpn_connected" {
+  type = bool
+  default = false
+}
+
 provider "kubernetes" {
-  host = "https://localhost:6443"
+  host = "https://$${var.vpn_connected ? var.controlplane[0].private_ip : "localhost"}:6443"
 
   client_certificate     = base64decode(yamldecode(var.kubeconfig).users.0.user.client-certificate-data)
   client_key             = base64decode(yamldecode(var.kubeconfig).users.0.user.client-key-data)
@@ -16,7 +25,7 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    host = "https://localhost:6443"
+    host = "https://$${var.vpn_connected ? var.controlplane[0].private_ip : "localhost"}:6443"
 
     client_certificate     = base64decode(yamldecode(var.kubeconfig).users.0.user.client-certificate-data)
     client_key             = base64decode(yamldecode(var.kubeconfig).users.0.user.client-key-data)
@@ -25,7 +34,7 @@ provider "helm" {
 }
 
 provider "kubectl" {
-  host = "https://localhost:6443"
+  host = "https://$${var.vpn_connected ? var.controlplane[0].private_ip : "localhost"}:6443"
 
   client_certificate     = base64decode(yamldecode(var.kubeconfig).users.0.user.client-certificate-data)
   client_key             = base64decode(yamldecode(var.kubeconfig).users.0.user.client-key-data)
@@ -34,3 +43,4 @@ provider "kubectl" {
 }
 EOF
 }
+

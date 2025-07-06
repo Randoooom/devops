@@ -1,5 +1,6 @@
 locals {
-  forgejo_redis = "rediss://:${var.redis_password}@${var.redis_host}:6379"
+  forgejo_redis    = "rediss://:${var.redis_password}@${var.redis_host}:6379"
+  forgejo_database = var.postgres_databases.forgejo
 }
 
 resource "kubernetes_namespace" "forgejo" {
@@ -26,16 +27,17 @@ resource "kubernetes_secret" "forgejo_config" {
   data = {
     database      = <<EOF
 DB_TYPE=postgres
-HOST=postgres.${var.cluster_domain}
+HOST=${var.postgres_host}
 NAME=forgejo
-USER=forgejo.forgejo
-PASSWD=${data.kubernetes_secret.forgejo_postgres.data.password}
+USER=${local.forgejo_database.username}
+PASSWD=${local.forgejo_database.password}
 SCHEMA=public
 SSL_MODE=require
 EOF
     server        = <<EOF
 DOMAIN=git.${var.public_domain}
-SSH_DOMAIN=ssh.git.${var.public_domain}
+ROOT_URL=https://git.${var.public_domain}
+SSH_DOMAIN=git.${var.public_domain}
 EOF
     storage       = <<EOF
 STORAGE_TYPE=minio
@@ -177,37 +179,9 @@ resource "helm_release" "forgejo" {
 
     service = {
       ssh = {
-        annotations = {
-          "external-dns.alpha.kubernetes.io/hostname" = "ssh.git.${var.public_domain}"
-        }
+        type     = "NodePort"
+        nodePort = "30022"
       }
-    }
-
-    ingress = {
-      enabled = true
-      hosts = [
-        {
-          host = "git.${var.public_domain}"
-          paths = [
-            {
-              path     = "/"
-              pathType = "Prefix"
-            }
-          ]
-        }
-      ]
-      tls = [
-        {
-          secretName = "forgejo-tls"
-          hosts = [
-            "git.${var.public_domain}"
-          ]
-        }
-      ]
-      annotations = {
-        "cert-manager.io/cluster-issuer" = "letsencrypt"
-      }
-      className = "cilium"
     }
 
     persistence = {
@@ -220,5 +194,54 @@ resource "helm_release" "forgejo" {
         wireguard = "true"
       }
     }
+
+    extraVolumes               = [var.ca_volume]
+    extraInitVolumeMounts      = [var.ca_volume_mount]
+    extraContainerVolumeMounts = [var.ca_volume_mount]
   })]
+}
+
+resource "kubectl_manifest" "forgejo_route" {
+  depends_on = [helm_release.forgejo]
+
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute"
+    metadata = {
+      name      = "forgejo"
+      namespace = kubernetes_namespace.forgejo.metadata[0].name
+      annotations = {
+        "external-dns.alpha.kubernetes.io/target" = var.loadbalancer_ip
+
+      }
+    }
+    spec = {
+      parentRefs = [
+        {
+          name        = "cilium"
+          sectionName = "https-public"
+          namespace   = "default"
+        }
+      ]
+      hostnames = ["git.${var.public_domain}"]
+      rules = [
+        {
+          matches = [
+            {
+              path = {
+                type  = "PathPrefix"
+                value = "/"
+              }
+            }
+          ]
+          backendRefs = [
+            {
+              name = "forgejo-http"
+              port = 3000
+            }
+          ]
+        }
+      ]
+    }
+  })
 }

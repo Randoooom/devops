@@ -26,8 +26,16 @@ dependency "mail" {
   config_path = "${get_terragrunt_dir()}/../mail"
 }
 
-dependency "kubernetes" {
-  config_path = "${get_terragrunt_dir()}/../kubernetes-base"
+dependency "databases" {
+  config_path = "${get_terragrunt_dir()}/../databases"
+}
+
+dependency "cni" {
+  config_path = "${get_terragrunt_dir()}/../cni"
+}
+
+dependency "nodes" {
+  config_path = "${get_terragrunt_dir()}/../nodes"
 }
 
 inputs = {
@@ -45,6 +53,15 @@ inputs = {
   smtp_host   = dependency.mail.outputs.smtp_host
   smtp_sender = dependency.mail.outputs.senders
 
-  redis_host     = dependency.kubernetes.outputs.redis_host
-  redis_password = dependency.kubernetes.outputs.redis_password
+  redis_host     = dependency.databases.outputs.redis_host
+  redis_password = dependency.databases.outputs.redis_password
+
+  loadbalancer_ip = dependency.cni.outputs.loadbalancer_ip
+  ca_volume       = dependency.cni.outputs.ca_volume
+  ca_volume_mount = dependency.cni.outputs.ca_volume_mount
+
+  postgres_host            = dependency.databases.outputs.postgres_host
+  postgres_databases       = dependency.databases.outputs.postgres_databases
+
+  controlplane         = dependency.nodes.outputs.controlplane
 }

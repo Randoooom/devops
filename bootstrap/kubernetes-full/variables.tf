@@ -79,3 +79,28 @@ variable "redis_password" {
   sensitive = true
   type      = string
 }
+
+variable "loadbalancer_ip" {
+  sensitive = true
+  type      = string
+}
+
+variable "ca_volume" {
+  type = any
+}
+
+variable "ca_volume_mount" {
+  type = any
+}
+
+variable "postgres_databases" {
+  sensitive = true
+  type = map(object({
+    username = string
+    password = string
+  }))
+}
+
+variable "postgres_host" {
+  type = string
+}

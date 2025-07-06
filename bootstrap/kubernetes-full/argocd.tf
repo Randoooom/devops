@@ -86,7 +86,15 @@ EOF
       }
     }
 
+    applicationSet = {
+      extraVolumes      = [var.ca_volume]
+      extraVolumeMounts = [var.ca_volume_mount]
+    }
+
     server = {
+      volumes      = [var.ca_volume]
+      volumeMounts = [var.ca_volume_mount]
+
       extraArgs = [
         "--redisdb=4",
         "--redis-use-tls"
@@ -105,6 +113,9 @@ EOF
     }
 
     controller = {
+      volumes      = [var.ca_volume]
+      volumeMounts = [var.ca_volume_mount]
+
       extraArgs = [
         "--redisdb=4",
         "--redis-use-tls"
@@ -112,6 +123,9 @@ EOF
     }
 
     repoServer = {
+      volumes      = [var.ca_volume]
+      volumeMounts = [var.ca_volume_mount]
+
       extraArgs = [
         "--redisdb=4",
         "--redis-use-tls"

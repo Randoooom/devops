@@ -48,3 +48,7 @@ terraform.rc
 bootstrap/.env
 
 .terragrunt-cache
+gitops/templates/forgejo-runner/secrets/forgejo-runner-token.yaml
+gitops/templates/feedback-fusion/secrets/feedback-fusion-config.yaml
+gitops/templates/feedback-fusion/secrets/feedback-fusion-dashboard-config.yaml
+gitops/templates/event/secrets/surrealdb-credentials.yaml

@@ -30,7 +30,12 @@ seal:
     find gitops/templates/**/secrets/ -type f -name '*.yaml' | while read -r file; do
         if grep -q "kind: Secret" "$file"; then
             echo "Sealing $file..."
-            kubeseal -f "$file" -w "$file"
+            kubeseal -f "$file" -w "${file%.yaml}-sealed.yaml"
         fi
     done
 
+plan:
+  cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a plan --queue-exclude-dir bastion --experiment cli-redesign
+
+apply:
+  cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a apply --queue-exclude-dir bastion --experiment cli-redesign

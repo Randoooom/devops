@@ -18,8 +18,16 @@ dependency "storage" {
   config_path = "${get_terragrunt_dir()}/../storage"
 }
 
-dependencies {
-  paths = ["${get_terragrunt_dir()}/../cni"]
+dependency "cni" {
+  config_path = "${get_terragrunt_dir()}/../cni"
+}
+
+dependency "databases" {
+  config_path = "${get_terragrunt_dir()}/../databases"
+}
+
+dependency "nodes" {
+  config_path = "${get_terragrunt_dir()}/../nodes"
 }
 
 inputs = {
@@ -29,4 +37,14 @@ inputs = {
   kubeconfig           = dependency.talos.outputs.kubeconfig
   bucket_endpoint      = dependency.storage.outputs.bucket_endpoint
   buckets              = dependency.storage.outputs.buckets
+
+  loadbalancer_ip = dependency.cni.outputs.loadbalancer_ip
+  ca_volume       = dependency.cni.outputs.ca_volume
+  ca_volume_mount = dependency.cni.outputs.ca_volume_mount
+
+  postgres_host            = dependency.databases.outputs.postgres_host
+  postgres_databases       = dependency.databases.outputs.postgres_databases
+  postgres_admin_password  = dependency.databases.outputs.postgres_admin_password
+
+  controlplane         = dependency.nodes.outputs.controlplane
 }
