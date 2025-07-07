@@ -6,6 +6,9 @@ locals {
 resource "kubernetes_namespace" "forgejo" {
   metadata {
     name = "forgejo"
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+    }
   }
 }
 
