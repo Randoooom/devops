@@ -64,6 +64,7 @@ resource "helm_release" "wireguard" {
         "oci-network-load-balancer.oraclecloud.com/security-list-management-mode" = "None"
         "oci-network-load-balancer.oraclecloud.com/subnet"                        = var.public_subnet
         "external-dns.alpha.kubernetes.io/hostname"                               = "wg.${var.cluster_domain}"
+        "external-dns.alpha.kubernetes.io/cloudflare-proxied"                     = "false"
         // "external-dns.alpha.kubernetes.io/target"                                 = var.loadbalancer_ip
       }
     }

@@ -184,6 +184,10 @@ resource "helm_release" "forgejo" {
       ssh = {
         type     = "NodePort"
         nodePort = "30022"
+
+        annotations = {
+          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
+        }
       }
     }
 

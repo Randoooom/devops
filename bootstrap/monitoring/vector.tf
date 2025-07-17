@@ -359,6 +359,10 @@ resource "helm_release" "vector_aggregator" {
             ]
           }
         ]
+
+        annotations = {
+          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
+        }
       }
   }))]
 }

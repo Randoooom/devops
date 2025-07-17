@@ -104,9 +104,10 @@ EOF
         enabled          = true
         ingressClassName = "internal"
         annotations = {
-          "cert-manager.io/cluster-issuer"               = "letsencrypt"
-          "nginx.ingress.kubernetes.io/ssl-passthrough"  = true
-          "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
+          "cert-manager.io/cluster-issuer"                      = "letsencrypt"
+          "nginx.ingress.kubernetes.io/ssl-passthrough"         = true
+          "nginx.ingress.kubernetes.io/backend-protocol"        = "HTTPS"
+          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
         }
         tls = true
       }
