@@ -130,6 +130,8 @@ spec:
         ltb-passwd:
           ingress:
             enabled: true
+            annotations:
+              external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
             ingressClassName: internal
             hosts:
               - selfservice.internal.{{ .Values.clusterDomain }}
