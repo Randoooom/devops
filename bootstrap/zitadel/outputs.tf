@@ -45,3 +45,10 @@ output "forgejo_client_secret" {
   value     = zitadel_application_oidc.forgejo.client_secret
   sensitive = true
 }
+
+output "additional_applications" {
+  sensitive = true
+  value = {
+    for idx, application in zitadel_application_oidc.additional_application : application.name => application
+  }
+}

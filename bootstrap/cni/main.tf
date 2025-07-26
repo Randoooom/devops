@@ -87,14 +87,14 @@ resource "helm_release" "cilium" {
     }
 
     hubble = {
-      enabled = false
+      enabled = true
 
       relay = {
-        enabled = false
+        enabled = true
       }
 
       ui = {
-        enabled = false
+        enabled = true
 
         ingress = {
           className = "internal"
@@ -167,7 +167,6 @@ resource "kubectl_manifest" "cilium_gateway" {
           }
 
           tls = {
-            mode = "Terminate"
             certificateRefs = [
               {
                 name  = "gateway-cluster-tls"
@@ -190,7 +189,6 @@ resource "kubectl_manifest" "cilium_gateway" {
           }
 
           tls = {
-            mode = "Terminate"
             certificateRefs = [
               {
                 name  = "gateway-public-tls"

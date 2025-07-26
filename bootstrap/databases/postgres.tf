@@ -143,10 +143,23 @@ resource "kubectl_manifest" "postgres_cluster" {
       }
     }
     spec = {
+      imageName = "ghcr.io/randoooom/postgis:17.3.5"
+
       instances             = 2
       enableSuperuserAccess = true
       superuserSecret = {
         name = kubernetes_secret.postgres_admin_credentials.metadata[0].name
+      }
+
+      bootstrap = {
+        initdb = {
+          postInitTemplateSQL = [
+            "CREATE EXTENSION postgis;",
+            "CREATE EXTENSION postgis_topology;",
+            "CREATE EXTENSION fuzzystrmatch;",
+            "CREATE EXTENSION postgis_tiger_geocoder;"
+          ]
+        }
       }
 
       storage = {
