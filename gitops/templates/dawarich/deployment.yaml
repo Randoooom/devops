@@ -137,6 +137,7 @@ metadata:
   name: dawarich
   namespace: dawarich
 spec:
+  ingressClassName: internal
   rules:
   - host: dawarich.internal.{{ .Values.clusterDomain }}
     http:
