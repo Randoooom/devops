@@ -136,6 +136,8 @@ kind: Ingress
 metadata:
   name: dawarich
   namespace: dawarich
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
   ingressClassName: internal
   rules:
