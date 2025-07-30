@@ -29,6 +29,26 @@ terraform {
     encrypt        = true
     dynamodb_table = "${get_env("BACKEND_LOCK")}"
   }
+
+  encryption {
+    method "unencrypted" "migrate" {}
+
+    key_provider "pbkdf2" "this" {
+      passphrase = "${get_env("STATE_PASSPHRASE")}"
+    }
+
+    method "aes_gcm" "this" {
+      keys = key_provider.pbkdf2.this
+    }
+
+    state {
+      method = method.aes_gcm.this
+
+      fallback {
+        method = method.unencrypted.migrate
+      }
+    }
+  }
 }
 EOF
 }

@@ -35,6 +35,18 @@ resource "helm_release" "prometheus" {
       enabled = false
     }
 
+    kubeScheduler = {
+      enabled = false
+    }
+
+    kubeControllerManager = {
+      enabled = false
+    }
+
+    kubeProxy = {
+      enabled = false
+    }
+
     prometheus = {
       prometheusSpec = {
         podMetadata = {

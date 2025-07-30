@@ -79,7 +79,8 @@ resource "kubectl_manifest" "oauth2_proxy_route" {
       name      = "oauth2-proxy"
       namespace = "sys-ingress-nginx"
       annotations = {
-        "external-dns.alpha.kubernetes.io/target" = var.loadbalancer_ip
+        "external-dns.alpha.kubernetes.io/target"             = var.loadbalancer_ip
+        "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
       }
     }
     spec = {

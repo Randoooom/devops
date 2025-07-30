@@ -30,7 +30,8 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   annotations:
-    external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
+    external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
   name: surrealdb
   namespace: event
 spec:

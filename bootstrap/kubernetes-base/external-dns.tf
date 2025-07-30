@@ -63,6 +63,6 @@ resource "helm_release" "external_dns" {
       ]
     }
 
-    extraArgs = ["--exclude-target-net=${var.public_subnet_cidr}", "--publish-internal-services", "--source=gateway-httproute", "--source=gateway-grpcroute", "--cloudflare-proxied"]
+    extraArgs = ["--exclude-target-net=${var.public_subnet_cidr}", "--publish-internal-services", "--source=gateway-httproute", "--source=gateway-grpcroute"]
   })]
 }

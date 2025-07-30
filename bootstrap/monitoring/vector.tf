@@ -65,6 +65,26 @@ resource "helm_release" "vector_agent" {
         }
       ]
 
+      service = {
+        ports = [
+          {
+            name     = "vector"
+            port     = 6000
+            protocol = "TCP"
+          },
+          {
+            name     = "otlp-grpc"
+            port     = 4317
+            protocol = "TCP"
+          },
+          {
+            name     = "otlp-http"
+            port     = 4318
+            protocol = "TCP"
+          }
+        ]
+      }
+
       customConfig = {
         data_dir = "/vector-data"
 

@@ -100,6 +100,9 @@ resource "helm_release" "cilium" {
           className = "internal"
           enabled   = true
           hosts     = ["hubble.internal.${var.cluster_domain}"]
+          annotations = {
+            "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
+          }
         }
       }
 
@@ -141,12 +144,6 @@ resource "kubectl_manifest" "cilium_gateway" {
       }
     }
     spec = {
-      addresses = [
-        {
-          type  = "IPAddress"
-          value = local.loadbalancer_ip
-        }
-      ]
       gatewayClassName = "cilium"
       listeners = [
         {
