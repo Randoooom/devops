@@ -31,6 +31,7 @@ kind: HTTPRoute
 metadata:
   annotations:
     external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
   name: feedback-fusion
   namespace: feedback-fusion
 spec:

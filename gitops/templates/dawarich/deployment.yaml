@@ -1,0 +1,177 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich
+  namespace: dawarich
+  labels:
+    app: dawarich
+spec:
+  selector:
+    matchLabels:
+      app: dawarich
+  template:
+    metadata:
+      labels:
+        app: dawarich
+    spec:
+      containers:
+        - name: dawarich
+          envFrom:
+          - secretRef:
+              name: dawarich-config
+          image: freikin/dawarich:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /var/app/public
+              name: public
+            - mountPath: /var/app/tmp/imports/watched
+              name: watched
+            - mountPath: /etc/ssl/certs/root-certs.pem
+              name: certificates
+              readOnly: true
+              subPath: root-certs.pem
+          command: ["web-entrypoint.sh", "bin/rails", "server", "-p", "3000", "-b", "::"]
+          ports:
+          - containerPort: 3000
+        - name: dawarich-sidekiq
+          envFrom:
+          - secretRef:
+              name: dawarich-config
+          image: freikin/dawarich:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /var/app/public
+              name: public
+            - mountPath: /var/app/tmp/imports/watched
+              name: watched
+            - mountPath: /etc/ssl/certs/root-certs.pem
+              name: certificates
+              readOnly: true
+              subPath: root-certs.pem
+          command:
+            - "sidekiq-entrypoint.sh"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 3000
+              httpHeaders:
+                - value: "health.dawarich"
+                  name: "Host"
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+              httpHeaders:
+                - value: "health.dawarich"
+                  name: "Host"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: public
+          persistentVolumeClaim:
+            claimName: public
+        - name: watched
+          persistentVolumeClaim:
+            claimName: watched
+        - configMap:
+            optional: false
+            defaultMode: 420
+            items:
+            - key: root-certs.pem
+              path: root-certs.pem
+            name: cluster-authority
+          name: certificates
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dawarich
+  namespace: dawarich
+spec:
+  selector:
+    app: dawarich
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+# dawarich does not support oidc and gateway api does not support http auth yet therefore we just expose
+# it internally as of now
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   annotations:
+#     external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
+#   name: dawarich
+#   namespace: dawarich
+# spec:
+#   hostnames:
+#   - dawarich.{{ .Values.domain }}
+#   parentRefs:
+#   - group: gateway.networking.k8s.io
+#     kind: Gateway
+#     name: cilium
+#     namespace: default
+#     sectionName: https
+#   rules:
+#   - backendRefs:
+#     - group: ""
+#       kind: Service
+#       name: dawarich
+#       port: 3000
+#       weight: 1
+#     matches:
+#     - path:
+#         type: PathPrefix
+#         value: /
+apiVersion: networking.k8s.io/v1 
+kind: Ingress 
+metadata:
+  name: dawarich
+  namespace: dawarich
+  annotations:
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+spec:
+  ingressClassName: internal
+  rules:
+  - host: dawarich.internal.{{ .Values.clusterDomain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dawarich
+            port:
+              number: 3000
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: watched
+  namespace: dawarich
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: public
+  namespace: dawarich
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

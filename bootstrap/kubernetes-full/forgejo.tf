@@ -40,7 +40,7 @@ EOF
     server        = <<EOF
 DOMAIN=git.${var.public_domain}
 ROOT_URL=https://git.${var.public_domain}
-SSH_DOMAIN=git.${var.public_domain}
+SSH_DOMAIN=ssh.git.${var.public_domain}
 EOF
     storage       = <<EOF
 STORAGE_TYPE=minio
@@ -184,6 +184,12 @@ resource "helm_release" "forgejo" {
       ssh = {
         type     = "NodePort"
         nodePort = "30022"
+
+        annotations = {
+          "external-dns.alpha.kubernetes.io/hostname"           = "ssh.git.${var.public_domain}"
+          "external-dns.alpha.kubernetes.io/target"             = var.loadbalancer_ip
+          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
+        }
       }
     }
 

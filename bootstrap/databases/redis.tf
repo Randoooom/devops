@@ -10,6 +10,11 @@ locals {
       namespace = kubernetes_namespace.redis.metadata[0].name
     }
     spec = {
+      args = [
+        "--lock_on_hashtags",
+        "--default_lua_flags=allow-undeclared-keys",
+        "--cluster_mode=emulated"
+      ]
       annotations = {
         "reloader.stakater.com/auto" = "true"
       }
@@ -95,6 +100,12 @@ resource "helm_release" "dragonfly" {
   values = [yamlencode({
     serviceMonitor = {
       enabled = true
+    }
+
+    manager = {
+      extraArgs = [
+        "--metrics-bind-address=0.0.0.0:8080"
+      ]
     }
   })]
 }

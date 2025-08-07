@@ -19,9 +19,12 @@ spec:
             pvcSize: 1Gi
 
         podOptions:
+          hostUsers: true
           nodeSelector:
             kubernetes.io/arch: arm64
 
         wyoming_whisper:
           language: de
+
+        workload:
   {{- include "common" . | nindent 2 }}

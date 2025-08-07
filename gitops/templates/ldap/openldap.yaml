@@ -28,6 +28,7 @@ spec:
         
         service:
           annotations:
+            external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
             external-dns.alpha.kubernetes.io/hostname: ldap.{{ .Values.clusterDomain }}
 
         extraVolumes:
@@ -51,6 +52,8 @@ spec:
         phpldapadmin:
           ingress:
             enabled: true
+            annotations:
+              external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
             ingressClassName: internal
             hosts:
               - ldap.internal.{{ .Values.clusterDomain }}
@@ -127,6 +130,8 @@ spec:
         ltb-passwd:
           ingress:
             enabled: true
+            annotations:
+              external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
             ingressClassName: internal
             hosts:
               - selfservice.internal.{{ .Values.clusterDomain }}

@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/OneLiteFeatherNET/feedback-fusion.git
     path: charts/feedback-fusion
-    targetRevision: feat/helm-dashboard-config
+    targetRevision: main 
     helm:
       values: |
         api:

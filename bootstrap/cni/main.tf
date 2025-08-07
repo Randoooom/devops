@@ -87,19 +87,22 @@ resource "helm_release" "cilium" {
     }
 
     hubble = {
-      enabled = false
+      enabled = true
 
       relay = {
-        enabled = false
+        enabled = true
       }
 
       ui = {
-        enabled = false
+        enabled = true
 
         ingress = {
           className = "internal"
           enabled   = true
           hosts     = ["hubble.internal.${var.cluster_domain}"]
+          annotations = {
+            "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
+          }
         }
       }
 
@@ -141,12 +144,6 @@ resource "kubectl_manifest" "cilium_gateway" {
       }
     }
     spec = {
-      addresses = [
-        {
-          type  = "IPAddress"
-          value = local.loadbalancer_ip
-        }
-      ]
       gatewayClassName = "cilium"
       listeners = [
         {
@@ -167,7 +164,6 @@ resource "kubectl_manifest" "cilium_gateway" {
           }
 
           tls = {
-            mode = "Terminate"
             certificateRefs = [
               {
                 name  = "gateway-cluster-tls"
@@ -190,7 +186,6 @@ resource "kubectl_manifest" "cilium_gateway" {
           }
 
           tls = {
-            mode = "Terminate"
             certificateRefs = [
               {
                 name  = "gateway-public-tls"

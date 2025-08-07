@@ -65,6 +65,26 @@ resource "helm_release" "vector_agent" {
         }
       ]
 
+      service = {
+        ports = [
+          {
+            name     = "vector"
+            port     = 6000
+            protocol = "TCP"
+          },
+          {
+            name     = "otlp-grpc"
+            port     = 4317
+            protocol = "TCP"
+          },
+          {
+            name     = "otlp-http"
+            port     = 4318
+            protocol = "TCP"
+          }
+        ]
+      }
+
       customConfig = {
         data_dir = "/vector-data"
 
@@ -108,11 +128,6 @@ parsed =  parse_json(.message) ??
 
 . = merge!(., parsed)
 .level = downcase(.level) ?? "info"
-
-
-if exists(.msg) {
-  .message = .msg
-}
 
 if match(to_string!(.message), r'.*(Error|error|err=|Err=).*') {
   .level = "error"
@@ -359,6 +374,10 @@ resource "helm_release" "vector_aggregator" {
             ]
           }
         ]
+
+        annotations = {
+          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
+        }
       }
   }))]
 }

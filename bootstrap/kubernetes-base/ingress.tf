@@ -36,7 +36,8 @@ locals {
       className = local.internalIngress
       internal  = true
       annotations = {
-        "external-dns.alpha.kubernetes.io/internal-hostname" = "*.internal.${var.cluster_domain}"
+        "external-dns.alpha.kubernetes.io/internal-hostname"  = "*.internal.${var.cluster_domain}"
+        "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
       }
     }
   ]

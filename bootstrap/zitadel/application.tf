@@ -73,3 +73,24 @@ resource "zitadel_application_oidc" "forgejo" {
   id_token_role_assertion     = true
   id_token_userinfo_assertion = false
 }
+
+resource "zitadel_application_oidc" "additional_application" {
+  for_each = var.additional_applications
+
+  org_id     = local.zitadel_org
+  project_id = zitadel_project.this.id
+
+  name                        = each.key
+  redirect_uris               = each.value.redirect_uris
+  response_types              = each.value.response_types
+  grant_types                 = each.value.grant_types
+  post_logout_redirect_uris   = each.value.post_logout_redirect_uris
+  app_type                    = each.value.app_type
+  auth_method_type            = "OIDC_AUTH_METHOD_TYPE_BASIC"
+  version                     = "OIDC_VERSION_1_0"
+  clock_skew                  = "0s"
+  access_token_type           = "OIDC_TOKEN_TYPE_BEARER"
+  access_token_role_assertion = true
+  id_token_role_assertion     = true
+  id_token_userinfo_assertion = false
+}
