@@ -129,11 +129,6 @@ parsed =  parse_json(.message) ??
 . = merge!(., parsed)
 .level = downcase(.level) ?? "info"
 
-
-if exists(.msg) {
-  .message = .msg
-}
-
 if match(to_string!(.message), r'.*(Error|error|err=|Err=).*') {
   .level = "error"
 }
