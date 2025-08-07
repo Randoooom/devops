@@ -19,3 +19,16 @@ variable "additional_applications" {
     app_type                  = string
   }))
 }
+
+variable "additional_roles" {
+  type = map(string)
+}
+
+variable "additional_actions" {
+  type = map(object({
+    script    = string
+    flow_type = string
+    trigger   = list(string)
+    can_fail  = bool
+  }))
+}
