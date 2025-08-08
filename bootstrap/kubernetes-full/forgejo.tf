@@ -134,7 +134,7 @@ resource "helm_release" "forgejo" {
   depends_on = [kubernetes_namespace.forgejo, kubernetes_secret.forgejo_config, kubernetes_secret.forgejo_admin, kubernetes_secret.forgejo_oauth]
 
   chart   = "oci://code.forgejo.org/forgejo-helm/forgejo"
-  version = "12.5.4"
+  version = "13.0.1"
 
   name      = "forgejo"
   namespace = kubernetes_namespace.forgejo.metadata[0].name
