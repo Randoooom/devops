@@ -34,7 +34,7 @@ resource "kubernetes_secret" "vector_credentials" {
 resource "helm_release" "vector_agent" {
   repository = "https://helm.vector.dev"
   chart      = "vector"
-  version    = "0.44.0"
+  version    = "0.45.0"
 
   namespace = kubernetes_namespace.monitoring.metadata[0].name
   name      = "vector-agent"
@@ -204,7 +204,7 @@ resource "helm_release" "vector_aggregator" {
 
   repository = "https://helm.vector.dev"
   chart      = "vector"
-  version    = "0.44.0"
+  version    = "0.45.0"
 
   namespace = kubernetes_namespace.monitoring.metadata[0].name
   name      = "vector-aggregator"
