@@ -6,7 +6,7 @@ resource "kubernetes_namespace" "argocd" {
 
 resource "kubernetes_secret" "argocd" {
   metadata {
-    name      = "argocd-zitadel"
+    name      = "argocd-credentials"
     namespace = kubernetes_namespace.argocd.metadata[0].name
 
     labels = {
@@ -15,8 +15,8 @@ resource "kubernetes_secret" "argocd" {
   }
 
   data = {
-    client-id      = var.argocd_client_id
-    client-secret  = var.argocd_client_secret
+    client-id      = var.application_credentials.argocd.client_id
+    client-secret  = var.application_credentials.argocd.client_secret
     redis-password = var.redis_password
   }
 }
@@ -66,22 +66,22 @@ resource "helm_release" "argocd" {
 
       cm = {
         "oidc.config" = <<EOF
-name: Zitadel
-issuer: https://secure.${var.public_domain}
-clientID: $argocd-zitadel:client-id 
-clientSecret: $argocd-zitadel:client-secret
+name: Entra
+issuer: ${var.oidc_url}
+clientID: $argocd-credentials:client-id 
+clientSecret: $argocd-credentials:client-secret
 requestedScopes:
   - openid
   - profile
   - email
-  - groups
 EOF
         url           = "https://argocd.internal.${var.cluster_domain}"
       }
 
       rbac = {
         "policy.csv" = <<EOF
-g, ${var.zitadel_project}:admin, role:admin
+g, ${var.groups.argocd-admin}, role:admin
+g, ${var.groups.argocd}, role:readonly
 EOF
       }
     }
@@ -100,16 +100,8 @@ EOF
         "--redis-use-tls"
       ]
 
-      ingress = {
-        enabled          = true
-        ingressClassName = "internal"
-        annotations = {
-          "cert-manager.io/cluster-issuer"                      = "letsencrypt"
-          "nginx.ingress.kubernetes.io/ssl-passthrough"         = true
-          "nginx.ingress.kubernetes.io/backend-protocol"        = "HTTPS"
-          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
-        }
-        tls = true
+      service = {
+        servicePortHttpsAppProtocol = "HTTPS"
       }
     }
 
@@ -137,6 +129,47 @@ EOF
       enabled = false
     }
   })]
+}
+
+resource "kubectl_manifest" "argocd_route" {
+  depends_on = [helm_release.argocd]
+
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute"
+    metadata = {
+      name      = "argocd"
+      namespace = kubernetes_namespace.argocd.metadata[0].name
+    }
+    spec = {
+      parentRefs = [
+        {
+          name        = "private"
+          sectionName = "https"
+          namespace   = "default"
+        }
+      ]
+      hostnames = ["argocd.internal.${var.cluster_domain}"]
+      rules = [
+        {
+          matches = [
+            {
+              path = {
+                type  = "PathPrefix"
+                value = "/"
+              }
+            }
+          ]
+          backendRefs = [
+            {
+              name = "argocd-server"
+              port = 443
+            }
+          ]
+        }
+      ]
+    }
+  })
 }
 
 resource "kubectl_manifest" "argocd_project" {
@@ -199,7 +232,7 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
 project: ${var.cluster_name}
 domain: ${var.public_domain}
 clusterDomain: ${var.cluster_domain}
-loadBalancerIp: ${var.loadbalancer_ip}
+loadBalancerIp: ${var.public_loadbalancer_ip}
 EOF
         }
       }

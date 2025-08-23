@@ -20,14 +20,8 @@ resource "kubernetes_secret" "vector_credentials" {
   }
 
   data = {
-    THANOS_USER     = var.thanos_username
-    THANOS_PASSWORD = var.thanos_password
-
-    LOKI_USER     = var.loki_username
-    LOKI_PASSWORD = var.loki_password
-
-    TEMPO_USER     = var.tempo_username
-    TEMPO_PASSWORD = var.tempo_password
+    NEW_RELIC_ACCOUNT_ID = var.new_relic_account_id
+    NEW_RELIC_TOKEN      = var.new_relic_token
   }
 }
 
@@ -89,10 +83,6 @@ resource "helm_release" "vector_agent" {
         data_dir = "/vector-data"
 
         sources = {
-          node = {
-            type = "host_metrics"
-          }
-
           logs = {
             type = "kubernetes_logs"
           }
@@ -121,12 +111,6 @@ resource "helm_release" "vector_agent" {
             inputs = ["deduped_logs"]
 
             source = <<EOF
-parsed =  parse_json(.message) ??
-            parse_logfmt(.message) ??
-            parse_syslog(.message) ??
-            parse_common_log(.message) ?? {}
-
-. = merge!(., parsed)
 .level = downcase(.level) ?? "info"
 
 if match(to_string!(.message), r'.*(Error|error|err=|Err=).*') {
@@ -142,19 +126,11 @@ if is_string(.kubernetes.pod_labels.app) {
 }
 
 .app = .kubernetes.pod_labels."app.kubernetes.io/name"
+.service.name = .app
 .source = "vector"
-.cluster = "${var.cluster_name}"
-EOF
-          }
-
-          labeled_metrics = {
-            type   = "remap"
-            inputs = ["node"]
-
-            source = <<EOF
-.tags.source = "vector"
-.tags.host = "$${KUBERNETES_NODE}"
-.tags.cluster = "${var.cluster_name}"
+.cluster_name = "${var.cluster_name}"
+.pod_name = .kubernetes.pod_name
+.node_name = .kubernetes.pod_node_name
 EOF
           }
         }
@@ -163,7 +139,7 @@ EOF
           vector = {
             type    = "vector"
             address = "${local.aggregator_host}:6000"
-            inputs  = ["labeled_metrics", "parsed_logs", "otlp.traces"]
+            inputs  = ["parsed_logs", "otlp.traces", "otlp.metrics"]
 
             tls = {
               enabled = true
@@ -269,76 +245,48 @@ resource "helm_release" "vector_aggregator" {
             inputs = ["vector"]
 
             route = {
-              metrics = {
-                type = "is_metric"
-              }
               logs = {
                 type = "is_log"
               }
               traces = {
                 type = "is_trace"
               }
+              metrics = {
+                type = "is_metric"
+              }
             }
           }
         }
 
         sinks = {
-          thanos = {
-            type     = "prometheus_remote_write"
-            inputs   = ["router.metrics"]
-            endpoint = var.thanos_endpoint
+          new_relic_metrics = {
+            type   = "new_relic"
+            inputs = ["router.metrics"]
 
-            auth = {
-              strategy = "basic"
-
-              user     = "$${THANOS_USER}"
-              password = "$${THANOS_PASSWORD}"
-            }
-
-            healthcheck = {
-              enabled = false
-            }
-          }
-
-          loki = {
-            type     = "loki"
-            inputs   = ["router.logs"]
-            endpoint = var.loki_endpoint
-
-            auth = {
-              strategy = "basic"
-
-              user     = "$${LOKI_USER}"
-              password = "$${LOKI_PASSWORD}"
-            }
-
-            encoding = {
-              codec = "text"
-            }
-
-            labels = {
-              cluster   = var.cluster_name
-              source    = "vector"
-              app       = "{{ \"{{\" }} .app {{ \"}}\" }}"
-              level     = "{{ \"{{\" }} .level {{ \"}}\" }}"
-              pod       = "{{ \"{{\" }} .kubernetes.pod_name {{ \"}}\" }}"
-              container = "{{ \"{{\" }} .kubernetes.container_name {{ \"}}\" }}"
-              namespace = "{{ \"{{\" }} .kubernetes.pod_namespace {{ \"}}\" }}"
-            }
-
+            account_id  = "'$${NEW_RELIC_ACCOUNT_ID}'"
+            api         = "metrics"
+            license_key = "$${NEW_RELIC_TOKEN}"
+            region      = "eu"
             compression = "gzip"
-
-            healthcheck = {
-              enabled = false
-            }
           }
 
-          tempo = {
+          new_relic_logs = {
+            type   = "new_relic"
+            inputs = ["router.logs"]
+
+            account_id  = "'$${NEW_RELIC_ACCOUNT_ID}'"
+            api         = "logs"
+            license_key = "$${NEW_RELIC_TOKEN}"
+            region      = "eu"
+            compression = "gzip"
+          }
+
+          new_relic_traces = {
             type   = "opentelemetry"
             inputs = ["router.traces"]
 
             protocol = {
-              uri  = var.tempo_endpoint
+              uri  = var.new_relic_otlp_endpoint
               type = "http"
 
               encoding = {
@@ -346,38 +294,53 @@ resource "helm_release" "vector_aggregator" {
               }
 
               auth = {
-                strategy = "basic"
-
-                user     = "$${TEMPO_USER}"
-                password = "$${TEMPO_PASSWORD}"
+                strategy = "bearer"
+                token    = "$${NEW_RELIC_TOKEN}"
               }
             }
           }
         }
       }
-
-      ingress = {
-        enabled   = true
-        className = "internal"
-        hosts = [
-          {
-            host = "vector.internal.${var.cluster_domain}"
-            paths = [
-              {
-                path     = "/"
-                pathType = "Prefix"
-                port = {
-                  name   = "api"
-                  number = 8686
-                }
-              }
-            ]
-          }
-        ]
-
-        annotations = {
-          "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
-        }
-      }
   }))]
+}
+
+resource "kubectl_manifest" "vector_aggregator_route" {
+  depends_on = [helm_release.vector_aggregator]
+
+  yaml_body = yamlencode({
+    apiVersion = "gateway.networking.k8s.io/v1"
+    kind       = "HTTPRoute"
+    metadata = {
+      name      = "vector"
+      namespace = kubernetes_namespace.monitoring.metadata[0].name
+    }
+    spec = {
+      parentRefs = [
+        {
+          name        = "private"
+          sectionName = "https"
+          namespace   = "default"
+        }
+      ]
+      hostnames = ["vector.internal.${var.cluster_domain}"]
+      rules = [
+        {
+          matches = [
+            {
+              path = {
+                type  = "PathPrefix"
+                value = "/"
+              }
+            }
+          ]
+          backendRefs = [
+            {
+              name = "vector-aggregator"
+              port = 8686
+            }
+          ]
+        }
+      ]
+    }
+  })
 }

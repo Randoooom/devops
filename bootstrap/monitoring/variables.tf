@@ -1,42 +1,3 @@
-variable "loki_endpoint" {
-  type = string
-}
-
-variable "loki_username" {
-  type = string
-}
-
-variable "loki_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "tempo_endpoint" {
-  type = string
-}
-
-variable "tempo_username" {
-  type = string
-}
-
-variable "tempo_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "thanos_endpoint" {
-  type = string
-}
-
-variable "thanos_username" {
-  type = string
-}
-
-variable "thanos_password" {
-  type      = string
-  sensitive = true
-}
-
 variable "ca_volume" {
   type = any
 }
@@ -51,4 +12,32 @@ variable "cluster_name" {
 
 variable "cluster_domain" {
   type = string
+}
+
+variable "new_relic_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "new_relic_api_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "new_relic_account_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "new_relic_prometheus_endpoint" {
+  type = string
+}
+
+variable "new_relic_otlp_endpoint" {
+  type = string
+}
+
+variable "new_relic_admin" {
+  type      = string
+  sensitive = true
 }

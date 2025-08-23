@@ -183,3 +183,24 @@ resource "kubectl_manifest" "trust_bundle" {
     }
   })
 }
+
+resource "kubectl_manifest" "ingress_certificate" {
+  depends_on = [kubectl_manifest.letsencrypt]
+
+  yaml_body = yamlencode({
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Certificate"
+    metadata = {
+      name      = "gateway-tls"
+    }
+    spec = {
+      secretName = "gateway-tls"
+      issuerRef = {
+        name = "letsencrypt"
+        kind = "ClusterIssuer"
+      }
+      commonName = "*.${var.cluster_domain}"
+      dnsNames   = ["*.${var.cluster_domain}", "*.${var.public_domain}", "*.internal.${var.cluster_domain}"]
+    }
+  })
+}

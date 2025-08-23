@@ -1,5 +1,6 @@
+
 locals {
-  loadbalancer_ip = [for ip in oci_network_load_balancer_network_load_balancer.this.ip_addresses : ip.ip_address if ip.is_public][0]
+  public_loadbalancer_ip = [for ip in oci_network_load_balancer_network_load_balancer.this.ip_addresses : ip.ip_address if ip.is_public][0]
 }
 
 resource "oci_network_load_balancer_network_load_balancer" "this" {
@@ -13,7 +14,7 @@ resource "oci_network_load_balancer_network_load_balancer" "this" {
 
 
 resource "oci_network_load_balancer_backend_set" "services" {
-  for_each = var.services
+  for_each = var.public_services
 
   name                     = "${replace(each.key, "_", "-")}-bs" # Eindeutiger Name pro Service, z.B. "http-bs"
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.this.id
@@ -30,7 +31,7 @@ resource "oci_network_load_balancer_backend_set" "services" {
 
 # Erstellt für jeden Service einen eigenen Listener
 resource "oci_network_load_balancer_listener" "services" {
-  for_each = var.services
+  for_each = var.public_services
 
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.this.id
   name                     = replace(each.key, "_", "-")
@@ -43,8 +44,8 @@ resource "oci_network_load_balancer_listener" "services" {
 
 resource "oci_network_load_balancer_backend" "nodes" {
   for_each = {
-    for pair in setproduct(keys(var.services), var.worker) : "${pair[0]}-${pair[1].id}" => {
-      service     = var.services[pair[0]]
+    for pair in setproduct(keys(var.public_services), var.worker) : "${pair[0]}-${pair[1].id}" => {
+      service     = var.public_services[pair[0]]
       service_key = pair[0]
       worker      = pair[1]
     }

@@ -104,53 +104,33 @@ spec:
 ---
 # dawarich does not support oidc and gateway api does not support http auth yet therefore we just expose
 # it internally as of now
-# apiVersion: gateway.networking.k8s.io/v1
-# kind: HTTPRoute
-# metadata:
-#   annotations:
-#     external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
-#   name: dawarich
-#   namespace: dawarich
-# spec:
-#   hostnames:
-#   - dawarich.{{ .Values.domain }}
-#   parentRefs:
-#   - group: gateway.networking.k8s.io
-#     kind: Gateway
-#     name: cilium
-#     namespace: default
-#     sectionName: https
-#   rules:
-#   - backendRefs:
-#     - group: ""
-#       kind: Service
-#       name: dawarich
-#       port: 3000
-#       weight: 1
-#     matches:
-#     - path:
-#         type: PathPrefix
-#         value: /
-apiVersion: networking.k8s.io/v1 
-kind: Ingress 
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
+  annotations:
+    external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
   name: dawarich
   namespace: dawarich
-  annotations:
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
-  ingressClassName: internal
+  hostnames:
+  - dawarich.{{ .Values.domain }}
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: private
+    namespace: default
+    sectionName: https
   rules:
-  - host: dawarich.internal.{{ .Values.clusterDomain }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: dawarich
-            port:
-              number: 3000
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: dawarich
+      port: 3000
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

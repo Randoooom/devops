@@ -21,9 +21,14 @@ resource "helm_release" "cilium" {
   values = [yamlencode({
     ipam = {
       mode = "kubernetes"
+
+      operator = {
+        clusterPoolIPv4PodCIDRList = [var.pod_subnet_block]
+      }
     }
 
-    kubeProxyReplacement = true
+    kubeProxyReplacement                = true
+    kubeProxyReplacementHealthzBindAddr = "0.0.0.0:10256"
 
     securityContext = {
       capabilities = {
@@ -50,8 +55,6 @@ resource "helm_release" "cilium" {
     egressGateway = {
       enabled = true
     }
-
-    kubeProxyReplacementHealthzBindAddr = "0.0.0.0:10256"
 
     encryption = {
       enabled        = true
@@ -95,15 +98,6 @@ resource "helm_release" "cilium" {
 
       ui = {
         enabled = true
-
-        ingress = {
-          className = "internal"
-          enabled   = true
-          hosts     = ["hubble.internal.${var.cluster_domain}"]
-          annotations = {
-            "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
-          }
-        }
       }
 
       metrics = {
@@ -121,118 +115,55 @@ resource "helm_release" "cilium" {
         }
       }
     }
-
-    gatewayAPI = {
-      enabled    = true
-      enableAlpn = true
-      hostNetwork = {
-        enabled = true
-      }
-    }
   })]
 }
 
-resource "kubectl_manifest" "cilium_gateway" {
-  yaml_body = yamlencode({
-    apiVersion = "gateway.networking.k8s.io/v1"
-    kind       = "Gateway"
-    metadata = {
-      name = "cilium"
-      annotations = {
-        "cert-manager.io/cluster-issuer"          = "letsencrypt"
-        "external-dns.alpha.kubernetes.io/target" = local.loadbalancer_ip
-      }
-    }
-    spec = {
-      gatewayClassName = "cilium"
-      listeners = [
-        {
-          name     = "http"
-          protocol = "HTTP"
-          port     = var.services.http.node_port
-        },
-        {
-          name     = "https"
-          protocol = "HTTPS"
-          port     = var.services.https.node_port
-          hostname = "*.${var.cluster_domain}"
-
-          allowedRoutes = {
-            namespaces = {
-              from = "All"
-            }
-          }
-
-          tls = {
-            certificateRefs = [
-              {
-                name  = "gateway-cluster-tls"
-                kind  = "Secret"
-                group = ""
-              }
-            ]
-          }
-        },
-        {
-          name     = "https-public"
-          protocol = "HTTPS"
-          port     = var.services.https.node_port
-          hostname = "*.${var.public_domain}"
-
-          allowedRoutes = {
-            namespaces = {
-              from = "All"
-            }
-          }
-
-          tls = {
-            certificateRefs = [
-              {
-                name  = "gateway-public-tls"
-                kind  = "Secret"
-                group = ""
-              }
-            ]
-          }
-        }
-      ]
-    }
-  })
-}
-
-resource "kubectl_manifest" "gateway_https_redirect" {
-  depends_on = [kubectl_manifest.cilium_gateway]
+resource "kubectl_manifest" "hubble_route" {
+  depends_on = [helm_release.cilium]
 
   yaml_body = yamlencode({
     apiVersion = "gateway.networking.k8s.io/v1"
     kind       = "HTTPRoute"
     metadata = {
-      name = "https-redirect"
+      name      = "hubble"
+      namespace = kubernetes_namespace.cilium.metadata[0].name
     }
     spec = {
       parentRefs = [
         {
-          name        = "cilium"
-          sectionName = "http"
+          name        = "private"
+          sectionName = "https"
+          namespace   = "default"
         }
       ]
-      hostnames = [
-        "*.${var.cluster_domain}",
-        "*.${var.public_domain}"
-      ]
+      hostnames = ["hubble.internal.${var.cluster_domain}"]
       rules = [
         {
-          filters = [
+          matches = [
             {
-              type = "RequestRedirect"
-              requestRedirect = {
-                scheme     = "https"
-                statusCode = 301
+              path = {
+                type  = "PathPrefix"
+                value = "/"
               }
+            }
+          ]
+          backendRefs = [
+            {
+              name = "hubble-ui"
+              port = 80
             }
           ]
         }
       ]
     }
   })
+}
+
+module "hubble-oidc" {
+  source = "${var.module_path}/envoy-oidc-security-policy"
+
+  cluster_name = var.cluster_name
+  route        = "hubble"
+  hostname     = "hubble.internal.${var.cluster_domain}"
+  namespace    = kubernetes_namespace.cilium.metadata[0].name
 }

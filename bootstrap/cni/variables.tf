@@ -2,18 +2,12 @@ variable "public_subnet" {
   type = string
 }
 
-variable "cluster_domain" {
+variable "private_subnet" {
   type = string
 }
 
-variable "cloudflare_api_token" {
-  type      = string
-  sensitive = true
-}
-
-variable "acme_email" {
-  type      = string
-  sensitive = true
+variable "cluster_domain" {
+  type = string
 }
 
 variable "worker" {
@@ -54,5 +48,9 @@ variable "remote_wireguard_cidr" {
 }
 
 variable "public_domain" {
+  type = string
+}
+
+variable "pod_subnet_block" {
   type = string
 }
