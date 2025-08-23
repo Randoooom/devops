@@ -113,7 +113,7 @@ metadata:
   namespace: dawarich
 spec:
   hostnames:
-  - dawarich.{{ .Values.domain }}
+  - dawarich.internal.{{ .Values.clusterDomain }}
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
