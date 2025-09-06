@@ -70,7 +70,7 @@ resource "helm_release" "zitadel" {
 
   repository = "https://charts.zitadel.com"
   chart      = "zitadel"
-  version    = "8.13.4"
+  version    = "9.5.0"
 
   name          = "zitadel"
   namespace     = kubernetes_namespace.zitadel.metadata[0].name
