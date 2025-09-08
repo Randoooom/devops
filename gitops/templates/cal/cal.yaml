@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://pyrrha.github.io/calcom-helm
     chart: calcom
-    targetRevision:  
+    targetRevision: 0.8.6 
     helm:
       values: |
           ingress:
