@@ -16,4 +16,7 @@ spec:
       values: |
           ingress:
             enabled: false
+
+          image:
+            tag: v5.6.15-test-arm
   {{- include "common" . | nindent 2 }}
