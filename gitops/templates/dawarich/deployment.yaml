@@ -107,8 +107,6 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  annotations:
-    external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
   name: dawarich
   namespace: dawarich
 spec:

@@ -111,6 +111,7 @@ resource "helm_release" "vector_agent" {
             inputs = ["deduped_logs"]
 
             source = <<EOF
+
 .level = downcase(.level) ?? "info"
 
 if match(to_string!(.message), r'.*(Error|error|err=|Err=).*') {
@@ -121,7 +122,6 @@ if is_string(.kubernetes.pod_labels.app) {
   if !exists(.kubernetes.pod_labels."app.kubernetes.io/name") {
     .kubernetes.pod_labels."app.kubernetes.io/name" = .kubernetes.pod_labels.app
   }
-
   del(.kubernetes.pod_labels.app)
 }
 
@@ -131,6 +131,12 @@ if is_string(.kubernetes.pod_labels.app) {
 .cluster_name = "${var.cluster_name}"
 .pod_name = .kubernetes.pod_name
 .node_name = .kubernetes.pod_node_name
+
+.deployment_name = .kubernetes.pod_owner
+if !exists(.deployment_name) || .deployment_name == "" {
+  .deployment_name = .app
+}
+
 EOF
           }
         }

@@ -13,9 +13,7 @@ locals {
     "coredns_proxy_request_duration_seconds",
     "coredns_dns_request_duration_seconds",
     "rest_client_request_duration",
-    "envoy_listener_downstream_cx_length_ms",
-    "envoy_listener_connections_accepted_per_socket",
-    "envoy_http_downstream_cx_length_ms"
+    "envoy_"
   ]
 }
 
