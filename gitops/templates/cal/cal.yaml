@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cal 
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: cal
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://pyrrha.github.io/calcom-helm
+    chart: calcom
+    targetRevision:  
+    helm:
+      values: |
+          ingress:
+            enabled: false
+  {{- include "common" . | nindent 2 }}
