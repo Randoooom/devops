@@ -27,7 +27,5 @@ inputs = {
   bucket_endpoint      = dependency.storage.outputs.bucket_endpoint
   buckets              = dependency.storage.outputs.buckets
 
-  loadbalancer_ip = dependency.cni.outputs.loadbalancer_ip
-
   controlplane         = dependency.nodes.outputs.controlplane
 }

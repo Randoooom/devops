@@ -1,0 +1,19 @@
+output "application_credentials" {
+  value = {
+    for app_name in keys(azuread_application.this) :
+    app_name => {
+      client_id     = azuread_application.this[app_name].client_id
+      client_secret = azuread_application_password.this[app_name].value
+    }
+  }
+  sensitive = true
+}
+
+output "oidc_url" {
+  value     = "https://login.microsoftonline.com/${data.azuread_client_config.this.tenant_id}/v2.0"
+  sensitive = true
+}
+
+output "groups" {
+  value = { for group in azuread_group.this : group.display_name => group.object_id }
+}

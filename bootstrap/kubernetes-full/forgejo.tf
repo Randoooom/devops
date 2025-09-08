@@ -125,8 +125,8 @@ resource "kubernetes_secret" "forgejo_oauth" {
   }
 
   data = {
-    key    = var.forgejo_client_id
-    secret = var.forgejo_client_secret
+    key    = var.application_credentials.forgejo.client_id
+    secret = var.application_credentials.forgejo.client_secret
   }
 }
 
@@ -172,10 +172,10 @@ resource "helm_release" "forgejo" {
 
       oauth = [
         {
-          name            = "Zitadel"
+          name            = "entra"
           provider        = "openidConnect"
           existingSecret  = "forgejo-oauth"
-          autoDiscoverUrl = "https://secure.${var.public_domain}/.well-known/openid-configuration"
+          autoDiscoverUrl = "${var.oidc_url}/.well-known/openid-configuration"
         }
       ]
     }
@@ -187,7 +187,7 @@ resource "helm_release" "forgejo" {
 
         annotations = {
           "external-dns.alpha.kubernetes.io/hostname"           = "ssh.git.${var.public_domain}"
-          "external-dns.alpha.kubernetes.io/target"             = var.loadbalancer_ip
+          "external-dns.alpha.kubernetes.io/target"             = var.public_loadbalancer_ip
           "external-dns.alpha.kubernetes.io/cloudflare-proxied" = "false"
         }
       }
@@ -220,14 +220,14 @@ resource "kubectl_manifest" "forgejo_route" {
       name      = "forgejo"
       namespace = kubernetes_namespace.forgejo.metadata[0].name
       annotations = {
-        "external-dns.alpha.kubernetes.io/target" = var.loadbalancer_ip
+        "external-dns.alpha.kubernetes.io/target" = var.public_loadbalancer_ip
 
       }
     }
     spec = {
       parentRefs = [
         {
-          name        = "cilium"
+          name        = "public"
           sectionName = "https-public"
           namespace   = "default"
         }

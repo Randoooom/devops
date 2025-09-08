@@ -5,7 +5,7 @@ resource "oci_core_network_security_group" "nlb" {
 }
 
 resource "oci_core_network_security_group_security_rule" "service_ingress" {
-  for_each = var.services
+  for_each = var.public_services
 
   network_security_group_id = oci_core_network_security_group.nlb.id
   direction                 = "INGRESS"

@@ -10,8 +10,8 @@ dependency "talos" {
   config_path = "${get_terragrunt_dir()}/../talos"
 }
 
-dependency "cni" {
-  config_path = "${get_terragrunt_dir()}/../cni"
+dependency "gateway" {
+  config_path = "${get_terragrunt_dir()}/../gateway"
 }
 
 dependency "nodes" {
@@ -21,8 +21,8 @@ dependency "nodes" {
 inputs = {
   kubeconfig           = dependency.talos.outputs.kubeconfig
 
-  ca_volume       = dependency.cni.outputs.ca_volume
-  ca_volume_mount = dependency.cni.outputs.ca_volume_mount
+  ca_volume       = dependency.gateway.outputs.ca_volume
+  ca_volume_mount = dependency.gateway.outputs.ca_volume_mount
 
   controlplane         = dependency.nodes.outputs.controlplane
 }

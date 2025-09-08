@@ -18,8 +18,8 @@ dependency "storage" {
   config_path = "${get_terragrunt_dir()}/../storage"
 }
 
-dependency "cni" {
-  config_path = "${get_terragrunt_dir()}/../cni"
+dependency "gateway" {
+  config_path = "${get_terragrunt_dir()}/../gateway"
 }
 
 dependency "databases" {
@@ -38,9 +38,8 @@ inputs = {
   bucket_endpoint      = dependency.storage.outputs.bucket_endpoint
   buckets              = dependency.storage.outputs.buckets
 
-  loadbalancer_ip = dependency.cni.outputs.loadbalancer_ip
-  ca_volume       = dependency.cni.outputs.ca_volume
-  ca_volume_mount = dependency.cni.outputs.ca_volume_mount
+  ca_volume       = dependency.gateway.outputs.ca_volume
+  ca_volume_mount = dependency.gateway.outputs.ca_volume_mount
 
   postgres_host            = dependency.databases.outputs.postgres_host
   postgres_databases       = dependency.databases.outputs.postgres_databases

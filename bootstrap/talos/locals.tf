@@ -91,7 +91,9 @@ EOF
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml
           - https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-podmonitors.yaml
           - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-          - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+          - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/experimental-install.yaml
+          - https://github.com/k8up-io/k8up/releases/download/k8up-4.8.4/k8up-crd.yaml
+          - https://github.com/envoyproxy/gateway/releases/download/v1.4.3/envoy-gateway-crds.yaml
       controllerManager:
         extraArgs:
           cloud-provider: external

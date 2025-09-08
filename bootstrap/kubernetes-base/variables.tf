@@ -39,30 +39,6 @@ variable "public_domain" {
   type = string
 }
 
-variable "zitadel_admin_mail" {
-  type = string
-}
-
-variable "zitadel_smtp_tls" {
-  type = bool
-}
-
-variable "zitadel_smtp_host" {
-  type = string
-}
-
-variable "zitadel_smtp_username" {
-  type = string
-}
-
-variable "zitadel_smtp_password" {
-  type = string
-}
-
-variable "zitadel_smtp_sender" {
-  type = string
-}
-
 variable "bucket_endpoint" {
   type      = string
   sensitive = true
@@ -75,11 +51,6 @@ variable "buckets" {
     name = string
   }))
   sensitive = true
-}
-
-variable "loadbalancer_ip" {
-  sensitive = true
-  type      = string
 }
 
 variable "postgres_admin_password" {

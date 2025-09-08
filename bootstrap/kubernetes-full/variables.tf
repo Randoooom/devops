@@ -10,38 +10,7 @@ variable "cluster_domain" {
   type = string
 }
 
-variable "oauth2_proxy_client_id" {
-  type = string
-}
-
-variable "oauth2_proxy_client_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "argocd_client_id" {
-  type = string
-}
-
-variable "argocd_client_secret" {
-  type      = string
-  sensitive = true
-}
-
-variable "zitadel_project" {
-  type = string
-}
-
 variable "forgejo_admin" {
-  type      = string
-  sensitive = true
-}
-
-variable "forgejo_client_id" {
-  type = string
-}
-
-variable "forgejo_client_secret" {
   type      = string
   sensitive = true
 }
@@ -80,7 +49,7 @@ variable "redis_password" {
   type      = string
 }
 
-variable "loadbalancer_ip" {
+variable "public_loadbalancer_ip" {
   sensitive = true
   type      = string
 }
@@ -103,4 +72,21 @@ variable "postgres_databases" {
 
 variable "postgres_host" {
   type = string
+}
+
+variable "application_credentials" {
+  type = map(object({
+    client_id     = string
+    client_secret = string
+  }))
+  sensitive = true
+}
+
+variable "oidc_url" {
+  type      = string
+  sensitive = true
+}
+
+variable "groups" {
+  type = map(string)
 }

@@ -218,6 +218,10 @@ resource "kubectl_manifest" "postgres_cluster" {
       managed = {
         roles = local.postgres_users
       }
+
+      monitoring = {
+        enablePodMonitor = true
+      }
     }
   })
 }

@@ -65,7 +65,7 @@ variable "module_path" {
   type = string
 }
 
-variable "services" {
+variable "public_services" {
   type = map(object({
     port      = number
     node_port = number
