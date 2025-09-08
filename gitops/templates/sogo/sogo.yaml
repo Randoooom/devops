@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sogo 
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: sogo
+    # TODO: solve this with yaml merging
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://helm.snry.xyz/docker-sogo
+    chart: sogo
+    targetRevision: 0.3.2 
+    helm:
+      values: |
+        sogo:
+          host: sogo.{{ .Values.domain }}
+          existingSecrets:
+            - sogo-config
+
+          configs:
+            SOGoTimeZone: Europe/Berlin
+
+        memcached:
+          enabled: false
+  {{- include "common" . | nindent 2 }}

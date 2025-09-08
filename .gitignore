@@ -54,3 +54,4 @@ gitops/templates/feedback-fusion/secrets/feedback-fusion-dashboard-config.yaml
 gitops/templates/event/secrets/surrealdb-credentials.yaml
 gitops/templates/dawarich/secrets/config.yaml
 gitops/templates/cal/secrets/calcom.yaml
+gitops/templates/sogo/secrets/sogo-config.yaml
