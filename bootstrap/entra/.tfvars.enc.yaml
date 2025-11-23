@@ -71,6 +71,14 @@ additional_applications:
         required_roles:
             - ENC[AES256_GCM,data:vsDe7pchsZU=,iv:VxHRzakYV2ONuGHuvetUlWkWOQJeVaiyjo7mFj2AnZ8=,tag:3P2bLtxD0xNwj7jGRPPQhQ==,type:str]
         sign_in_audience: ENC[AES256_GCM,data:dVUyIf5Bx0CTjiSL,iv:i1IlofpaaEn5+dtUltdodA/NNa/ecWviqk8zF/9nUZk=,tag:mCLiDDSbKsZ/F2wCisVtSw==,type:str]
+    dawarich:
+        app_role_assignment_req: ENC[AES256_GCM,data:IJEKpA==,iv:ZeNI28PL9RGKbz5kQ0N/LMkFwLNea5d1I9kr+T5Acbc=,tag:6kOhSGNBhqYnXn+stsSIXQ==,type:bool]
+        logout_uris: []
+        redirect_uris:
+            - ENC[AES256_GCM,data:Ki4TwKU092CDxnQLEC+eLI5H8zrK21TQiHKJa4W/DYsmJoA54CZY4JFVuO+XAvetLco4QNcwYRTbzX6IXf5EeK2Jj2k73nHJnUOgNlQ=,iv:QtFMrYhHnKrkGszZegAzCzJ4ztcZJOhuRILxXSNTu74=,tag:WyLOJSWJnmRCkzZk/n4tqQ==,type:str]
+        required_roles:
+            - ENC[AES256_GCM,data:Sm25+Lngeb4=,iv:3D9F3ocin7mt2G0R3QzYsyx8cW0V9W9c+0/TS+ozK8Q=,tag:rGtHFROu/GtA61o22gzH8A==,type:str]
+        sign_in_audience: ENC[AES256_GCM,data:0hgDO38TXYXvbSOF,iv:68p9070AlVYIwAamwarj/zS2bEGdQ6QE1fVb+vTfbq0=,tag:N6AfyrK+J9fVCk7IL4tvWg==,type:str]
 additional_groups:
     - ENC[AES256_GCM,data:0UUJqOF95SY=,iv:G7xS0GuH6CjQlfitwn0fQZNIj/vyNNKDU/8lmqKFjDU=,tag:7QTJR7hwQBhSXbls8Ws7dw==,type:str]
     - ENC[AES256_GCM,data:X/m2nPPLmgCDrvw6jdM=,iv:jH6iOhhIsrghU7jRg5u8UxX0bKKGdGXawJ+blKJeaFc=,tag:mGRQ+4Ht8pV70gGhSiWrHA==,type:str]
@@ -83,6 +91,7 @@ additional_groups:
     - ENC[AES256_GCM,data:wjuZGpnluIu5wLWnKg==,iv:L6Itkjk0ulESqieOfBGtOJdASEauFedCbsCO7CkHrik=,tag:RoQ9aH+BhYWBeLF8D+Mxzw==,type:str]
     - ENC[AES256_GCM,data:q3lMlQzaI9Jj9oh41A==,iv:XVjCWiIPl4UYCCT60cHqVtu6snWihyni5BDVUXp22W8=,tag:iOk41nze7lqZh1dWaXAHtw==,type:str]
     - ENC[AES256_GCM,data:kqFJfWK1iPA=,iv:v6/MvhaaUFu21uJOijEKK9NZeqDVwdED4/+SD2L/mD0=,tag:2sT93hhxj5SLOXhcYT0pQA==,type:str]
+    - ENC[AES256_GCM,data:IaIIjOnkc/Q=,iv:yYaz5zmQTivzQ2Bx8cMohfSkVT1y9rYA3sBnlm9VkJg=,tag:LrdVsOBmaqa237S9U5vRQA==,type:str]
 sops:
     age:
         - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
@@ -94,7 +103,7 @@ sops:
             NFNtNFloTkQzQ2ZvR0Rob2pwZjJham8Kp5hHC+CJJ4+69Q9BAewZtrsNYoHx3X/V
             2VdsV6QLDpXs6jGoNV6A3hPkZTbrvUEwAVkz7uUcLOTpBpTTawyd5g==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-23T14:11:28Z"
-    mac: ENC[AES256_GCM,data:xadzHlusKxFV2cFTKBBRU3T1wMYzMkzDnxoMm0F4Gnbe/zqkeUgLIFo0yTEFx7m/GXfixsWONF8bk4D0BJwRDkxKYp2i+GJE7ov4kpQ2GY+xRPyu+GlRVioVXpGELyvmf3+MQXkTGawUrC9Yu9lDSKnQVO4vbrbQGnfUpzKhX/4=,iv:fpA5JeTRNLX9aBi0HrJngD+ZPUL/Gp4EA/A7gQ/ypZg=,tag:UTAkx4JC+uSUvQehFgG7Kg==,type:str]
+    lastmodified: "2025-11-23T17:53:01Z"
+    mac: ENC[AES256_GCM,data:UaOpYT2FKSFf2g3RwKBt5a+CFWPmoEX8lLqhIMyjxpXxg+07OSMJCipYStr12tydbIe6MOLyALxJAQhXVfXyfjwyXYHKZgn4Tz0xmUh3Jhj+isx1mAgeM9fSKjkBLhUy4TYMCtb0PhWrSS/9HjOuF92rCqVj+iVcTUWgqZiz4Ys=,iv:mGHs0Nf6qW2vyDLrSeJ7ONrdGHuSnBQ9pfs/bv7bCx4=,tag:uoS2QU3jjvsZi6jaSrQKrQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
