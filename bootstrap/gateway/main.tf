@@ -38,7 +38,7 @@ resource "helm_release" "gateway" {
   depends_on = [kubectl_manifest.ingress_certificate]
 
   chart   = "oci://docker.io/envoyproxy/gateway-helm"
-  version = "1.4.3"
+  version = "1.6.0"
 
   namespace = kubernetes_namespace.gateway.metadata[0].name
   name      = "envoy-gateway"
