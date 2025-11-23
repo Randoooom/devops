@@ -92,7 +92,7 @@ resource "helm_release" "dragonfly" {
   depends_on = [kubernetes_namespace.redis]
 
   chart   = "oci://ghcr.io/dragonflydb/dragonfly-operator/helm/dragonfly-operator"
-  version = "v1.1.11"
+  version = "v1.3.0"
 
   name      = "dragonfly-operator"
   namespace = kubernetes_namespace.redis.metadata[0].name
