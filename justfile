@@ -1,14 +1,3 @@
-install:
- pre-commit install 
-
-git-secret-hide:
-  git secret hide
-
-git-secret-reveal:
-  git secret reveal
-
-# bastion access
-
 stop-bastion:
   sh ./bootstrap/scripts/stop_bastion_sessions.sh
 
@@ -26,13 +15,7 @@ bastion:
     rm -f .bastion || true
 
 seal:
-    #!/usr/bin/env sh
-    find gitops/templates/**/secrets/ -type f -name '*.yaml' | while read -r file; do
-        if grep -q "kind: Secret" "$file"; then
-            echo "Sealing $file..."
-            kubeseal -f "$file" -w "${file%.yaml}-sealed.yaml"
-        fi
-    done
+  fd . gitops -e .enc.yaml -x sh -c 'sops decrypt {} | kubeseal -o yaml > "$(dirname {})/$(basename {} .enc.yaml).sealed.yaml"'
 
 plan:
   cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a plan --queue-exclude-dir bastion --experiment cli-redesign

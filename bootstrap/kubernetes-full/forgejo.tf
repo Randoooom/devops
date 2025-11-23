@@ -210,6 +210,12 @@ resource "helm_release" "forgejo" {
   })]
 }
 
+module "crawler_rules_forgejo" {
+  source = "${var.module_path}/crawler-rules"
+
+  namespace = "forgejo"
+}
+
 resource "kubectl_manifest" "forgejo_route" {
   depends_on = [helm_release.forgejo]
 
@@ -234,6 +240,7 @@ resource "kubectl_manifest" "forgejo_route" {
       ]
       hostnames = ["git.${var.public_domain}"]
       rules = [
+        module.crawler_rules_forgejo.crawler_rules,
         {
           matches = [
             {

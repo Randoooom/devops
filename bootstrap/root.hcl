@@ -1,19 +1,4 @@
 terraform {
-  extra_arguments "vars" {
-    commands = [
-      "apply",
-      "plan",
-      "import",
-      "push",
-      "refresh"
-    ]
-
-    arguments = [
-      "-var-file=${get_terragrunt_dir()}/../.tfvars",
-      "-var-file=${get_terragrunt_dir()}/.tfvars"
-    ]
-  }
-
   source = "."
 }
 
@@ -75,6 +60,11 @@ variable "public_services" {
   EOF
 }
 
-inputs = {
-  module_path = "${get_terragrunt_dir()}/../modules"
+locals {
+  global_variables = yamldecode(sops_decrypt_file("${get_terragrunt_dir()}/../.tfvars.enc.yaml"))
+  local_variables = yamldecode(sops_decrypt_file("${get_terragrunt_dir()}/.tfvars.enc.yaml"))
 }
+
+inputs = merge(local.global_variables, local.local_variables, {
+  module_path = "${get_terragrunt_dir()}/../modules"
+})
