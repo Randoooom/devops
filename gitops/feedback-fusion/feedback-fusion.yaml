@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://github.com/OneLiteFeatherNET/feedback-fusion.git
       path: charts/feedback-fusion
-      targetRevision: main 
+      targetRevision: fix/arm64 
       helm:
         values: |
           server:
