@@ -11,3 +11,7 @@ output "forgejo_password" {
   sensitive = true
   value     = random_password.forgejo_admin.result
 }
+
+output "argocd_age_public_key" {
+  value = age_secret_key.argocd.public_key
+}

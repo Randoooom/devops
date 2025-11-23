@@ -14,9 +14,6 @@ bastion:
     fi
     rm -f .bastion || true
 
-seal:
-  fd . gitops -e .enc.yaml -x sh -c 'sops decrypt {} | kubeseal -o yaml > "$(dirname {})/$(basename {} .enc.yaml).sealed.yaml"'
-
 plan:
   cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a plan --queue-exclude-dir bastion --experiment cli-redesign
 

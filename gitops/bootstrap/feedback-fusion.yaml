@@ -1,0 +1,21 @@
+piVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: feedback-fusion-stack
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: sys-argocd
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/randoooom/devops.git 
+    path: gitops/feedback-fusion
+    targetRevision: main
+  project: randoms-rocks 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

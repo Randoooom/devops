@@ -19,5 +19,10 @@ terraform {
       source  = "oracle/oci"
       version = "7.13.0"
     }
+
+    age = {
+      source = "clementblaise/age"
+      version = "0.1.1"
+    }
   }
 }

@@ -1,0 +1,12 @@
+apiVersion: viaduct.ai/v1
+kind: ksops
+metadata:
+  name: feedback-fusion-secret-generator
+  annotations:
+    config.kubernetes.io/function: |
+      exec:
+        path: ksops
+files:
+  - feedback-fusion-config.enc.yaml
+  - feedback-fusion-indexer-config.enc.yaml
+  - feedback-fusion-dashboard-config.enc.yaml

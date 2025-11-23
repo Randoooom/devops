@@ -21,6 +21,19 @@ resource "kubernetes_secret" "argocd" {
   }
 }
 
+resource "age_secret_key" "argocd" {}
+
+resource "kubernetes_secret" "argocd_age" {
+  metadata {
+    name      = "argocd-age"
+    namespace = kubernetes_namespace.argocd.metadata[0].name
+  }
+
+  data = {
+    "key.txt" = age_secret_key.argocd.secret_key
+  }
+}
+
 resource "helm_release" "argocd" {
   depends_on = [kubernetes_namespace.argocd, kubernetes_secret.argocd]
 
@@ -65,7 +78,8 @@ resource "helm_release" "argocd" {
       }
 
       cm = {
-        "oidc.config" = <<EOF
+        "kustomize.buildOptions" = "--enable-alpha-plugins --enable-exec"
+        "oidc.config"            = <<EOF
 name: Entra
 issuer: ${var.oidc_url}
 clientID: $argocd-credentials:client-id 
@@ -75,13 +89,12 @@ requestedScopes:
   - profile
   - email
 EOF
-        url           = "https://argocd.internal.${var.cluster_domain}"
+        url                      = "https://argocd.internal.${var.cluster_domain}"
       }
 
       rbac = {
         "policy.csv" = <<EOF
-g, ${var.groups.argocd-admin}, role:admin
-g, ${var.groups.argocd}, role:readonly
+g, ${var.groups.argocd}, role:admin
 EOF
       }
     }
@@ -116,12 +129,70 @@ EOF
     }
 
     repoServer = {
-      volumes      = [var.ca_volume]
-      volumeMounts = [var.ca_volume_mount]
+      volumes = [
+        var.ca_volume,
+        {
+          name     = "sops"
+          emptyDir = {}
+        },
+        {
+          name = "age"
+          secret = {
+            secretName = "argocd-age"
+          }
+        }
+      ]
+
+      volumeMounts = [
+        var.ca_volume_mount,
+        {
+          name      = "age"
+          readOnly  = true
+          mountPath = "/age"
+        },
+        {
+          name      = "sops"
+          mountPath = "/usr/local/bin/kustomize"
+          subPath   = "kustomize"
+        },
+        {
+          name      = "sops"
+          mountPath = "/usr/local/bin/ksops"
+          subPath   = "ksops"
+        }
+      ]
 
       extraArgs = [
         "--redisdb=4",
         "--redis-use-tls"
+      ]
+
+      env = [
+        {
+          name  = "SOPS_AGE_KEY_FILE"
+          value = "/age/key.txt"
+        }
+      ]
+
+      initContainers = [
+        {
+          name    = "install-ksops"
+          image   = "viaductoss/ksops:v4.3.0"
+          command = ["/bin/sh", "-c"]
+          args = [<<EOF
+            echo "Installing KSOPS...";
+            mv ksops /sops/;
+            mv kustomize /sops/;
+            echo "Done.";
+EOF
+          ]
+          volumeMounts = [
+            {
+              name      = "sops"
+              mountPath = "/sops"
+            }
+          ]
+        }
       ]
     }
 
@@ -224,17 +295,8 @@ resource "kubectl_manifest" "argocd_app_of_apps" {
       }
       source = {
         repoURL        = "https://github.com/randoooom/devops"
-        path           = "gitops"
+        path           = "gitops/bootstrap"
         targetRevision = "main"
-
-        helm = {
-          values = <<EOF
-project: ${var.cluster_name}
-domain: ${var.public_domain}
-clusterDomain: ${var.cluster_domain}
-loadBalancerIp: ${var.public_loadbalancer_ip}
-EOF
-        }
       }
       project = var.cluster_name
       syncPolicy = {
