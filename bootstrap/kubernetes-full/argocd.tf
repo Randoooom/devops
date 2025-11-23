@@ -61,7 +61,7 @@ resource "helm_release" "argocd" {
         }
       }
       params = {
-        "server.insecure" = false
+        "server.insecure" = true
       }
 
       cm = {
