@@ -1,3 +1,9 @@
 creation_rules:
+  - path_regex: gitops\/.*\.enc\..*$
+    age: 
+      - age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9  
+      - age1lpxxu3tya3wprzs9fm6hu7z8fc7fdh7k0qyk8tp58xfp8ujm835sw630st
   - path_regex: .*\.enc\..*$
-    age: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9  
+    age: 
+      - age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9  
+

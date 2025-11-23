@@ -22,4 +22,11 @@ spec:
           hostUsers: true
           nodeSelector:
             kubernetes.io/arch: arm64
-  {{- include "common" . | nindent 2 }}
+  project: randoms-rocks 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

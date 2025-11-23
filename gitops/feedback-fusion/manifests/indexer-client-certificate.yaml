@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: indexer-client-certificate
+  namespace: feedback-fusion
+spec:
+  secretName: indexer-client-tls
+  issuerRef:
+    name: cluster-authority
+    kind: ClusterIssuer
+  commonName: indexer-client
+  dnsNames:
+    - indexer-client.local
+  usages:
+    - client auth
+    - digital signature
+    - key encipherment
+  privateKey:
+    algorithm: ECDSA
+    size: 384
+

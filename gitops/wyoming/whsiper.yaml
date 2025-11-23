@@ -27,4 +27,11 @@ spec:
           language: de
 
         workload:
-  {{- include "common" . | nindent 2 }}
+  project: randoms-rocks 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

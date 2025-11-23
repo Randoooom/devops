@@ -1,13 +1,11 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  annotations:
-    external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
-  name: feedback-fusion-dashboard
-  namespace: feedback-fusion
+  name: event
+  namespace: event
 spec:
   hostnames:
-  - feedback-fusion.{{ .Values.domain }}
+  - event.randoms.rocks
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
@@ -18,7 +16,7 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: feedback-fusion-dashboard
+      name: event 
       port: 3000
       weight: 1
     matches:
@@ -30,13 +28,12 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   annotations:
-    external-dns.alpha.kubernetes.io/target: {{ .Values.loadBalancerIp }} 
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-  name: feedback-fusion
-  namespace: feedback-fusion
+  name: surrealdb
+  namespace: event
 spec:
   hostnames:
-  - feedback-fusion.{{ .Values.clusterDomain }}
+  - surrealdb.pu.randoms.rocks
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
@@ -47,7 +44,7 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: feedback-fusion 
+      name: event-surrealdb
       port: 8000
       weight: 1
     matches:

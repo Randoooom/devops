@@ -1,0 +1,91 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: feedback-fusion 
+  namespace: sys-argocd
+spec:
+  destination:
+    namespace: feedback-fusion
+    server: https://kubernetes.default.svc
+  sources:
+    - repoURL: https://github.com/OneLiteFeatherNET/feedback-fusion.git
+      path: charts/feedback-fusion
+      targetRevision: main 
+      helm:
+        values: |
+          server:
+            image:
+              pullPolicy: Always
+              tag: nightly
+
+            ingress:
+              enabled: false
+
+            volumes:
+              - configMap:
+                  optional: false
+                  defaultMode: 420
+                  items:
+                  - key: root-certs.pem
+                    path: root-certs.pem
+                  name: cluster-authority
+                name: certificates
+
+            volumeMounts:
+              - mountPath: /etc/ssl/certs/root-certs.pem
+                name: certificates
+                readOnly: true
+                subPath: root-certs.pem
+
+          indexer:
+            image:
+              pullPolicy: Always
+              tag: nightly
+
+            volumes:
+              - name: indexer-tls
+                secret:
+                  secretName: indexer-tls
+                  defaultMode: 420
+              - configMap:
+                  optional: false
+                  defaultMode: 420
+                  items:
+                  - key: root-certs.pem
+                    path: root-certs.pem
+                  name: cluster-authority
+                name: certificates
+
+            volumeMounts:
+              - mountPath: /tls/indexer/tls.key
+                name: indexer-tls
+                readOnly: true
+                subPath: tls.key
+              - mountPath: /tls/indexer/tls.crt
+                name: indexer-tls
+                readOnly: true
+                subPath: tls.crt
+              - mountPath: /etc/ssl/certs/root-certs.pem
+                name: certificates
+                readOnly: true
+                subPath: root-certs.pem
+
+
+          dashboard:
+            image:
+              pullPolicy: Always
+              tag: "nightly"
+
+            ingress:
+              enabled: false
+    - repoURL: https://github.com/randoooom/devops.git
+      path: gitops/feedback-fusion/manifests
+      targetRevision: main
+  project: randoms-rocks 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
