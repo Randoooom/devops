@@ -20,7 +20,7 @@ spec:
           envFrom:
           - secretRef:
               name: dawarich-config
-          image: freikin/dawarich:latest
+          image: freikin/dawarich:0.36.0-rc.1 
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /var/app/public
@@ -38,7 +38,7 @@ spec:
           envFrom:
           - secretRef:
               name: dawarich-config
-          image: freikin/dawarich:latest
+          image: freikin/dawarich:0.36.0-rc.1 
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /var/app/public
