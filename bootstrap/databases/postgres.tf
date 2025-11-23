@@ -163,7 +163,7 @@ resource "kubectl_manifest" "postgres_cluster" {
       }
 
       storage = {
-        size = "5Gi"
+        size = "10Gi"
       }
 
       certificates = {

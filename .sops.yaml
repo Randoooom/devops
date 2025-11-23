@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: .*\.enc\..*$
+    age: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9  

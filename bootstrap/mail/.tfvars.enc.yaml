@@ -1,0 +1,19 @@
+cloudflare_zone: ENC[AES256_GCM,data:ZVSAuM+TxX+S84vkAQ==,iv:TQQbI1/gYxBKRerERYvbRMe4UN++haFE+VENECKFSt8=,tag:qfn9y2Vx7Gew3D31Ci1WiQ==,type:str]
+senders:
+    git.randoms.rocks:
+        - ENC[AES256_GCM,data:514PTLauMbU=,iv:KjUGa7ImH6VGRt5zdptveM8xvMYbe0ycwumqq57zYpQ=,tag:vNK1LthrkO84NNNoV8VnlQ==,type:str]
+sops:
+    age:
+        - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmaW1xYktEdmhNZlV6V2RV
+            Rll0MFlEbjAwYVdDcVZ1bEM3N3JhYldBNG5BCjJ6WlBleituK09jazBndUhWblBt
+            L29ZV1FLMjhTdy9lMUs5eHhkdnRuY00KLS0tIFR4RUtxUHY5Y29mTVY5NlVnWnRS
+            cFVnSGpxNlNBTkdNa1E5eDgzTjZqZzgKYUuvczp6evWVtZ0+4RK0xWdQkbmiBXV3
+            7WbhapnCHZnsXyNtpyrig0BrBn1++ln/vXWT6nBZBlfLXxFIKMFXow==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-11-23T14:11:28Z"
+    mac: ENC[AES256_GCM,data:ZXTprgbRDm1Y7E9QD7QutFCqiXn53g7iyOxJI2pTmyDMsQdm8fzXU8DF5LUWWuyS2e/lIQNEOhrkg+ebuDlsTkH2OAqjlwsDjT239td8uAM0gIj7KJnXY3pfPRbDGKOxMbFmGgCekATINxO9JyBGpFu0r2/1xfQs6a5qbY9kf4g=,iv:ub4w2tbTxRJepfWXzH3j25Uf2A232Odh8nJk7BMHtF8=,tag:h9UGdHohhp5pSP/neyeUcA==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.11.0

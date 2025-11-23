@@ -1,0 +1,33 @@
+access_tokens:
+    code.forgejo.org: ENC[AES256_GCM,data:+pTKJAbYzX6exDg9M2q5SS50uggZL6iwHItNU62ztAgVp4W+2BDqIA==,iv:WnhWrhwUDVHaBt6hwwN5Rl6iiLudwHfQmop9//N0+Xc=,tag:uKdsPlOHJ2ddqTWPVjlTZA==,type:str]
+    github.com: ENC[AES256_GCM,data:5OLpdNVRQbto7D0ziymQ5xpOWNkRM6hx9q0a3yGMQo6BvukCsRkRpUCyO1sWzul/wypIMUJstxm/4tnMSG7LThPRdd68WZwx8oLIUznZCtf5JxrikfvSW7wdjHJF,iv:ZyLCPTD+GX20mJziMR1TPWL9/ZuyHO5qXUJf2eVClH4=,tag:uPRiDJM/sjpRhPTfdoAe8A==,type:str]
+organizations:
+    actions:
+        mirrors:
+            https://code.forgejo.org/actions/checkout.git: ENC[AES256_GCM,data:kf1SmA==,iv:chAJZOaiNvyeLsowyU9XV2t+thoMVmm0AhpneojoLbE=,tag:uALJfQvO2uJ3vsLfBC5W7Q==,type:str]
+            https://github.com/dcarbone/install-jq-action.git: ENC[AES256_GCM,data:UVut0Q==,iv:/TcXHWgKPMDldz6GQDPVCTmmP9rxXmr2WQb+0pqvgSE=,tag:Sw+1PeUvzBHZf3rIexV63g==,type:str]
+            https://github.com/docker/build-push-action.git: ENC[AES256_GCM,data:smByIHd3,iv:hHcz/f1hGffrk4HYwiLqiO5RT5ZCSWD2mOCKlH+AO5c=,tag:W+3GSlPAzvZDKDJzKPutKQ==,type:str]
+            https://github.com/docker/login-action.git: ENC[AES256_GCM,data:6g2+AvXI,iv:EboKZK7IaeAQozjO2CmhMog1EZiT48mV3BwosQBLjDs=,tag:ta8VIgpYulD62PX97zHNFg==,type:str]
+            https://github.com/docker/setup-buildx-action.git: ENC[AES256_GCM,data:qco2xBs1,iv:fFZ8yjZa2vyvsZIe2P0omp9oqPyamRVuj6JiCcOQKjE=,tag:JyfWR16gohXW5sBK74rFmA==,type:str]
+            https://github.com/eLco/setup-terragrunt.git: ENC[AES256_GCM,data:eRSl+A==,iv:oGuHtZlaZUul44ps1U6emIX0/wseb4oIYsr9Y3An6uM=,tag:46keIsQSz6q6wG1PrSp1cA==,type:str]
+            https://github.com/entrostat/git-secret-action.git: ENC[AES256_GCM,data:j79TBg==,iv:93ZaQ+zl0n+e2lajEx/soVeKtmyUCU9Gvt3iwsnj5dc=,tag:QIqoJFSBhz3lE+eWJG6BbQ==,type:str]
+            https://github.com/extractions/setup-just.git: ENC[AES256_GCM,data:pcnKs5s=,iv:1EUA8ZXRaQu9VkxD3KqGZquI5E9w0aaGoJX+5qrPte0=,tag:HK1QWdvGrv1hNG2BAXzY1A==,type:str]
+            https://github.com/hashicorp/setup-terraform.git: ENC[AES256_GCM,data:214z4A==,iv:RJmUDqTCGPVbd7wpYC1jMGcd9GTjSpSVIoB0fW3UoeE=,tag:k2SQjt9hdVW2/azop429Wg==,type:str]
+            https://github.com/opentofu/setup-opentofu.git: ENC[AES256_GCM,data:QTUBDg==,iv:DLEIdGZLq2UMSr2BmP0FhtOtWB9R7riedtVV+yO/9x4=,tag:ZjHM6+vR2gcmc64tfBeTXQ==,type:str]
+            https://github.com/webfactory/ssh-agent.git: ENC[AES256_GCM,data:Ak8ODkSJ,iv:q+IdOTNIEa7+OuVo5iBbg4Z4h69+SDbimRxcz5mNpqk=,tag:w0d9FELy5enBgOs7Bj3JiA==,type:str]
+        public: ENC[AES256_GCM,data:+Qgqow==,iv:KXvJAFjce9sL9WkioB3AXlFBCAGwTyDMlzpoA3V6i/o=,tag:XXLshY9SdvYtbmHSA61cKg==,type:bool]
+sops:
+    age:
+        - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBpUmhPK24yK1Z4YkkyTnVG
+            K3hPTVNScDVMbVJFck5jZlI3NW9NemRodW4wCnJiL2ZSenhiTE5ObytqVWk2M2hz
+            N0Rpd3MyWDBwVHNKU2d4Zk9WMWpxc0kKLS0tIFN0MTB3Yk1xUGNGS1UxU25pS0tT
+            dVpYQ0VBTmZicStGZG43T09ZaU5wQmcKNlNCp+XJFnRtj+XSM8hJVs1bBUwnueKH
+            hvB1IKhQuRKZHijoEdzab6Cqqy8xJNQNdPcqEpwDBYkJFyMzN+X13Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-11-23T14:11:28Z"
+    mac: ENC[AES256_GCM,data:+jIr5K04Mohxaq0myYGZ/s5qwWL1laeoe43wv4RDkc0tcB8CTPVie4g5yUmzVrvLrybM6JCUrQr/3MF57PwI1EO+Bvuarz9oE32SZ+UgFc1CeJaltXLAgclz4B5dRZeetbkpfqJA04MOaQC4sBvmcTxGOnEqhxypgA6vBNQ7Tdc=,iv:z/fJn8JikPmXeOMxvmn4bxBblhtsv95FF83nwB6u+ek=,tag:9vCCYlWOjOapPslGrAukrg==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.11.0

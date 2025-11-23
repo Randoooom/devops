@@ -22,4 +22,3 @@ output "ca_volume_mount" {
     subPath   = "root-certs.pem"
   }
 }
-

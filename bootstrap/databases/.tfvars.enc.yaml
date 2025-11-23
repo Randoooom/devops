@@ -1,0 +1,19 @@
+postgres_databases:
+    dawarich: ENC[AES256_GCM,data:il6Zat4Tqs8=,iv:pM3QSkKEZrcal1E5hAoRcTwGKCCqbK1wqWAb6hooc8w=,tag:oJdxjLnrqZKVBuF+SIJqBw==,type:str]
+    feedbackfusion: ENC[AES256_GCM,data:Xt+ehli9G53YuQ3wxsE=,iv:aJneiSbq1YuZloIL/sXbb9hBzsVqEWaP7UsYmJn94mE=,tag:OPiAuLAI9Ag0lCcnB3Rrbw==,type:str]
+    forgejo: ENC[AES256_GCM,data:XpkZJsWhiw==,iv:BOR1zjrzgJ7wuxBxi1qKI0aFo+JCmCQUuuelKtJuJL0=,tag:VJsXV0e6jUJ5Iqq2BC3KQA==,type:str]
+sops:
+    age:
+        - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSByNFVOa3dzTGhkRDg2Sm9u
+            NkQzUHhoVVpOZ0FwdUl5eG9jc3NmQmhGYXpFCi9haXFHYllOWDZVZVpRZTk4VFFB
+            Rzg2cmVqYTdiRWlWQ0ozOVRiY1dSOW8KLS0tIGZGdW92TW42SlJ3RzNNRnNEWkZ3
+            N1B6UlZydFBsem4zZUF3NUlBT0Y2Y2sKWUOW3Xwbk+vAFiACvqdIeJaPBL7H3Bnt
+            5a0WRxT7wBe2GyUu7PgOV8DTTqCixrfOiGzAI2b9TzunT3XZa7FUlA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-11-23T14:11:28Z"
+    mac: ENC[AES256_GCM,data:slgg7Mkcu3zk5aNe01FsZBp0K3pjPf0kJRO8t2m1/qqyxdfmjQyfhURF7UjgAXOh9vyeC338IU+b6V23vbhTqAKgR1fx4B2Iky7r98bqjF83EX9aeBALIfoDzhLuGZ85ZYJNRfHxP2EcPaHcj69Z2zmloeNF5oBSjIzgxTx5LKg=,iv:7jCPHKwDrioyR+tALxC0Q7Cb/6G/ZMYSFOXGbOnRYPU=,tag:NnmgdV6VQwZ20SiUrZgN7A==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.11.0
