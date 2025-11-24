@@ -9,7 +9,7 @@ spec:
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
-    name: cilium
+    name: public
     namespace: default
     sectionName: https-public
   rules:
@@ -37,7 +37,7 @@ spec:
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
-    name: cilium
+    name: public
     namespace: default
     sectionName: https
   rules:
