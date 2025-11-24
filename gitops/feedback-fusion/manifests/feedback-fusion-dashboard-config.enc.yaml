@@ -11,6 +11,8 @@ stringData:
     NUXT_OIDC_PROVIDERS_OIDC_REDIRECT_URI: ENC[AES256_GCM,data:Mxwy6s8A/zPfB7HbBvpQKmUuUMqJOPNxJlB6YPzGK+qBwZZ/e+eKAjg/Z3SRvhB34g6ZUZOvQb8=,iv:nboe4po1qKIfFV29RU1U/aZ/H3LO1rNrSyRtv04u/NA=,tag:r+f4ogygozjzhEpc45D2/g==,type:str]
     NUXT_OIDC_PROVIDERS_OIDC_TOKEN_URL: ENC[AES256_GCM,data:LokquhpCFVpKDa+n6AI3w5phIbyxUasxhuvBj7AaUOAW3N30sBFFRhI77OeM92RSm6QuLgocPBQy0JJgaSpFGl+xgxl+RRJBE8qskWSgVp5nMlY=,iv:0Pey159Z5cwTyhsXDjW5p1+bilvB3kCZ803N6dWwgZU=,tag:NO6XIt3qea5jocaOj+gKQA==,type:str]
     NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT: ENC[AES256_GCM,data:nd0zZBAWeNhIJn498CdwZ1qjcSGiuHwT5EB8+b5HEHs=,iv:b3FcJ0YWImjp1FQHs/xfSXdAOZolqWGM3QhI2RnmJ2s=,tag:UPl1kFLFbe2mbZbZx3Lr/w==,type:str]
+    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ACCESS_TOKEN: ENC[AES256_GCM,data:5k+kJlo=,iv:OzjQFKixRt5Yyfxh2rCsc7616gnogp1Mp8AaMwsGdH4=,tag:j+vPHzv8JMOFZxphyqJivQ==,type:bool]
+    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ID_TOKEN: ENC[AES256_GCM,data:1ieGGYA=,iv:RkHvoFXNIofQkrPesf9CvPpto/hFkMlO8ECqxulVEW8=,tag:Udfel7ViMUti68U3pn92Rw==,type:bool]
 sops:
     age:
         - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
@@ -31,7 +33,7 @@ sops:
             Um1BT0lzLzdmNnNCLzRyZTFUcDdJT1kKIAEKMxC/ToPeNgfDCHH1X6JaN0ZpgxbF
             vdggpfBDF9BFr6kIwRHMBiXGyUdqdaFrVezH5UxPPGWux8+ZIvdX4Q==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-23T15:09:42Z"
-    mac: ENC[AES256_GCM,data:RZLOwjRe1TCtPVEotdx0tDE3M7TbEWnbqteeF8q7CUBtH2tfOhsK0pPUjuwb2BRYCR6Ft+ykEFkCrhqPaU1PVVAuMZ+d6rCqc4qfzIvEabeEqmMKYLaJZ6nFkqID6r9nitYTqXFfx25hw7L898rHjSiedOdUZSzimBgSYpUa0V8=,iv:PsR/joOr9WKEsRE3XIEzt44/hstIlvy/BFc1+8LgAUk=,tag:O8JDCCBtwXrV49jZRvjRcg==,type:str]
+    lastmodified: "2025-11-24T10:24:06Z"
+    mac: ENC[AES256_GCM,data:LwbNeBU0A9Ge5f6MvPz+Kf7ebRDOkCwd8tRmHIApOnozbfZxVkdcv8Kph4YSIaZb+o600v0RiAAu7PE0QnOHCh0asdL18w7TZ3OMQ1zVaNVlhoKpO1m5YnLe8tleZI8jh/DtzpuBRM+u7eSJiu9tfjqORwD11KMScCbDQcghH3U=,iv:R0LrxagD+p1aGDCr4E0x3I6yZGfL1ErhIWnvt4NJkw4=,tag:9gyfLd8SjCfGVulCY/YUcQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
