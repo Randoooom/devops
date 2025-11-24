@@ -22,6 +22,10 @@ spec:
               enabled: false
 
             volumes:
+              - name: indexer-client-tls
+                secret:
+                  secretName: indexer-client-tls
+                  defaultMode: 420
               - configMap:
                   optional: false
                   defaultMode: 420
@@ -36,6 +40,9 @@ spec:
                 name: certificates
                 readOnly: true
                 subPath: root-certs.pem
+              - mountPath: /tls/indexer
+                name: indexer-tls
+                readOnly: true
 
           indexer:
             image:
@@ -57,14 +64,9 @@ spec:
                 name: certificates
 
             volumeMounts:
-              - mountPath: /tls/indexer/tls.key
+              - mountPath: /tls/indexer
                 name: indexer-tls
                 readOnly: true
-                subPath: tls.key
-              - mountPath: /tls/indexer/tls.crt
-                name: indexer-tls
-                readOnly: true
-                subPath: tls.crt
               - mountPath: /etc/ssl/certs/root-certs.pem
                 name: certificates
                 readOnly: true
