@@ -11,8 +11,8 @@ stringData:
     NUXT_OIDC_PROVIDERS_OIDC_REDIRECT_URI: ENC[AES256_GCM,data:Mxwy6s8A/zPfB7HbBvpQKmUuUMqJOPNxJlB6YPzGK+qBwZZ/e+eKAjg/Z3SRvhB34g6ZUZOvQb8=,iv:nboe4po1qKIfFV29RU1U/aZ/H3LO1rNrSyRtv04u/NA=,tag:r+f4ogygozjzhEpc45D2/g==,type:str]
     NUXT_OIDC_PROVIDERS_OIDC_TOKEN_URL: ENC[AES256_GCM,data:LokquhpCFVpKDa+n6AI3w5phIbyxUasxhuvBj7AaUOAW3N30sBFFRhI77OeM92RSm6QuLgocPBQy0JJgaSpFGl+xgxl+RRJBE8qskWSgVp5nMlY=,iv:0Pey159Z5cwTyhsXDjW5p1+bilvB3kCZ803N6dWwgZU=,tag:NO6XIt3qea5jocaOj+gKQA==,type:str]
     NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT: ENC[AES256_GCM,data:nd0zZBAWeNhIJn498CdwZ1qjcSGiuHwT5EB8+b5HEHs=,iv:b3FcJ0YWImjp1FQHs/xfSXdAOZolqWGM3QhI2RnmJ2s=,tag:UPl1kFLFbe2mbZbZx3Lr/w==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ACCESS_TOKEN: ENC[AES256_GCM,data:5k+kJlo=,iv:OzjQFKixRt5Yyfxh2rCsc7616gnogp1Mp8AaMwsGdH4=,tag:j+vPHzv8JMOFZxphyqJivQ==,type:bool]
-    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ID_TOKEN: ENC[AES256_GCM,data:1ieGGYA=,iv:RkHvoFXNIofQkrPesf9CvPpto/hFkMlO8ECqxulVEW8=,tag:Udfel7ViMUti68U3pn92Rw==,type:bool]
+    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ACCESS_TOKEN: ENC[AES256_GCM,data:ezhnBiQ=,iv:peF02IBTZ4G9u5XUKDL4FyUb3nukCp83CkmXowJ1Qkw=,tag:Wmo6o2biIreg0auc+51Bnw==,type:str]
+    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ID_TOKEN: ENC[AES256_GCM,data:j1XNLZc=,iv:Fh0SCNadqNIJgsJqlDck4bDVbGJMFB7BUfKl1v6fmGA=,tag:PcB4Hn93flmOzfL0dY5+3w==,type:str]
 sops:
     age:
         - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
@@ -33,7 +33,7 @@ sops:
             Um1BT0lzLzdmNnNCLzRyZTFUcDdJT1kKIAEKMxC/ToPeNgfDCHH1X6JaN0ZpgxbF
             vdggpfBDF9BFr6kIwRHMBiXGyUdqdaFrVezH5UxPPGWux8+ZIvdX4Q==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-24T10:24:06Z"
-    mac: ENC[AES256_GCM,data:LwbNeBU0A9Ge5f6MvPz+Kf7ebRDOkCwd8tRmHIApOnozbfZxVkdcv8Kph4YSIaZb+o600v0RiAAu7PE0QnOHCh0asdL18w7TZ3OMQ1zVaNVlhoKpO1m5YnLe8tleZI8jh/DtzpuBRM+u7eSJiu9tfjqORwD11KMScCbDQcghH3U=,iv:R0LrxagD+p1aGDCr4E0x3I6yZGfL1ErhIWnvt4NJkw4=,tag:9gyfLd8SjCfGVulCY/YUcQ==,type:str]
+    lastmodified: "2025-11-24T10:38:30Z"
+    mac: ENC[AES256_GCM,data:DDLCwaYdOPjWaIs6CPelF40rW3MjTix5cG9QDSTVtObDtC9Xg4JgPxSAew7whS/lEtWW8ytL5C6kunLYW1W0bOV8NPb+dozQ7BANjqXtLVUeXPf4ZLQ+jzePTei+SxGC7++tS3H7M1TZtXPoDM54HP5JtJPotiqRnY/RcGD6Pmg=,iv:uUz7kgBXtmFdRfpglhS+T6uf/ci9/w3pm7Cmvd/V8iQ=,tag:u9U/CogTpQ8CcmUu8TrlhQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
