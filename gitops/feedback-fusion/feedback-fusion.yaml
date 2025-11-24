@@ -41,7 +41,7 @@ spec:
                 readOnly: true
                 subPath: root-certs.pem
               - mountPath: /tls/indexer
-                name: indexer-tls
+                name: indexer-client-tls
                 readOnly: true
 
           indexer:
