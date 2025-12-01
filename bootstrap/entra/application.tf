@@ -8,10 +8,10 @@ locals {
         app_role_assignment_req = true
         sign_in_audience        = "AzureADMyOrg"
       }
-      feedback_fusion = {
-        redirect_uris           = ["https://feedback-fusion.${var.public_domain}/auth/oidc/callback"]
+      feedbackfusion = {
+        redirect_uris           = ["https://feedback-fusion.${var.public_domain}/auth/oidc/callback", "http://localhost:3000/auth/oidc/callback"]
         logout_uris             = []
-        required_roles          = ["feedback-fusion"]
+        required_roles          = ["feedbackfusion"]
         app_role_assignment_req = true
         sign_in_audience        = "AzureADMyOrg"
       }
@@ -39,6 +39,31 @@ resource "azuread_application" "additional" {
   sign_in_audience        = try(each.value.sign_in_audience, "AzureADMyOrg")
   group_membership_claims = ["ApplicationGroup"]
 
+  identifier_uris = ["api://${each.key}"]
+
+  api {
+    requested_access_token_version = 2
+  }
+
+  required_resource_access {
+    resource_app_id = "00000003-0000-0000-c000-000000000000" # Microsoft Graph
+
+    resource_access {
+      id   = "e1fe6ddf-0b2b-4f82-b7c9-3342a0d3f3d4" # openid
+      type = "Scope"
+    }
+
+    resource_access {
+      id   = "14dad69e-765b-4774-b52d-84b63f4b1bdb" # profile
+      type = "Scope"
+    }
+
+    resource_access {
+      id   = "b4e74841-8e56-480b-be0b-210c2f9a7d52" # User.Read
+      type = "Scope"
+    }
+  }
+
   dynamic "app_role" {
     for_each = try(each.value.required_roles, [])
 
@@ -53,13 +78,13 @@ resource "azuread_application" "additional" {
 
   optional_claims {
     access_token {
-      name                  = "groups"
-      essential             = true
+      name      = "groups"
+      essential = true
     }
 
     id_token {
-      name                  = "groups"
-      essential             = true
+      name      = "groups"
+      essential = true
     }
   }
 }

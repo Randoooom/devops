@@ -4,16 +4,11 @@ metadata:
     name: ENC[AES256_GCM,data:7kExGdH5vUyaY9UWhpT6Z+Kg0qlMNZfRHygw+1/aiRs=,iv:UT5GHTs/q3hCUQnIZjcSWkuX5Ob++6QP1VbjIKlf7YA=,tag:hwWukXIjc0g5URWM6tagSw==,type:str]
     namespace: ENC[AES256_GCM,data:Nlotk2ZRiu+Qnt4fSNtx,iv:1cel499hzBniHEdWWwVmGSU7Wpw3XIYipIj6pKs67A8=,tag:RuhvLjX57t4Kmr9TtEj7Kw==,type:str]
 stringData:
-    NUXT_OIDC_PROVIDERS_OIDC_AUTHORIZATION_URL: ENC[AES256_GCM,data:7Gw2IpQORQ14VpEfkQB+dwJKpS464mMIROYswzbFxJBqa+aK6/zLBsuAYROqQkpfcL9CvUAAbi0wOBv+ArAIjIi6D7Z//MDT8pM6NiZqL/3HGX5a3/xD,iv:CNN+qroqu6yWEAOfnwcZP8No3RYqqW06q+xQCYwBfoc=,tag:NA6W3txN8K+MVATVmO5FoQ==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_CLIENT_ID: ENC[AES256_GCM,data:0vy6I3KDJIe6inepPLN6duY5vXVJX9kkFO6/LPtQbgi0PorI,iv:pYXkhhV6x15ES5uzGOYUVklKsm+f7XY4dKCZIC6lF1k=,tag:jLV2ZgDLkRg+xUpWhg5Irw==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_CLIENT_SECRET: ENC[AES256_GCM,data:k7CnY5+7qp1vn3VqqVpuft2ISxDwg6bu+LHwxXdeXgOvmDQ11a/QJA==,iv:sdC8wjPDeYBv33huhWMt+VVPdbf1oWo7O8fFjUGHzEo=,tag:Mb4+bxchZfgsTZVxm2DZGA==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_OPEN_ID_CONFIGURATION: ENC[AES256_GCM,data:IDOXsbbvMQ/el9yAsMNJrTild9Bhu/sU9ilhwkeGuuxwrKxw9+7WIG8W1xpeiV47pMg7kTU4/piNuhjmdQYx3wiXQhLHp5p8ayQbniBtghmviAdIwfReC9gBvjXUops+uxpjr7viuVDo1GVf,iv:hRJ3aTftpYmO0PiThpoQ4ylYKnYlnUG9Hgk8/P5yI9c=,tag:F8vuDSIcg6HuqoVEjrpmNw==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_REDIRECT_URI: ENC[AES256_GCM,data:Mxwy6s8A/zPfB7HbBvpQKmUuUMqJOPNxJlB6YPzGK+qBwZZ/e+eKAjg/Z3SRvhB34g6ZUZOvQb8=,iv:nboe4po1qKIfFV29RU1U/aZ/H3LO1rNrSyRtv04u/NA=,tag:r+f4ogygozjzhEpc45D2/g==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_TOKEN_URL: ENC[AES256_GCM,data:LokquhpCFVpKDa+n6AI3w5phIbyxUasxhuvBj7AaUOAW3N30sBFFRhI77OeM92RSm6QuLgocPBQy0JJgaSpFGl+xgxl+RRJBE8qskWSgVp5nMlY=,iv:0Pey159Z5cwTyhsXDjW5p1+bilvB3kCZ803N6dWwgZU=,tag:NO6XIt3qea5jocaOj+gKQA==,type:str]
+    NUXT__CLIENT_ID: ENC[AES256_GCM,data:tPboo4Jmlpm0QC5j6+0ZBFsgVu0sisCVTOUGCRrgNogbEl4/,iv:vhXhFNvDDI+gxyCu3FYNoFrFzGG2I+CAIO1uLSZoGeY=,tag:vFMtXc8Uod1CvescDpxGfQ==,type:str]
+    NUXT_CLIENT_SECRET: ENC[AES256_GCM,data:2hXsms0Yt9VbRmOxOBBmP5BQfsgEDH+MaN6/fiVmgBO+rPYHx1Efeg==,iv:NVe2/HFwkCA8v8pTMgfi+wYaQT13iXlcPwOXNfoOc7Q=,tag:GSEa7aiqIJgukCsqGhtr/g==,type:str]
+    NUXT_OIDC_DISCOVERY: ENC[AES256_GCM,data:KjAYjYYmow91aIizhvRofZXfC6xWnjHgR0ehCvntjf3BZTwGojrqaj8sDFFAJKXzTpz8e1rTxQYsNGMXuq4zLOI12C7KLuUwDFyE+Zd0cxc5YoPqAbdLIn0lfIfjhSTWlwy2ulMYwB4X4J/O,iv:teKy38XZ6d5jucWpSIFn1Nh/fTYSrmIEqqhmJgIvCGs=,tag:yWNdLuEmIVX2gLL8f4Xsng==,type:str]
     NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT: ENC[AES256_GCM,data:JAGg2Usu6KoKA7SMYNcFuBtGqoCuEDW4NH8f5VVhStdg+L/H6DHQog==,iv:XVBTEjo/5aRwoE4FoFRs9r6R6xJaJ8ybCdCzDdWRnqs=,tag:wP4TcnpmVhMLLnrHwuu3Rw==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ACCESS_TOKEN: ENC[AES256_GCM,data:ezhnBiQ=,iv:peF02IBTZ4G9u5XUKDL4FyUb3nukCp83CkmXowJ1Qkw=,tag:Wmo6o2biIreg0auc+51Bnw==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_VALIDATE_ID_TOKEN: ENC[AES256_GCM,data:j1XNLZc=,iv:Fh0SCNadqNIJgsJqlDck4bDVbGJMFB7BUfKl1v6fmGA=,tag:PcB4Hn93flmOzfL0dY5+3w==,type:str]
-    NUXT_OIDC_PROVIDERS_OIDC_SKIP_ACCESS_TOKEN_PARSING: ENC[AES256_GCM,data:Ofb8IA==,iv:ygJw0UisoXNztLhmtiIufIW88dbSwsgK4dVD7QS/qcI=,tag:pF6zO3h6qvSPWpOfwONCrg==,type:str]
+    NUXT_SCOPE: ENC[AES256_GCM,data:aaISdAU37P2TxBePGfqpgHSH,iv:Htq82hX+YEWubHybJefAWC+8Rxg0c7DH6JUJrFSjZ3A=,tag:/dkg/r00db02S7BW+u9HLw==,type:str]
 sops:
     age:
         - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
@@ -34,7 +29,7 @@ sops:
             Um1BT0lzLzdmNnNCLzRyZTFUcDdJT1kKIAEKMxC/ToPeNgfDCHH1X6JaN0ZpgxbF
             vdggpfBDF9BFr6kIwRHMBiXGyUdqdaFrVezH5UxPPGWux8+ZIvdX4Q==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-11-24T18:51:28Z"
-    mac: ENC[AES256_GCM,data:XtgXNY9S4SWOwar8oCJ8pyTp8H2vbZxliXisxql2DIzJNxi1Cao55PMTfFQZr/ABO001lEZdZhC3Fuos7OFcmcwX5qWkhZsQWJmvuS/GuOtgMrOzy0VV/etaGPSjLMf/fQTesRjRE3rAYtXAoNn7wdNStHpsKdrOXr9KdmWYO58=,iv:lPjldF9Vbw+FMYUD8rtcA0GZYYW2Ch7YJXvtbM4VaFA=,tag:Z/WzhGF5yYXSEG/fDCJCng==,type:str]
+    lastmodified: "2025-12-01T23:39:39Z"
+    mac: ENC[AES256_GCM,data:1fGmfdA4t5Os6E3JqQ95jebtR6I0E3nrOBccfK2iX+IaEoufcneWmlMo2rNuPCnBYiWdZHf4bKfjhN3hKaGLa50oLJbBq3n9OY0LiEW6zC4HNeiAG+TVI151GuvMxAsUwcALodbnJGCY12k4Y3cYc1swiSPjPca1iAkXUOukrog=,iv:+quD8fxOqs+DyJUm3BIIUOcq8CaVx/w/2j+wOe3W4KQ=,tag:vTfuoA0APl0Jnr08PVlNkA==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0

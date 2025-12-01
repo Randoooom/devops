@@ -1,5 +1,5 @@
 locals {
-  groups = concat(var.additional_groups, ["admin", "forgejo", "argocd-admin", "argocd", "feedback-fusion"])
+  groups = concat(var.additional_groups, ["admin", "forgejo", "argocd-admin", "argocd", "feedbackfusion"])
 
   app_role_group_pairs = flatten([
     for app_name, app_conf in local.additional_applications : [
