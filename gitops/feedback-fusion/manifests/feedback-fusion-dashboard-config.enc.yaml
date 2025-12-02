@@ -4,12 +4,12 @@ metadata:
     name: ENC[AES256_GCM,data:7kExGdH5vUyaY9UWhpT6Z+Kg0qlMNZfRHygw+1/aiRs=,iv:UT5GHTs/q3hCUQnIZjcSWkuX5Ob++6QP1VbjIKlf7YA=,tag:hwWukXIjc0g5URWM6tagSw==,type:str]
     namespace: ENC[AES256_GCM,data:Nlotk2ZRiu+Qnt4fSNtx,iv:1cel499hzBniHEdWWwVmGSU7Wpw3XIYipIj6pKs67A8=,tag:RuhvLjX57t4Kmr9TtEj7Kw==,type:str]
 stringData:
-    NUXT_CLIENT_ID: ENC[AES256_GCM,data:OwouaHVDfse3+/thyxjCVydSZSuKEbrRblAUzo/03ecx97KK,iv:M0N0xkSGgJUWw8TdliTeXJzW9lFw8r+BC9HipcoI6KU=,tag:DhrFKCfnvkN9dI7zbjIYRw==,type:str]
+    NUXT_CLIENT_ID: ENC[AES256_GCM,data:tgsqVvpUE5Ic/DAc2kkrdPUMLXuYyQgdaSPQ8lhzkRURTZ5Y,iv:kZluFef9Ybj0cstEtkQAYbqztp/A+m1xKHMWbWlpqT8=,tag:J5f51inL/D7up5P9JcYosw==,type:str]
     NUXT_ORIGIN: ENC[AES256_GCM,data:FJVcyQE1FkjX8HpndFmd9JDDvHZFfD/uHXDBE0BJHvR1iLZcEQ==,iv:JOg7skHXguZKAKEHi6SJX8YJalZ/oVGZibfQV1b9DP4=,tag:Z/rBlDOx156hDuGVymo3oA==,type:str]
-    NUXT_CLIENT_SECRET: ENC[AES256_GCM,data:2hXsms0Yt9VbRmOxOBBmP5BQfsgEDH+MaN6/fiVmgBO+rPYHx1Efeg==,iv:NVe2/HFwkCA8v8pTMgfi+wYaQT13iXlcPwOXNfoOc7Q=,tag:GSEa7aiqIJgukCsqGhtr/g==,type:str]
+    NUXT_CLIENT_SECRET: ENC[AES256_GCM,data:ETkvN6Wu3whBGBglY6PAgfdYQnSluMVIhc7/vIx2YujeGI2TfrPYLw==,iv:kZzhhakcN8o6p1okMfjMBFZs+UaM+MjkU9g1tLBYDwM=,tag:K7hnA1uhobzk6HKDu/SKTQ==,type:str]
     NUXT_OIDC_DISCOVERY: ENC[AES256_GCM,data:KjAYjYYmow91aIizhvRofZXfC6xWnjHgR0ehCvntjf3BZTwGojrqaj8sDFFAJKXzTpz8e1rTxQYsNGMXuq4zLOI12C7KLuUwDFyE+Zd0cxc5YoPqAbdLIn0lfIfjhSTWlwy2ulMYwB4X4J/O,iv:teKy38XZ6d5jucWpSIFn1Nh/fTYSrmIEqqhmJgIvCGs=,tag:yWNdLuEmIVX2gLL8f4Xsng==,type:str]
     NUXT_PUBLIC_FEEDBACK_FUSION_ENDPOINT: ENC[AES256_GCM,data:JAGg2Usu6KoKA7SMYNcFuBtGqoCuEDW4NH8f5VVhStdg+L/H6DHQog==,iv:XVBTEjo/5aRwoE4FoFRs9r6R6xJaJ8ybCdCzDdWRnqs=,tag:wP4TcnpmVhMLLnrHwuu3Rw==,type:str]
-    NUXT_SCOPE: ENC[AES256_GCM,data:aaISdAU37P2TxBePGfqpgHSH,iv:Htq82hX+YEWubHybJefAWC+8Rxg0c7DH6JUJrFSjZ3A=,tag:/dkg/r00db02S7BW+u9HLw==,type:str]
+    NUXT_SCOPE: ENC[AES256_GCM,data:nJnASRY13IfDy1ROJwKCj4ZGNOw=,iv:yrXalHVPN/JPXxvbKKSVqSO1Xvif8YrQvOVupz+s9B4=,tag:017hbTxZpT1uovvc9XLcvg==,type:str]
 sops:
     age:
         - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
@@ -30,7 +30,7 @@ sops:
             Um1BT0lzLzdmNnNCLzRyZTFUcDdJT1kKIAEKMxC/ToPeNgfDCHH1X6JaN0ZpgxbF
             vdggpfBDF9BFr6kIwRHMBiXGyUdqdaFrVezH5UxPPGWux8+ZIvdX4Q==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-02T20:09:59Z"
-    mac: ENC[AES256_GCM,data:yg0Y8zcrRoYr5+RlsnvWjuWR5zt2RAjbcSEIUfEH6y+FHDmsOAIzI2Ax1DZqwy2p0sBKRIYFeMZSwINDnTJWsDX8EE22g6ft4KGMAeswbP7fsCHTyWZ1i1CWnM+P8af9zQbT14y+9PJGOV3PsQtWSkEEtnebBhhZKFSepRX7KvY=,iv:9xlv3JyEsHuwtX4pwisIJzEo/ks5mcbAAvQ9L4zscBk=,tag:eOdqpLudQrBp5l/qBQ/Z/w==,type:str]
+    lastmodified: "2025-12-02T20:24:00Z"
+    mac: ENC[AES256_GCM,data:9J420w6GK1gm5GGIOmEoCfptw9HsZtMUAGk1IYICkpwpANCTQPxnI2zlReiK8V/hHWIK3oxeb8PcN6Tm6M4MibB8K+f32FjT4vXPVSS7htlqkM5bPP51xi2JBSNdNbxUoLSjx4MN3LSfj0MOrl18qYuZ3nx0OnqLYCKntDFf970=,iv:HGFV6OcZw1C0MoeZAaBln9nFMDRmWs+/YHVbXZMqzSo=,tag:A7iPuk9wJ5jVM+XvKMVhow==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
