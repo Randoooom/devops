@@ -1,0 +1,35 @@
+- name: Create exceptions
+  community.openwrt.uci:
+    command: add
+    config:  firewall
+    type:    rule
+    values:
+      name:    "{{ item.name }}_exception_{{ exception_idx }}"
+      src:     "{{ item.source | default('*') }}"
+      proto:   "{{ item.protocol | default('tcpudp') }}"
+      dest_ip: "{{ exception_ip }}"
+      dest_port: "{{ item.destination_port }}"
+      target:  ACCEPT
+      priority: 1
+  loop: "{{ item.whitelisted_addresses }}"
+  loop_control:
+    index_var: exception_idx
+    label:     "{{ exception_ip }}"
+  vars:
+    exception_ip: "{{ item.whitelisted_addresses[exception_idx] }}"
+
+- name: Create forwarding
+  community.openwrt.uci:
+    command: add
+    config:  firewall
+    type:    redirect
+    values:
+      name:      "{{ item.name }}"
+      src:       "{{ item.source | default('*') }}"
+      proto:     "{{ item.protocol | default('tcpudp') }}"
+      src_dport: "{{ item.destination_port }}"
+      dest_ip:   "{{ item.forward_address }}"
+      dest_port: "{{ item.forward_port }}"
+      target:    DNAT
+      priority:  10
+

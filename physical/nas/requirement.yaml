@@ -1,0 +1,6 @@
+collections:
+  - community.sops
+  - community.general
+  - community.docker
+  - name: arensb.truenas
+    version: 1.11.4

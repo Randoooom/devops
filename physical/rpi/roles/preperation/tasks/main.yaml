@@ -1,0 +1,8 @@
+- name: Create DNS A record 
+  community.general.cloudflare_dns:
+    zone: "{{ cloudflare_zone }}"
+    type: A
+    record: "{{ dns_entry | regex_replace('\\.' + cloudflare_zone + '$', '') }}"
+    value: "{{ ansible_host }}"  
+    api_token: "{{ cloudflare_api_token }}"
+    state: present

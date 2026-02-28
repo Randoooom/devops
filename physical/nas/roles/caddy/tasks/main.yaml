@@ -1,0 +1,36 @@
+- name: Create Caddy datasets
+  become: true
+  arensb.truenas.filesystem:
+    name: "{{ item }}"
+    state: present
+    create_ancestors: yes
+  loop:
+    - "{{ caddy_dataset_config }}"
+    - "{{ caddy_dataset_data }}"
+
+- name: Template Caddyfile
+  become: true
+  template:
+    src: ../templates/Caddyfile.j2
+    dest: "/mnt/{{ caddy_dataset_config }}/Caddyfile"
+
+- name: Create snippets dir
+  become: true
+  file:
+    path: "/mnt/{{ caddy_dataset_config }}/snippets"
+    state: directory
+
+- name: Start caddy
+  become: true
+  community.docker.docker_container:
+    name: caddy
+    image: randoooohm/caddy
+    state: started
+    restart_policy: unless-stopped
+    volumes:
+      - "/mnt/{{ caddy_dataset_config }}:/etc/caddy"
+      - "/mnt/{{ caddy_dataset_data }}:/data"
+    ports:
+      - "443:443"
+    env:
+      CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"

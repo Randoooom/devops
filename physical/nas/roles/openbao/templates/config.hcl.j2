@@ -1,0 +1,20 @@
+ui = true
+api_addr = "https://{{ openbao_dns }}"
+
+listener "tcp" {
+  address = "0.0.0.0:8200"
+  tls_disable = true
+}
+
+storage "file" {
+  path = "/openbao/file"
+}
+
+seal "static" {
+  current_key_id = "{{ current_key_id }}"
+  current_key = "file:///openbao/config/keys/{{ current_key_id }}.key"
+{% if previous_key_id %}
+  previous_key_id = "{{ previous_key_id }}"
+  previous_key = "file:///openbao/config/keys/{{ previous_key_id }}.key"
+{% endif %}
+}

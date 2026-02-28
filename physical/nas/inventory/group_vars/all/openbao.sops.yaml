@@ -1,0 +1,18 @@
+openbao_dataset_root: ENC[AES256_GCM,data:U0+7wuOVwAgePjdm7j2ZCAq/x5hBCA73Ag==,iv:f6TvKd4/bHPr1z5mbKSfYRRr54RvmopUEaBPJGQshOc=,tag:D7nMOc2cs/+cQvBB0FM/EQ==,type:str]
+openbao_dns: ENC[AES256_GCM,data:tKyQlVcJnUGrbSAGo3HL9LiPaR5o,iv:SB52ufCA+QAH8c0SdEf0XjBMcfZTdvSe7/0uutfzoH4=,tag:/jRCtdARux2VW436B2uS1A==,type:str]
+openbao_ansible_password: ENC[AES256_GCM,data:2Xk0GvTSgU+JQtKEhCtb2FQx4caNJbMIMqX/L6q0X3QY0qvTPjVdrA==,iv:aq6gjWshPUG83WxEEpqX7YD1Ip+QTeIIt6zGnD2oPR4=,tag:LWRrq9z6Ou57q89E+kxlNg==,type:str]
+sops:
+    age:
+        - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzKzNGVDN6dnBRUHF6Wit0
+            R0Nocm5tbzR5MnVDbUhPTEowcWZZSWd2QWhvClRTZkFOZmc4NEFjUEZKdUVJTDhz
+            MEJocVRZcHQwNEMwM2F2eUFtZmN4RGMKLS0tIGdEY0N6K2JTZDNsVHFBcWlkSnZs
+            S2FrUEFweUx4TVJSenF6ZTBwK3VGWWsKDgEQ9xpXQlnKvam4QFEU1kbVB/vez7sk
+            kVimC8drO2ci5CDRJvZG5a7GSEtKJE5lruyanQm9XEgRyMn89uD9Kw==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-01-04T19:36:58Z"
+    mac: ENC[AES256_GCM,data:EXbZjRI2wHlwIoGX7FdK9Dydsa4BuIteRbZbjn96toqkOnIMsYPRnX14ziaz4e1NidWVGEihQqUHrygsnoz5d/pKXohJ4be0s7U73h6P/5QCFBymtWVRm/KbY2QGx/97BIaSz71v9TUv40PRxMzJv/Wnqhdd3EnWo6opl3YV7WI=,iv:6f47fk8fSA1L2b7edXYep8i96BOYEjfGJJaBIHmfQCU=,tag:DUK0n8l9LA/FvjKee0a9yA==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.11.0

@@ -1,0 +1,4 @@
+run:
+  ansible-playbook deploy.yaml
+
+  cd tofu/openbao && terragrunt apply -input=false
