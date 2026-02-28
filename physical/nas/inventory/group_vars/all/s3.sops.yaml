@@ -1,0 +1,21 @@
+rustfs_dataset_data: ENC[AES256_GCM,data:TmwYxVsnrRqFGbs25Ju+B0BsBxfqqL/X+Pgud18=,iv:he9CbtnyiMWVxav4NRvlAeKakJ6aAKN6e3cmwu4CDzo=,tag:sbpE21uMYKjTfuwL+DgqIQ==,type:str]
+rustfs_dataset_logs: ENC[AES256_GCM,data:T3d9c29NnnmFQJqjgqoHEyDwOEGltjUVukUIE+I=,iv:6LgTYzLr/ImaCcOz/GEO6WgNL+x2z0wz3NUX12AISAI=,tag:QglqbKAnoVpJMi8OoUETjw==,type:str]
+rustfs_host: ENC[AES256_GCM,data:5EaYhNcQsAjty60Fdtz6ng==,iv:6BxUjWtmpT9dWkuEBJUZBy78qyA78rbwV9sAfH9s1pE=,tag:YSujX1M1T64dqQx0YXJNlQ==,type:str]
+rustfs_console_host: ENC[AES256_GCM,data:RzrLT5rG7/X6kC+UxeYlfR2u48XVp6a/,iv:uMU1/5lmQnGKrs8MPbDckyh6Xo/g0pbBLl4Xaep+iyQ=,tag:Z6Yza/n5xDGOzZFffdiO4A==,type:str]
+rustfs_access_key: ENC[AES256_GCM,data:+yU5/iB4rG4YUZrXCPXnFX3P2OYNqUt8HpcAijLO4InMdIeZuOvoOw==,iv:h30+b3zv7z0Ft5nkagzWXLY8jf/8kLUK5T6ZaYC42Dc=,tag:rncG7p0xbrdfHj8WszmDGA==,type:str]
+rustfs_secret_key: ENC[AES256_GCM,data:+QdnIWV0bRUft6vBPkCNmCti9oN9B0eRZ9AxTi6+T1HyDlndhUZdEg==,iv:n4MQe5ghYmA9igwkHnlyMBRiS4gl4+Tqo+pMdBsxXmM=,tag:cGeJOYeWJ/Jef1ifDSpXog==,type:str]
+sops:
+    age:
+        - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPclZTWGR4OUJZNG5qNHJh
+            OXFQbUZVSjRUZkZWYWZnT2U3VThBbFUyNVIwCjUveXNuWGtDVVNXLzRYZm5zeHh5
+            TElXbHkra3lqcU00eHp1K2x0RU5DWlUKLS0tIFRmSit6eXc5NndNVEx2V3kxYm02
+            TVhBTHBIRW93L1NyR0c2bjFzUmJXL00KlWU+XrqZeaPwkw/HMBlfYeb9dCdSXj+z
+            HyrZArInp9IYxcgMHKhVYW/40+m9P2+tPagoFtj4ULuGlKjCdu6DTQ==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-02-28T19:49:39Z"
+    mac: ENC[AES256_GCM,data:8JIjesUn6x/QeA7CljKAIhGS34zGez7WLcJiooPHdDlVSZnXnzBDqc87U+H+cDA5HG8EM9WdBl2jMIPZdXSa/sGMW7inhvl6k1QF9YLwIvoDvl89XPMn7VU36cMlWMSWlEmeS9tuqKTtW7/HRJ9Ik4tjNp+4D00s93oAUkFNkGw=,iv:dnkoMyezWCseT+i27s5Nk+RVE1Oh2fD14BcpnXFzHLA=,tag:Xrh2ikt8GVaHu/KU4Z7Vqw==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.12.1

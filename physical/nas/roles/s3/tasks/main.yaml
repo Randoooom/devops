@@ -1,0 +1,39 @@
+- name: Create RustFS datasets
+  become: true
+  arensb.truenas.filesystem:
+    name: "{{ item }}"
+    state: present
+    create_ancestors: yes
+  loop:
+    - "{{ rustfs_dataset_data }}"
+    - "{{ rustfs_dataset_logs }}"
+
+- name: Start RustFS
+  become: true
+  community.docker.docker_container:
+    name: rustfs
+    image: rustfs/rustfs:{{ rustfs_version }}
+    state: started
+    restart_policy: unless-stopped
+    volumes:
+      - "/mnt/{{ rustfs_dataset_data }}:/data"
+      - "/mnt/{{ rustfs_dataset_logs }}:/logs"
+    ports:
+      - "19000:9000"
+      - "19001:9001"
+    env:
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_SERVER_DOMAINS: "{{ rustfs_host }}"
+      RUSTFS_ACCESS_KEY: "{{ rustfs_access_key }}"
+      RUSTFS_SECRET_KEY: "{{ rustfs_secret_key }}"
+
+- name: Configure caddy
+  ansible.builtin.include_role:
+    name: caddy_host
+  vars:
+    name: rustfs
+    caddy_hosts:
+      - host: "{{ rustfs_host }}"
+        proxy: "http://{{ truenas_dns }}:19000"
+      - host: "{{ rustfs_console_host }}"
+        proxy: "http://{{ truenas_dns }}:19001"

@@ -1,0 +1,3 @@
+caddy_hosts: []
+  # - host: ""
+  #   proxy: ""
