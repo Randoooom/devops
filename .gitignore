@@ -48,3 +48,6 @@ terraform.rc
 bootstrap/.env
 
 .terragrunt-cache
+
+.ssh/
+.output/

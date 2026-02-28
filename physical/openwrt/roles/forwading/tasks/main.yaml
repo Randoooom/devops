@@ -1,0 +1,13 @@
+- name: Create forwarding
+  loop: "{{ forwarding }}"
+  community.openwrt.uci:
+    command: add
+    config: firewall
+    values:
+      name: "{{ item.name }}"
+      src: "{{ item.source | default('*') }}"
+      dest: "{{ item.destination if item.destination else omit }}"
+      src_dport: "{{ item.destination_port }}"
+      target: DNAT
+      dest_ip: "{{ item.forward_address }}"
+      dest_port: "{{ item.forward_port }}"

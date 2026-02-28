@@ -19,3 +19,24 @@ plan:
 
 apply:
   cd bootstrap && TF_VAR_vpn_connected=true terragrunt run -a apply --queue-exclude-dir bastion --experiment cli-redesign
+
+provision PHYSICAL:
+  #!/usr/bin/sh
+
+  # change to the referenced physical stack
+  cd physical/{{ PHYSICAL }}
+  # prepare outputs
+  mkdir -p inventory/.output
+  # decrypt the ssh for ansible
+  sops decrypt --output-type json ssh.sops.yaml | jq -r '.private_key' > inventory/.output/key
+
+  # install ansible modules
+  ansible-galaxy install -r requirement.yaml
+
+  # init all terragrunt modules (yes terragrunt does not support -chdir)
+  fd -t dir -d 1 . tofu -x sh -c 'cd {} && terragrunt init'
+
+  just run
+
+encrypt:
+  fd .sops.yaml -X grep -L '^sops:' {} | xargs -I {} sops encrypt -i {}

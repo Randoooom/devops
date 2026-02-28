@@ -1,0 +1,6 @@
+- name: Deploy services
+  hosts: nas
+  become: true
+  roles:
+    - caddy
+    - openbao

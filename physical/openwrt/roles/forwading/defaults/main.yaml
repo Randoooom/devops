@@ -1,0 +1,7 @@
+forwardings:
+  # - name: Forward DNS
+  #   destination_port: 53
+  #   whitelisted_addresses:
+  #     - 1.1.1.1
+  #   forward_address: 192.168.1.2
+  #   forward_port: 53

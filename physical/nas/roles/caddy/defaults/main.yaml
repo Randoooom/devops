@@ -1,0 +1,14 @@
+caddy_dataset_data: "{{ caddy_dataset_root }}/data"
+
+caddy_portals: []
+  # - client_id: ""
+  #   client_secret: ""
+  #   tenant_id: ""
+  #   scopes: "openid profile email"
+  #   name: ""
+caddy_domain: ""
+caddy_hosts: [] 
+  # - host: foo # resolves to foo.DOMAIN
+  #   proxy_host: http://localhost:8000
+  #   proxy_https_insecure: false
+  #   portal: bar

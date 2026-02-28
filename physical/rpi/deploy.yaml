@@ -1,0 +1,4 @@
+- name: Prepare host
+  hosts: rpi
+  roles:
+    - preperation

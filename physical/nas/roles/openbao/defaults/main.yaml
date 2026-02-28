@@ -1,0 +1,8 @@
+openbao_dataset_root: ""
+openbao_dataset_config: "{{ openbao_dataset_root }}/config"
+openbao_dataset_logs: "{{ openbao_dataset_root }}/logs"
+openbao_dataset_file: "{{ openbao_dataset_root }}/file"
+openbao_dns: ""
+openbao_version: 2.5.0-beta20251125
+openbao_rotation_months: 3
+openbao_credentials_storage: "{{ openbao_dataset_config }}/openbao.sops.yaml"

@@ -1,0 +1,69 @@
+- name: Check wether OpenBao is initialized already
+  community.docker.docker_container_exec:
+    container: openbao
+    command: sh -c 'bao operator init -status -format=yaml 2>/dev/null || true'
+  register: openbao_status
+
+- name: Register OpenBao status
+  set_fact:
+    openbao_initialized: "{{ (openbao_status.stdout | from_yaml).Initialized }}"
+
+- name: Initialize OpenBao
+  when: not openbao_initialized
+  block: 
+    - name: Initialize
+      community.docker.docker_container_exec:
+        container: openbao
+        command: bao operator init -format=yaml 
+      register: openbao_init
+
+    - name: Set root token
+      set_fact:
+        openbao_token: "{{ (openbao_init.stdout | from_yaml).root_token }}"
+
+    - name: Encrypt OpenBao credentials
+      delegate_to: localhost
+      args:
+        stdin: "{{ openbao_init.stdout }}" 
+      shell: sops encrypt --filename-override {{ inventory_dir }}/.output/openbao.sops.yaml > {{ inventory_dir }}/.output/openbao.sops.yaml
+
+    - name: Copy credentials to host
+      copy:
+        src: "{{ inventory_dir }}/.output/openbao.sops.yaml"
+        dest: "/mnt/{{ openbao_credentials_storage }}"
+
+    - name: Create admin policy
+      community.docker.docker_container_exec:
+        container: openbao
+        command: |
+          sh -c 'echo "path \"*\" {
+                   capabilities = [\"create\", \"read\", \"update\", \"delete\", \"list\", \"sudo\"]
+                 }" | bao policy write admin -'
+        env:
+          VAULT_TOKEN: "{{ openbao_token }}"
+
+    - name: Create ansible user
+      community.docker.docker_container_exec:
+        container: openbao
+        argv:
+          - /bin/sh
+          - -c
+          - "bao auth enable userpass && bao write auth/userpass/users/ansible policies=admin password={{ openbao_ansible_password }}" 
+        env:
+          VAULT_TOKEN: "{{ openbao_token }}"
+
+    - name: Revoke root token
+      community.docker.docker_container_exec:
+        container: openbao
+        command: bao token revoke -self
+        env:
+          VAULT_TOKEN: "{{ openbao_token }}"
+
+- name: Write OpenBao UserPass
+  delegate_to: localhost
+  args:
+    stdin: |
+      openbao_username: ansible
+      openbao_password: {{ openbao_ansible_password }}
+      openbao_endpoint: https://{{ openbao_dns }} 
+  shell: sops encrypt --filename-override {{ inventory_dir }}/.output/openbao-userpass.sops.yaml > {{ inventory_dir }}/.output/openbao-userpass.sops.yaml

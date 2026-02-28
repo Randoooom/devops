@@ -1,0 +1,94 @@
+- name: Create OpenBao DNS entry 
+  community.general.cloudflare_dns:
+    zone: "{{ cloudflare_zone }}"
+    type: CNAME
+    record: "{{ openbao_dns | regex_replace('\\.' + cloudflare_zone + '$', '') }}"
+    value: "{{ truenas_dns }}"  
+    api_token: "{{ cloudflare_api_token }}"
+    state: present
+
+- name: Create OpenBao datasets
+  arensb.truenas.filesystem:
+    name: "{{ item }}"
+    state: present
+    create_ancestors: yes
+  loop:
+    - "{{ openbao_dataset_config }}"
+    - "{{ openbao_dataset_logs }}"
+    - "{{ openbao_dataset_file }}"
+
+- name: Ensure OpenBao key directory exists
+  file:
+    path: "/mnt/{{ openbao_dataset_config }}/keys"
+    state: directory
+
+- name: Calculate current key ID
+  set_fact:
+    current_key_id: "{{ ansible_date_time.year }}-{{ ansible_date_time.month }}"
+
+- name: Calculate previous key date with Python
+  shell: |
+    python3 -c "
+    from datetime import datetime
+    from dateutil.relativedelta import relativedelta
+    now = datetime.now()
+    previous = now - relativedelta(months={{ openbao_rotation_months }})
+    print(f'{previous.year}-{previous.month:02d}')
+    "
+  register: previous_date
+  changed_when: false
+
+- name: Set previous key ID candidate
+  set_fact:
+    previous_key_id_candidate: "{{ previous_date.stdout }}"
+
+- name: Check if previous key exists
+  stat:
+    path: "/mnt/{{ openbao_dataset_config }}/keys/{{ previous_key_id_candidate }}.key"
+  register: previous_key_stat
+
+- name: Set previous_key_id
+  set_fact:
+    previous_key_id: "{{ previous_key_id_candidate if previous_key_stat.stat.exists else None }}"
+
+- name: Generate current key if missing
+  shell: openssl rand -out /mnt/{{ openbao_dataset_config }}/keys/{{ current_key_id }}.key 32
+  args:
+    creates: "/mnt/{{ openbao_dataset_config }}/keys/{{ current_key_id }}.key"
+
+- name: Template OpenBao configuration
+  template:
+    src: ../templates/config.hcl.j2
+    dest: "/mnt/{{ openbao_dataset_config }}/config.hcl"
+  notify: reload openbao 
+
+- name: Start OpenBao
+  community.docker.docker_container:
+    name: openbao
+    image: "openbao/openbao:{{ openbao_version }}"
+    state: started
+    restart_policy: unless-stopped
+    command: bao server -config=/openbao/config/config.hcl
+    volumes:
+      - "/mnt/{{ openbao_dataset_config }}:/openbao/config"
+      - "/mnt/{{ openbao_dataset_logs }}:/openbao/logs"
+      - "/mnt/{{ openbao_dataset_file }}:/openbao/file"
+    ports:
+      - "8200:8200"
+    env:
+      VAULT_ADDR: "https://{{ openbao_dns }}"
+
+- name: Configure caddy
+  template:
+    src: ../templates/caddy.j2
+    dest: "/mnt/{{ caddy_dataset_config }}/snippets/openbao"
+  notify: reload caddy
+
+- name: Initialize OpenBao
+  include_tasks: initialize.yaml
+
+- name: Fetch credentials from host
+  fetch:
+    src: "/mnt/{{ openbao_credentials_storage }}"
+    dest: "{{ inventory_dir }}/.output/openbao.sops.yaml"
+    flat: true

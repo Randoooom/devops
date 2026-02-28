@@ -1,0 +1,67 @@
+{
+	order authenticate before respond
+	order authorize before basicauth
+
+  security {
+    {% for portal in caddy_portals %}
+      oauth identity provider {{ portal.name }} {
+        realm {{ portal.name }}
+              driver azure
+              client_id     {{ portal.client_id }}
+              client_secret {{ portal.client_secret }}
+              tenant_id     {{ portal.tenant_id }}
+              scopes        {{ portal.scopes }}
+      }
+
+      authentication portal {{ portal.name }} {
+        enable identity provider {{ portal.name }}
+        cookie path /
+        
+        transform user {
+          match realm {{ portal.name }}
+          action add role authenticated
+        }
+      }
+
+      authorization policy {{ portal.name }} {
+        set auth url /caddy/auth/oauth2/{{ portal.name }}
+        allow roles authenticated
+      }
+    {% endfor %}
+  }
+}
+
+{% for host in caddy_hosts %}
+{{ host.host }}.{{ caddy_domain }} {
+  {% if 'portal' in host %}
+    route /caddy/auth/* {
+      authenticate with {{ host.portal }}
+    }
+
+    route {
+      authorize with {{ host.portal }}
+      reverse_proxy {{ host.proxy_host }} {% if 'proxy_https_insecure' in host and host.proxy_https_insecure %} {
+        transport http {
+            tls_insecure_skip_verify
+        }
+      }
+      {% endif %}
+
+    }
+  {% else %}
+    reverse_proxy {{ host.proxy_host }} {% if 'proxy_https_insecure' in host and host.proxy_https_insecure %} {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+    {% endif %}
+  {% endif %}
+
+  tls {
+    dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    resolvers 1.1.1.1
+  }
+}
+{% endfor %}
+
+import snippets/*
