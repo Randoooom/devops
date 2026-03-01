@@ -38,13 +38,28 @@ receivers:
       container.blockio.io_service_bytes_recursive:
         enabled: true
 
+  filelog/docker:
+    include:
+      - /var/lib/docker/containers/*/*.log
+    start_at: beginning
+    include_file_path: true
+    operators:
+      - type: json_parser
+        timestamp:
+          parse_from: attributes.time
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+
+      - type: move
+        from: attributes.log
+        to: body
+
 processors:
   batch:
     send_batch_size: 1024
     timeout: "5s"
     send_batch_max_size: 2048
 
-  resourcedetection:
+  resourcedetection/system:
     detectors:
       - env
       - system
@@ -62,7 +77,16 @@ service:
         - docker_stats
         - hostmetrics
       processors:
-        - resourcedetection
+        - resourcedetection/system
+        - batch
+      exporters:
+        - otlp/backend
+
+    logs:
+      receivers:
+        - filelog/docker
+      processors:
+        - resourcedetection/system 
         - batch
       exporters:
         - otlp/backend
