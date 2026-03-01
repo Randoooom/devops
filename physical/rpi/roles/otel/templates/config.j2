@@ -1,0 +1,68 @@
+receivers:
+  hostmetrics:
+    collection_interval: 60s
+    scrapers:
+      cpu: {}
+      disk: {}
+      load: {}
+      filesystem: {}
+      memory: {}
+      network: {}
+      paging: {}
+      process:
+        mute_process_name_error: true
+        mute_process_exe_error: true
+        mute_process_io_error: true
+      processes: {}
+      system: {}
+
+  docker_stats:
+    collection_interval: 60s
+    metrics:
+      container.cpu.utilization:
+        enabled: true
+      container.memory.percent:
+        enabled: true
+      container.network.io.usage.rx_bytes:
+        enabled: true
+      container.network.io.usage.tx_bytes:
+        enabled: true
+      container.network.io.usage.rx_dropped:
+        enabled: true
+      container.network.io.usage.tx_dropped:
+        enabled: true
+      container.memory.usage.total:
+        enabled: true
+      container.memory.usage.limit:
+        enabled: true
+      container.blockio.io_service_bytes_recursive:
+        enabled: true
+
+processors:
+  batch:
+    send_batch_size: 1024
+    timeout: "5s"
+    send_batch_max_size: 2048
+
+  resourcedetection:
+    detectors:
+      - env
+      - system
+
+exporters:
+  otlp/backend:
+    endpoint: {{ otlp_endpoint }}
+    tls:
+      insecure: false
+
+service:
+  pipelines:
+    metrics:
+      receivers:
+        - docker_stats
+        - hostmetrics
+      processors:
+        - resourcedetection
+        - batch
+      exporters:
+        - otlp/backend

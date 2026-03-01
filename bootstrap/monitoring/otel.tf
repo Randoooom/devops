@@ -259,9 +259,9 @@ resource "kubectl_manifest" "otel_agent" {
                   match_type   = "regexp"
                 }
               }
-              network = {}
-              load    = {}
-              system  = {}
+              network   = {}
+              load      = {}
+              system    = {}
               processes = {}
             }
           }
@@ -382,6 +382,11 @@ resource "kubectl_manifest" "otel_agent" {
             attributes = [
               {
                 key    = "k8s.node.name"
+                value  = "$${env:K8S_NODE_NAME}"
+                action = "upsert"
+              },
+              {
+                key    = "host.name"
                 value  = "$${env:K8S_NODE_NAME}"
                 action = "upsert"
               }

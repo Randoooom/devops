@@ -1,0 +1,2 @@
+run:
+  ansible-playbook deploy.yaml
