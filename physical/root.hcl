@@ -12,9 +12,9 @@ locals {
   parent_level = "${dirname(get_terragrunt_dir())}/tfvars.sops.yaml"
   unit_level   = "${get_terragrunt_dir()}/tfvars.sops.yaml"
 
-  root_vars   = fileexists(local.root_level)   ? yamldecode(sops_decrypt_file(local.root_level))   : {}
-  parent_vars = fileexists(local.parent_level) ? yamldecode(sops_decrypt_file(local.parent_level)) : {}
-  unit_vars   = fileexists(local.unit_level)  ? yamldecode(sops_decrypt_file(local.unit_level))   : {}
+  root_vars   = fileexists(local.root_level)   ? yamldecode(sops_decrypt_file(local.root_level))   : tomap({})
+  parent_vars = fileexists(local.parent_level) ? yamldecode(sops_decrypt_file(local.parent_level)) : tomap({})
+  unit_vars   = fileexists(local.unit_level)  ? yamldecode(sops_decrypt_file(local.unit_level))   : tomap({})
 
   defaults = merge(local.root_vars, local.parent_vars, local.unit_vars)
 }

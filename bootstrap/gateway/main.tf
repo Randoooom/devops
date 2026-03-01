@@ -121,27 +121,30 @@ resource "kubectl_manifest" "envoy_proxy" {
       }
 
       telemetry = {
-        # metrics = {
-        #   prometheus = {
-        #     disable = true
-        #   }
-        #
-        #   sinks = [
-        #     {
-        #       type = "OpenTelemetry"
-        #       openTelemetry = {
-        #         host = "vector-agent-headless.sys-monitoring.svc.cluster.local"
-        #         port = 4317
-        #       }
-        #     }
-        #   ]
-        # }
+        metrics = {
+          prometheus = {
+            disable = true
+          }
+
+          sinks = [
+            {
+              type = "OpenTelemetry"
+              openTelemetry = {
+                host = "otel-agent-collector.sys-monitoring.svc.cluster.local"
+                port = 4317
+              }
+            }
+          ]
+        }
 
         tracing = {
           samplingRate = 100
           provider = {
-            host = "vector-agent-headless.sys-monitoring.svc.cluster.local"
+            host = "otel-agent-collector.sys-monitoring.svc.cluster.local"
             port = 4317
+          }
+          tags = {
+            "service.name" = each.key == "private" ? "Internal EnvoyGateway" : "External EnvoyGateway"
           }
         }
       }

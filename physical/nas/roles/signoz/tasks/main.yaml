@@ -1,0 +1,238 @@
+- name: Create SigNoz datasets
+  become: true
+  arensb.truenas.filesystem:
+    name: "{{ item }}"
+    state: present
+    create_ancestors: yes
+  loop:
+    - "{{ signoz_dataset_clickhouse }}"
+    - "{{ signoz_dataset_zookeeper }}"
+    - "{{ signoz_dataset_sqlite }}"
+    - "{{ signoz_dataset_common }}"
+
+- name: Check if SigNoz archive already exists
+  ansible.builtin.stat:
+    path: "/tmp/signoz-{{ signoz_version }}.zip"
+  register: signoz_archive
+
+- name: Prepare common dataset
+  when: not signoz_archive.stat.exists
+  block:
+    - name: Download SigNoz archive 
+      ansible.builtin.get_url:
+        url: "https://github.com/SigNoz/signoz/archive/refs/tags/{{ signoz_version }}.zip"
+        dest: "/tmp/signoz-{{ signoz_version }}.zip"
+
+    - name: Extract archive
+      ansible.builtin.unarchive:
+        src: "/tmp/signoz-{{ signoz_version }}.zip"
+        dest: "/tmp/"
+        remote_src: true
+
+    - name: Copy common dir
+      ansible.builtin.copy:
+        src: "/tmp/signoz-{{ signoz_version | regex_replace('^v', '') }}/deploy/common/"
+        dest: "/mnt/{{ signoz_dataset_common }}"
+        remote_src: true
+
+    - name: Copy otel-collector-config.yaml
+      ansible.builtin.copy:
+        src: "/tmp/signoz-{{ signoz_version | regex_replace('^v', '') }}/deploy/docker/otel-collector-config.yaml"
+        dest: "/mnt/{{ signoz_dataset_common }}"
+        remote_src: true
+
+
+- name: Create SigNoz network
+  community.docker.docker_network:
+    name: "{{ signoz_network }}"
+    driver: bridge
+
+- name: Init ClickHouse
+  community.docker.docker_container:
+    name: signoz-init-clickhouse
+    image: "clickhouse/clickhouse-server:{{ signoz_clickhouse_version }}"
+    state: started
+    restart_policy: on-failure
+    networks:
+      - name: "{{ signoz_network }}"
+    command: 
+      - bash
+      - -c
+      - |
+        version="v0.0.1"
+        node_os=$(uname -s | tr '[:upper:]' '[:lower:]')
+        node_arch=$(uname -m | sed s/aarch64/arm64/ | sed s/x86_64/amd64/)
+        echo "Fetching histogram-binary for ${node_os}/${node_arch}"
+        cd /tmp
+        wget -O histogram-quantile.tar.gz "https://github.com/SigNoz/signoz/releases/download/histogram-quantile%2F${version}/histogram-quantile_${node_os}_${node_arch}.tar.gz"
+        tar -xvzf histogram-quantile.tar.gz
+        mv histogram-quantile /var/lib/clickhouse/user_scripts/histogramQuantile
+    volumes: 
+        - "/mnt/{{ signoz_dataset_common }}/clickhouse/user_scripts:/var/lib/clickhouse/user_scripts"
+
+- name: Start Zookeeper
+  community.docker.docker_container:
+    state: started
+    name: signoz-zookeeper-1
+    restart_policy: unless-stopped
+    user: root
+    labels:
+      signoz.io/scrape: "true"
+      signoz.io/port: "9141"
+      signoz.io/path: "/metrics"
+    image: "signoz/zookeeper:{{ signoz_zookeeper_version }}"
+    volumes: 
+      - "/mnt/{{ signoz_dataset_zookeeper }}:/bitnami/zookeeper"
+    env:
+      ZOO_SERVER_ID: "1"
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOO_AUTPURGE_INTERVAL: "1"
+      ZOO_ENABLE_PROMETHEUS_METRICS: "yes"
+      ZOO_PROMETHEUS_METRICS_PORT_NUMBER: "9141"
+    networks:
+      - name: "{{ signoz_network }}"
+        aliases:
+          - zookeeper-1
+    healthcheck:
+      test:
+        - CMD_SHELL
+        - curl -s -m 2 http://localhost:8080/commands/ruok | grep error | grep null
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+- name: Start ClickHouse
+  community.docker.docker_container:
+    state: healthy
+    name: signoz-clickhouse
+    restart_policy: unless-stopped
+    volumes:
+      - "/mnt/{{ signoz_dataset_common }}/clickhouse/config.xml:/etc/clickhouse-server/config.xml"
+      - "/mnt/{{ signoz_dataset_common }}/clickhouse/users.xml:/etc/clickhouse-server/users.xml"
+      - "/mnt/{{ signoz_dataset_common }}/clickhouse/custom-function.xml:/etc/clickhouse-server/custom-function.xml"
+      - "/mnt/{{ signoz_dataset_common }}/clickhouse/user_scripts:/var/lib/clickhouse/user_scripts/"
+      - "/mnt/{{ signoz_dataset_common }}/clickhouse/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml"
+      - "/mnt/{{ signoz_dataset_clickhouse }}:/var/lib/clickhouse/"
+    image: "clickhouse/clickhouse-server:{{ signoz_clickhouse_version }}"
+    tty: true
+    labels:
+      signoz.io/scrape: "true"
+      signoz.io/port: "9363"
+      signoz.io/path: "/metrics"
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - --spider
+        - -q
+        - 0.0.0.0:8123/ping
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    env:
+      CLICKHOUSE_SKIP_USER_SETUP: "1"
+    networks:
+      - name: "{{ signoz_network }}"
+        aliases:
+          - clickhouse
+
+- name: Start SigNoz
+  community.docker.docker_container:
+    state: healthy
+    name: signoz
+    restart_policy: unless-stopped
+    image: "signoz/signoz:{{ signoz_version }}"
+    ports: 
+      - "18080:8080"
+    volumes:
+      - "/mnt/{{ signoz_dataset_sqlite }}:/var/lib/signoz"
+    env:
+      SIGNOZ_ALERTMANAGER_PROVIDER: signoz
+      SIGNOZ_TELEMETRYSTORE_CLICKHOUSE_DSN: tcp://clickhouse:9000
+      SIGNOZ_SQLSTORE_SQLITE_PATH: /var/lib/signoz/signoz.db
+      SIGNOZ_TOKENIZER_JWT_SECRET: "{{ signoz_jwt_secret }}"
+      SIGNOZ_USER_ROOT_ENABLED: "true"
+      SIGNOZ_USER_ROOT_EMAIL: "{{ signoz_root_username }}"
+      SIGNOZ_USER_ROOT_PASSWORD: "{{ signoz_root_password }}"
+      SIGNOZ_USER_ROOT_ORG_NAME: default
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - --spider
+        - -q
+        - localhost:8080/api/v1/health
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - name: "{{ signoz_network }}"
+
+- name: Start Migrator 
+  community.docker.docker_container:
+    restart_policy: on-failure
+    networks:
+      - name: "{{ signoz_network }}"
+    image: "signoz/signoz-otel-collector:{{ signoz_otel_collector_version }}"
+    name: signoz-telemetrystore-migrator
+    entrypoint:
+      - /bin/sh
+    command:
+      - -c
+      - |
+        /signoz-otel-collector migrate bootstrap &&
+        /signoz-otel-collector migrate sync up &&
+        /signoz-otel-collector migrate async up
+    env:
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN: tcp://clickhouse:9000
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_CLUSTER: cluster
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_REPLICATION: "true"
+      SIGNOZ_OTEL_COLLECTOR_TIMEOUT: 10m
+
+- name: Start otel-collector
+  community.docker.docker_container:
+    restart_policy: unless-stopped
+    networks:
+      - name: "{{ signoz_network }}"
+        aliases:
+          - otel-collector
+    image: "signoz/signoz-otel-collector:{{ signoz_otel_collector_version }}"
+    name: signoz-otel-collector
+    entrypoint:
+      - /bin/sh
+    command:
+      - -c
+      - |
+        /signoz-otel-collector migrate sync check &&
+        /signoz-otel-collector --config=/etc/otel-collector-config.yaml --manager-config=/etc/manager-config.yaml --copy-path=/var/tmp/collector-config.yaml
+    volumes: 
+      - "/mnt/{{ signoz_dataset_common }}/otel-collector-config.yaml:/etc/otel-collector-config.yaml"
+      - "/mnt/{{ signoz_dataset_common }}/signoz/otel-collector-opamp-config.yaml:/etc/manager-config.yaml"
+    env:
+      OTEL_RESOURCE_ATTRIBUTES: host.name=signoz-host,os.type=linux
+      LOW_CARDINAL_EXCEPTION_GROUPING: "false"
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN: tcp://clickhouse:9000
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_CLUSTER: cluster
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_REPLICATION: "true"
+      SIGNOZ_OTEL_COLLECTOR_TIMEOUT: 10m
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+
+- name: Configure caddy
+  ansible.builtin.include_role:
+    name: caddy_host
+  vars:
+    name: signoz
+    caddy_hosts:
+      - host: "{{ signoz_host }}"
+        proxy: "http://{{ truenas_dns }}:18080"
+      - host: "{{ signoz_otel_grpc_host }}"
+        proxy: | 
+          h2c://{{ truenas_dns }}:4317 {
+            transport http {
+              versions h2c
+            }
+          }
+      - host: "{{ signoz_otel_http_host }}"
+        proxy: "http://{{ truenas_dns }}:4318"

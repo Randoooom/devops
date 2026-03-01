@@ -39,7 +39,7 @@ resource "helm_release" "argocd" {
 
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  version    = "8.6.4"
+  version    = "9.4.5"
 
   namespace = "sys-argocd"
   name      = "argocd"
@@ -99,12 +99,38 @@ EOF
       }
     }
 
+    notifications = {
+      metrics = {
+        enabled = true
+
+        serviceMonitor = {
+          enabled = true
+        }
+      }
+    }
+
     applicationSet = {
+      metrics = {
+        enabled = true
+
+        serviceMonitor = {
+          enabled = true
+        }
+      }
+
       extraVolumes      = [var.ca_volume]
       extraVolumeMounts = [var.ca_volume_mount]
     }
 
     server = {
+      metrics = {
+        enabled = true
+
+        serviceMonitor = {
+          enabled = true
+        }
+      }
+
       volumes      = [var.ca_volume]
       volumeMounts = [var.ca_volume_mount]
 
@@ -126,9 +152,25 @@ EOF
         "--redisdb=4",
         "--redis-use-tls"
       ]
+
+      metrics = {
+        enabled = true
+
+        serviceMonitor = {
+          enabled = true
+        }
+      }
     }
 
     repoServer = {
+      metrics = {
+        enabled = true
+
+        serviceMonitor = {
+          enabled = true
+        }
+      }
+
       volumes = [
         var.ca_volume,
         {

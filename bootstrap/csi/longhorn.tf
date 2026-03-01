@@ -22,6 +22,12 @@ resource "helm_release" "longhorn" {
     longhornUI = {
       replicas = 1
     }
+
+    metrics = {
+      serviceMonitor = {
+        enabled = true
+      }
+    }
   })]
 }
 

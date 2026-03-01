@@ -34,3 +34,5 @@
       - "443:443"
     env:
       CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://{{ truenas_dns }}:4317"
+      OTEL_SERVICE_NAME: "truenas-caddy"
