@@ -29,7 +29,7 @@ resource "helm_release" "postgres_operator" {
 
   repository = "https://cloudnative-pg.github.io/charts"
   chart      = "cloudnative-pg"
-  version    = "0.26.1"
+  version    = "0.27.1"
 
   name      = "postgres-operator"
   namespace = kubernetes_namespace.postgres.metadata[0].name
