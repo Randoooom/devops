@@ -1,0 +1,12 @@
+signoz_dataset_root: ""
+signoz_dataset_zookeeper: "{{ signoz_dataset_root }}/zookeeper"
+signoz_dataset_clickhouse: "{{ signoz_dataset_root }}/clickhouse"
+signoz_dataset_sqlite: "{{ signoz_dataset_root }}/sqlite"
+signoz_dataset_common: "{{ signoz_dataset_root }}/common"
+
+signoz_network: "signoz"
+
+signoz_clickhouse_version: 25.5.6
+signoz_zookeeper_version: 3.7.1
+signoz_version: v0.113.0
+signoz_otel_collector_version: v0.144.1

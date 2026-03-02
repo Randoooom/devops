@@ -1,0 +1,15 @@
+- name: Install OTEL
+  apt:
+    deb: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_version }}/otelcol-contrib_{{ otel_version }}_linux_arm64.deb"
+
+- name: Enable and start OTEL
+  systemd_service:
+      name: otelcol-contrib
+      enabled: true
+      state: started
+
+- name: Template OTEL configuration
+  template:
+    src: ../templates/config.j2
+    dest: /etc/otelcol-contrib/config.yaml
+  notify: reload otel

@@ -1,0 +1,20 @@
+- name: Load S3 credentials
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Get S3 credentials from Terraform
+      ansible.builtin.command: terragrunt output -json credentials
+      args:
+        chdir: "{{ playbook_dir }}/tofu/s3"
+      delegate_to: localhost
+      connection: local
+      run_once: true
+      register: terragrunt_s3
+      no_log: true
+
+    - name: Set S3 credentials on all hosts
+      ansible.builtin.set_fact:
+        s3_credentials: "{{ terragrunt_s3.stdout | from_json }}"
+      no_log: true
+

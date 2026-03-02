@@ -1,7 +1,0 @@
-- name: reload openbao
-  become: true
-  community.docker.docker_container:
-    name: openbao
-    image: "openbao/openbao:{{ openbao_version }}"
-    state: started
-    restart: true

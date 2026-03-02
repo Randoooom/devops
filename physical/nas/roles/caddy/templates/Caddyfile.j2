@@ -61,6 +61,10 @@
     dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     resolvers 1.1.1.1
   }
+
+  tracing {
+    span "{{ host.host }}"
+  }
 }
 {% endfor %}
 

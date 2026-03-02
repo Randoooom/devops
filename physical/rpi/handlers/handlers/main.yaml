@@ -1,0 +1,4 @@
+- name: reload otel 
+  systemd_service:
+      name: otelcol-contrib
+      state: reloaded

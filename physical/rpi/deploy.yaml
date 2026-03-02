@@ -2,3 +2,9 @@
   hosts: rpi
   roles:
     - preperation
+
+- name: Deploy services
+  hosts: rpi
+  become: true
+  roles:
+    - otel

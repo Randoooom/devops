@@ -41,3 +41,17 @@ variable "new_relic_admin" {
   type      = string
   sensitive = true
 }
+
+variable "otel_grpc_endpoint" {
+  type      = string
+  sensitive = true
+}
+
+variable "postgres_host" {
+  type = string
+}
+
+variable "postgres_signoz_password" {
+  type      = string
+  sensitive = true
+}

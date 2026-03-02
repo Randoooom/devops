@@ -25,3 +25,8 @@ output "postgres_admin_password" {
   sensitive = true
   value     = random_password.postgres_admin.result
 }
+
+output "postgres_signoz_password" {
+  sensitive = true
+  value     = random_password.signoz.result
+}

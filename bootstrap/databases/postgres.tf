@@ -2,13 +2,20 @@ locals {
   postgres_bucket = var.buckets["postgres"]
   postgres_domain = "postgresql-central-rw.${kubernetes_namespace.postgres.metadata[0].name}.svc.cluster.local"
 
-  postgres_users = [for database, user in var.postgres_databases : {
+  postgres_users = concat([for database, user in var.postgres_databases : {
     name = user
     passwordSecret = {
       name = database
     }
     login = true
-  }]
+    }], [{
+    name    = "signoz"
+    login   = true
+    inRoles = ["pg_monitor"]
+    passwordSecret = {
+      name = "signoz-credentials"
+    }
+  }])
 }
 
 resource "kubernetes_namespace" "postgres" {
@@ -80,6 +87,23 @@ resource "kubernetes_secret" "postgres_admin_credentials" {
   data = {
     username = "postgres"
     password = random_password.postgres_admin.result
+  }
+}
+
+resource "random_password" "signoz" {
+  length  = 80
+  special = false
+}
+
+resource "kubernetes_secret" "signoz" {
+  metadata {
+    name      = "signoz-credentials"
+    namespace = kubernetes_namespace.postgres.metadata[0].name
+  }
+
+  data = {
+    username = "signoz"
+    password = random_password.signoz.result
   }
 }
 

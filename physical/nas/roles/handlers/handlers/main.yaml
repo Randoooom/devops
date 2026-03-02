@@ -1,0 +1,19 @@
+- name: reload caddy
+  become: true
+  community.docker.docker_container_exec:
+    container: caddy
+    command: caddy reload --config /etc/caddy/Caddyfile 
+
+- name: reload openbao
+  become: true
+  community.docker.docker_container:
+    name: openbao
+    image: "openbao/openbao:{{ openbao_version }}"
+    state: started
+    restart: true
+
+- name: reload otel 
+  community.docker.docker_container:
+      name: otelcol-contrib
+      state: started
+      restart: true

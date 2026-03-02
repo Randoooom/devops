@@ -1,0 +1,14 @@
+- name: Create DNS entries
+  ansible.builtin.include_role:
+    name: dns_entry
+  vars:
+    dns_entry: "{{ item.host }}"
+    dns_target: "{{ truenas_dns }}"
+    dns_type: CNAME
+  loop: "{{ caddy_hosts }}"
+
+- name: Configure caddy
+  template:
+    src: ../templates/caddy.j2
+    dest: "/mnt/{{ caddy_dataset_config }}/snippets/{{ name }}"
+  notify: reload caddy
