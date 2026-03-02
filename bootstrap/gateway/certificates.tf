@@ -20,7 +20,7 @@ resource "helm_release" "cert_manager" {
 
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"
-  version    = "v1.19.1"
+  version    = "v1.19.4"
 
   namespace = kubernetes_namespace.cert_manager.metadata[0].name
   name      = "cert-manager"
