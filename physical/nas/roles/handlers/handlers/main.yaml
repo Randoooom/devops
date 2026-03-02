@@ -11,3 +11,9 @@
     image: "openbao/openbao:{{ openbao_version }}"
     state: started
     restart: true
+
+- name: reload otel 
+  community.docker.docker_container:
+      name: otelcol-contrib
+      state: started
+      restart: true

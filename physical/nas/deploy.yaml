@@ -2,7 +2,8 @@
   hosts: nas
   become: true
   roles:
-    - caddy
-    - s3
-    - openbao
-    - signoz
+    # - caddy
+    # - s3
+    # - openbao
+    # - signoz
+    - otel

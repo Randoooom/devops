@@ -1,0 +1,30 @@
+- name: Create OTEL datasets
+  arensb.truenas.filesystem:
+    name: "{{ item }}"
+    state: present
+    create_ancestors: yes
+  loop:
+    - "{{ otel_dataset }}"
+
+- name: Template OTEL configuration
+  template:
+    src: ../templates/config.j2
+    dest: "/mnt/{{ otel_dataset }}/config.yaml"
+  notify: reload otel
+
+- name: Start OTEL
+  community.docker.docker_container:
+    state: started
+    name: otel-contrib
+    image: "otel/opentelemetry-collector-contrib:{{ otel_version }}"
+    restart_policy: unless-stopped
+    user: 0
+    hostname: "{{ truenas_dns }}"
+    volumes:
+      - "/mnt/{{ otel_dataset }}/config.yaml:/etc/otelcol-contrib/config.yaml"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/hostfs/proc:ro      
+      - /sys:/hostfs/sys:ro       
+      - /dev:/hostfs/dev:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/hostname:/etc/hostname:ro

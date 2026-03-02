@@ -15,6 +15,7 @@ signoz_otel_http_host: ENC[AES256_GCM,data:eUD3Z38Cu9RyPtvy8u7lZqDOLtMDkUZF0n//O
 signoz_root_username: ENC[AES256_GCM,data:5Jf7p3wnusOmSj+OZ0ldKWcCsQ==,iv:t+AGpArzN2u8MMUS1zrzeDHk2UHJacoFENeqTsd8Qp8=,tag:Jiy0N1O0MGVLoOpiSsGrUw==,type:str]
 signoz_root_password: ENC[AES256_GCM,data:hU3jTzmxdi5IVagQu0YIXfd+Bzo0A7/L35LNIROGjrPKDMwmH9Dy8g==,iv:+i8R4wQNfvPlxKqGd0i6tjyTu6J9chGRvWFwXB0Rzzs=,tag:AR2nPNJAFl8sJxNxce/Q/A==,type:str]
 signoz_jwt_secret: ENC[AES256_GCM,data:+yrDj4owC0hSGNkHFq5LShGPcxxZXerLwfvneN6jlTt12garbankww==,iv:hvsN1VLeOX+CILWUPLC+DlcFe9hAkl96fFC+pSNhrdU=,tag:d72gmRaqHGelKZF7hGCz0g==,type:str]
+otel_dataset: ENC[AES256_GCM,data:ygAfdXMXoKnQu3xCf8KWrgLJKrEykfBCOgA6LG4CyWaS,iv:pIogz0W8+kd/Nli6ma18z5el5IRgvBAkuueL2doUneM=,tag:stvi7tZAUyFfnad+GCtsog==,type:str]
 sops:
     age:
         - recipient: age16mma2m563yzghre54wdulnckg2avawj8qsftgnuq6e00x7lcuefsw28vr9
@@ -26,7 +27,7 @@ sops:
             RTU5SU5Rcm9hVStLckdnNFRDSEI4a0UKEO4RPbkVr7qX1t1XKBroQLZVy7WeuJdp
             tXvQamF2YAR+f5Lc0dAjnITmPiCmhzSmTP3cIIHbq/tKJBiFULzNyQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-01T14:04:03Z"
-    mac: ENC[AES256_GCM,data:oHYBe/kZGrrDJqVgoIqYBzKrDq++g9FZKVX9rnQrD2O2KZbCszqDrCCv+l3jyhXU1NjO7f13xIZ6isV9Is87W7uhGXDymzHr/4IYgq7/Hc6aDHfDsgI+0vx2kgcIkinePwC8ZqBvJvVwevDZYjK2EFeM2QM3j+GMu5PecJ/etqc=,iv:b80E976tMyoAYxUBGvz9Hrlsw5cAK9icxBy286M0Des=,tag:um3OJs+mj9gF5TizkRTHrg==,type:str]
+    lastmodified: "2026-03-01T20:30:27Z"
+    mac: ENC[AES256_GCM,data:T+OhLbPOm3bZKsIIw6ozptmoGLkyGvFE/LQfMLINCiXlqz//J4XukI+XXvcvsWyxrxHw/QLizsdD0w068vXim9ZuchpiykAAGdPGuUu2vdZUXZGPBJdneCRSpjcwxQipBGC4FUzgMHfWsMi3d0KU9YH+r2BOs4FzZB70lYRuVS8=,iv:14lehXTAoxDCf613WDPtH43TlmUxQtK7D3NHuY3aG6I=,tag:eCVODdByOZ/Q7ZjXZ/cF6A==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.12.1
