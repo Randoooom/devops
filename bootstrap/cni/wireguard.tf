@@ -3,8 +3,8 @@ locals {
 [Interface]
 Address = ${var.remote_wireguard_peer_cidr}
 ListenPort = 51820
-PostUp = wg set wg0 private-key /etc/wireguard/privatekey; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -i wg0 -j ACCEPT; iptables -A FORWARD -o wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o cilium_host -j MASQUERADE
-PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -D FORWARD -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables -t nat -D POSTROUTING -o cilium_host -j MASQUERADE
+PostUp = wg set wg0 private-key /etc/wireguard/privatekey; iptables-nft -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables-nft -A FORWARD -i wg0 -j ACCEPT; iptables-nft -A FORWARD -o wg0 -j ACCEPT; iptables-nft -t nat -A POSTROUTING -o cilium_host -j MASQUERADE
+PostDown = iptables-nft -D FORWARD -i wg0 -j ACCEPT; iptables-nft -D FORWARD -o wg0 -j ACCEPT; iptables-nft -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables-nft -t nat -D POSTROUTING -o cilium_host -j MASQUERADE
 
 
 [Peer]
@@ -48,10 +48,6 @@ resource "helm_release" "wireguard" {
   namespace = "sys-wireguard"
 
   values = [yamlencode({
-    image = {
-      tag        = "20240902-9c85c2e"
-      pullPolicy = "IfNotPresent"
-    }
     configSecretName = "wireguard-endpoint"
     autoscaling = {
       enabled = false
