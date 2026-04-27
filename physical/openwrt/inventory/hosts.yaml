@@ -1,5 +1,0 @@
-all:
-  children:
-    openwrt:
-      hosts:
-        openwrt:

@@ -1,3 +1,0 @@
-- name: Configure forwardings
-  roles:
-    - forwarding

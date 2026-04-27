@@ -9,7 +9,7 @@ locals {
         sign_in_audience        = "AzureADMyOrg"
       }
       feedbackfusion = {
-        redirect_uris           = ["https://feedback-fusion.${var.public_domain}/auth/oidc/callback", "http://localhost:3000/auth/oidc/callback"]
+        redirect_uris           = ["https://feedback-fusion.${var.public_domain}/auth/oidc/callback", "http://localhost:3000/api/auth/oauth2/callback/oidc"]
         logout_uris             = []
         required_roles          = ["feedbackfusion"]
         app_role_assignment_req = true
